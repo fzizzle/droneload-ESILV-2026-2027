@@ -1,5 +1,7 @@
 # Agent Rules
 
+**English** | [Français](AGENTS.fr.md)
+
 Rules for every agent and contributor. This file loads into each agent session, so keep it short.
 
 ## Project Context
@@ -55,7 +57,8 @@ Get a person's decision before you:
 
 - Never commit generated files or footage. Stage files by name.
 - Use UTF-8 and LF.
-- `README.md` and `README.fr.md` must stay in step.
+- Write code, comments, logs and `TODO.md` in English.
+- Write READMEs, `docs/` and this file in English and French. A change to one language needs the same change in the other (`*.fr.md`). Read only the English version.
 
 ## Verification
 
@@ -82,5 +85,5 @@ For detection changes, also run `python3 -m testing.benchmark` before and after,
 ## Done Means
 
 - [ ] `./scripts/check.sh` passes
-- [ ] Log, `TODO.md` and both READMEs are up to date
+- [ ] Log, `TODO.md` and both language versions are up to date
 - [ ] Pull request is open

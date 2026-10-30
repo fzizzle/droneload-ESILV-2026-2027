@@ -113,7 +113,7 @@ logs/                           # Journaux de branche et décisions
 TODO.md                         # Problèmes connus et travail restant
 ```
 
-`flight`, `navigation`, `payload`, `comms` et `mission` sont prévus et ne contiennent qu'un court README (en anglais). Voir [`docs/architecture.md`](docs/architecture.md) (en anglais).
+`flight`, `navigation`, `payload`, `comms` et `mission` sont prévus et ne contiennent qu'un court README. Voir [`docs/architecture.fr.md`](docs/architecture.fr.md).
 
 ## Images de test
 
@@ -143,15 +143,15 @@ python3 -m droneload.vision --source "test_footage/shadow-aruco/video_5/%05d.png
 
 ## Contribuer
 
-Les contributeurs et les agents de code suivent [`AGENTS.md`](AGENTS.md). Le travail se fait sur des branches, et chaque branche a un journal dans `logs/`.
+Les contributeurs et les agents de code suivent [`AGENTS.fr.md`](AGENTS.fr.md). Le travail se fait sur des branches, et chaque branche a un journal dans `logs/`.
 
 **Agents :** lisez et utilisez les fichiers Markdown du projet, en n'ouvrant que ce dont la tâche a besoin :
 
-- [`AGENTS.md`](AGENTS.md) : règles pour tout travail dans ce dépôt
+- [`AGENTS.fr.md`](AGENTS.fr.md) : règles pour tout travail dans ce dépôt
 - [`TODO.md`](TODO.md) : problèmes connus et travail restant
-- [`docs/architecture.md`](docs/architecture.md) : modules et dépendances entre eux (en anglais)
+- [`docs/architecture.fr.md`](docs/architecture.fr.md) : modules et dépendances entre eux
 - [`logs/DECISIONS.md`](logs/DECISIONS.md) : décisions durables
-- [`docs/contest-rules.md`](docs/contest-rules.md) : règles provisoires de Droneload 2027 (en anglais), pour les questions sur le concours
+- [`docs/contest-rules.fr.md`](docs/contest-rules.fr.md) : règles provisoires de Droneload 2027, pour les questions sur le concours
 - [`logs/`](logs/) : un journal par branche, où noter votre travail
 - [`README.md`](README.md) ou `README.fr.md` : ce que fait le projet et comment le lancer
 
