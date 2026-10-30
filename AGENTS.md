@@ -44,7 +44,7 @@ Get a person's decision before you:
 
 - Match the surrounding code. Do not refactor unrelated code.
 - Use the standard library and standard packages before custom code.
-- Follow the module boundaries in `docs/architecture.md`. Create a module's folder only when work on it starts.
+- Follow the module boundaries in `docs/architecture.md`.
 - Camera code goes in `droneload/vision/camera_*.py`, with `open()`, `read()` and `release()`.
 - Settings go in constants at the top of each module's main file.
 - `scripts/test_camera.sh` and `camera_rubikpi_csi.py` must use the same pipeline.

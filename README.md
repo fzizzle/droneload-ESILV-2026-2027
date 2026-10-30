@@ -93,6 +93,7 @@ timestamp_ms,id,label,cx,cy
 
 ```
 droneload/
+├── flight/  navigation/  payload/  comms/  mission/   # Planned
 └── vision/                     # Marker detection
     ├── detect.py               # Detection loop and command-line options
     ├── camera_opencv.py        # Any source cv2.VideoCapture can open
@@ -112,7 +113,7 @@ logs/                           # Branch logs and decisions
 TODO.md                         # Known problems and open work
 ```
 
-Flight, navigation, payload, comms and mission modules are planned. See [`docs/architecture.md`](docs/architecture.md).
+`flight`, `navigation`, `payload`, `comms` and `mission` are planned and hold only a short README. See [`docs/architecture.md`](docs/architecture.md).
 
 ## Test Footage
 

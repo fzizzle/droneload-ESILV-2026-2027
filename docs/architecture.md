@@ -1,6 +1,6 @@
 # Architecture
 
-Each module owns one job. Create a module's folder when work on it starts.
+Each module owns one job. Modules that have not started hold only a short `README.md`.
 
 | Module | Job | State |
 |--------|-----|-------|

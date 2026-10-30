@@ -93,6 +93,7 @@ timestamp_ms,id,label,cx,cy
 
 ```
 droneload/
+├── flight/  navigation/  payload/  comms/  mission/   # Prévus
 └── vision/                     # Détection des marqueurs
     ├── detect.py               # Boucle de détection et options en ligne de commande
     ├── camera_opencv.py        # Toute source lisible par cv2.VideoCapture
@@ -112,7 +113,7 @@ logs/                           # Journaux de branche et décisions
 TODO.md                         # Problèmes connus et travail restant
 ```
 
-Les modules de vol, navigation, charge utile, communication et mission sont prévus. Voir [`docs/architecture.md`](docs/architecture.md) (en anglais).
+`flight`, `navigation`, `payload`, `comms` et `mission` sont prévus et ne contiennent qu'un court README (en anglais). Voir [`docs/architecture.md`](docs/architecture.md) (en anglais).
 
 ## Images de test
 
