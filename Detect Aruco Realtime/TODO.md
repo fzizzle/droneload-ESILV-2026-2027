@@ -37,6 +37,9 @@ Problems found while reviewing the project.
 
 - [ ] **Record real `DICT_4X4_50` footage.** No public source was found.
 
+- [ ] **Update `ARUCO_LABELS` when 2027 IDs are published.** The labels match
+  the 2026 rules, which had two windows. 2027 has one window with 6 markers.
+
 ## Repo hygiene
 
 - [x] **`rubikpi-script` is a broken submodule.** It is committed as a gitlink

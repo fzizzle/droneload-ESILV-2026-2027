@@ -98,6 +98,9 @@ Detect Aruco Realtime/
 ├── camera_rubikpi_csi.py  # RubikPi CSI camera (GStreamer pipeline)
 ├── camera_picamera2.py    # Raspberry Pi camera
 ├── make_test_video.py     # Generates a test video of moving markers
+├── benchmark.py           # Scores detection against ground truth
+├── test_main.py           # Unit and end-to-end tests
+├── check.sh               # Runs all checks with short output
 ├── setup.sh               # Installs GStreamer and qtiqmmfsrc on the RubikPi
 ├── test_camera.sh         # Tests the CSI pipeline without OpenCV
 ├── build_opencv.sh        # Builds OpenCV with GStreamer and aruco
@@ -129,6 +132,26 @@ python3 main.py --source "../test_footage/shadow-aruco/video_5/%05d.png" --dict 
 |-----|---------|--------|---------|
 | `fdcl-gwu` | 821 frames at 1080p | [fdcl-gwu/aruco-markers](https://github.com/fdcl-gwu/aruco-markers) | BSD-3-Clause |
 | `shadow-aruco` | 1,334 photos at 800×600 in a dark room with moving shadows, with ground truth in `corrected_annotations/` | [Shadow-ArUco Dataset](https://doi.org/10.5281/zenodo.10791293), `video_5` | CC BY 4.0 |
+
+## Contributing
+
+Contributors and coding agents follow [`AGENTS.md`](AGENTS.md). Work happens on branches, and each branch has a log in `logs/`.
+
+**Agents:** read and use the project's Markdown files, opening only what the task needs:
+
+- [`AGENTS.md`](AGENTS.md): rules for all work in this repository
+- [`Detect Aruco Realtime/TODO.md`](Detect%20Aruco%20Realtime/TODO.md): known problems and open work
+- [`logs/DECISIONS.md`](logs/DECISIONS.md): lasting decisions
+- [`docs/contest-rules.md`](docs/contest-rules.md): provisional Droneload 2027 rules, for contest questions
+- [`logs/`](logs/): one log per branch, where you record your work
+- `README.md` or [`README.fr.md`](README.fr.md): what the project does and how to run it
+
+Before asking for review, run these from `Detect Aruco Realtime/`:
+
+```bash
+pip install -r requirements-dev.txt
+./check.sh
+```
 
 ## RubikPi 3 Installation
 

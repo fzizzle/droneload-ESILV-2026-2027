@@ -1,0 +1,4 @@
+# Fixed here so results match for every contributor
+[lint]
+select = ["E9", "F", "B"]
+ignore = ["B905"]

@@ -98,6 +98,9 @@ Detect Aruco Realtime/
 ├── camera_rubikpi_csi.py  # Caméra CSI du RubikPi (pipeline GStreamer)
 ├── camera_picamera2.py    # Caméra du Raspberry Pi
 ├── make_test_video.py     # Génère une vidéo de test avec des marqueurs en mouvement
+├── benchmark.py           # Évalue la détection par rapport à la vérité terrain
+├── test_main.py           # Tests unitaires et de bout en bout
+├── check.sh               # Lance tous les contrôles avec une sortie courte
 ├── setup.sh               # Installe GStreamer et qtiqmmfsrc sur le RubikPi
 ├── test_camera.sh         # Teste le pipeline CSI sans OpenCV
 ├── build_opencv.sh        # Compile OpenCV avec GStreamer et aruco
@@ -129,6 +132,26 @@ python3 main.py --source "../test_footage/shadow-aruco/video_5/%05d.png" --dict 
 |-----|---------|--------|---------|
 | `fdcl-gwu` | 821 images en 1080p | [fdcl-gwu/aruco-markers](https://github.com/fdcl-gwu/aruco-markers) | BSD-3-Clause |
 | `shadow-aruco` | 1 334 photos en 800×600 dans une pièce sombre avec des ombres mobiles, vérité terrain dans `corrected_annotations/` | [Shadow-ArUco Dataset](https://doi.org/10.5281/zenodo.10791293), `video_5` | CC BY 4.0 |
+
+## Contribuer
+
+Les contributeurs et les agents de code suivent [`AGENTS.md`](AGENTS.md). Le travail se fait sur des branches, et chaque branche a un journal dans `logs/`.
+
+**Agents :** lisez et utilisez les fichiers Markdown du projet, en n'ouvrant que ce dont la tâche a besoin :
+
+- [`AGENTS.md`](AGENTS.md) : règles pour tout travail dans ce dépôt
+- [`Detect Aruco Realtime/TODO.md`](Detect%20Aruco%20Realtime/TODO.md) : problèmes connus et travail restant
+- [`logs/DECISIONS.md`](logs/DECISIONS.md) : décisions durables
+- [`docs/contest-rules.md`](docs/contest-rules.md) : règles provisoires de Droneload 2027 (en anglais), pour les questions sur le concours
+- [`logs/`](logs/) : un journal par branche, où noter votre travail
+- [`README.md`](README.md) ou `README.fr.md` : ce que fait le projet et comment le lancer
+
+Avant de demander une relecture, lancez depuis `Detect Aruco Realtime/` :
+
+```bash
+pip install -r requirements-dev.txt
+./check.sh
+```
 
 ## Installation sur RubikPi 3
 
