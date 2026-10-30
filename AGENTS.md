@@ -15,9 +15,10 @@ Some contributors use free plans.
 
 - Read only what the task needs: `TODO.md`, `logs/DECISIONS.md` and your branch's log. Open the README, other logs or other files only when required.
 - Never open `test_footage/`, images or videos unless the task needs it.
-- Run `./check.sh` instead of separate commands. Its output is short.
+- Run `./scripts/check.sh` instead of separate commands. Its output is short.
 - Do not paste long output into logs or pull requests. Summarise it.
 - Use the benchmark only for detection changes.
+- Work in one module at a time.
 
 ## Workflow
 
@@ -43,10 +44,11 @@ Get a person's decision before you:
 
 - Match the surrounding code. Do not refactor unrelated code.
 - Use the standard library and standard packages before custom code.
-- Camera code goes in `camera_*.py`, with `open()`, `read()` and `release()`.
-- Settings go in the constants at the top of `main.py`.
-- `test_camera.sh` and `camera_rubikpi_csi.py` must use the same pipeline.
-- Add a test to `test_main.py` for each new behaviour or bug fix.
+- Follow the module boundaries in `docs/architecture.md`. Create a module's folder only when work on it starts.
+- Camera code goes in `droneload/vision/camera_*.py`, with `open()`, `read()` and `release()`.
+- Settings go in constants at the top of each module's main file.
+- `scripts/test_camera.sh` and `camera_rubikpi_csi.py` must use the same pipeline.
+- Add a test in `tests/` for each new behaviour or bug fix.
 - Delete dead code instead of commenting it out.
 
 ## Repository
@@ -57,7 +59,7 @@ Get a person's decision before you:
 
 ## Verification
 
-From `Detect Aruco Realtime/`, once:
+From the repository root, once:
 
 ```bash
 pip install -r requirements-dev.txt
@@ -66,10 +68,10 @@ pip install -r requirements-dev.txt
 Before review:
 
 ```bash
-./check.sh
+./scripts/check.sh
 ```
 
-For detection changes, also run `python3 benchmark.py` before and after, and log both results. The baseline is `found=56.4% unmatched=26.6%`. The footage is listed in the README. Passing the generated test video does not show detection quality is good.
+For detection changes, also run `python3 -m testing.benchmark` before and after, and log both results. The baseline is `found=56.4% unmatched=26.6%`. The footage is listed in the README. Passing the generated test video does not show detection quality is good.
 
 ## Reporting
 
@@ -79,6 +81,6 @@ For detection changes, also run `python3 benchmark.py` before and after, and log
 
 ## Done Means
 
-- [ ] `./check.sh` passes
+- [ ] `./scripts/check.sh` passes
 - [ ] Log, `TODO.md` and both READMEs are up to date
 - [ ] Pull request is open

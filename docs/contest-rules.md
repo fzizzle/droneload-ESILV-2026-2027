@@ -57,7 +57,7 @@ Use OpenCV with Python for vision, simulate flight with Gazebo and ArduPilot, an
 
 ## ArUco Markers
 
-The 2027 IDs are not published. `ARUCO_LABELS` in `main.py` matches annex 4 of the 2026 rules, and 2026 markers were 20 × 20 cm from a 4x4 dictionary. 2026 had two windows and 12 window markers; 2027 has one window with 6 markers, so IDs 4-15 may change.
+The 2027 IDs are not published. `ARUCO_LABELS` in `droneload/vision/detect.py` matches annex 4 of the 2026 rules, and 2026 markers were 20 × 20 cm from a 4x4 dictionary. 2026 had two windows and 12 window markers; 2027 has one window with 6 markers, so IDs 4-15 may change.
 
 ## Open Questions
 

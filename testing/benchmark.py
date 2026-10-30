@@ -1,5 +1,5 @@
 # Score detection against Shadow-ArUco ground truth, in one line of output:
-#   python3 benchmark.py
+#   python3 -m testing.benchmark
 import argparse
 import glob
 import json
@@ -8,7 +8,7 @@ import os
 import cv2
 import numpy as np
 
-import main
+from droneload.vision import detect
 
 MATCH_DISTANCE_PX = 15
 
@@ -23,7 +23,7 @@ def score(paths, detector):
     for path in paths:
         truth = load_truth(path)
         annotated += len(truth)
-        gray = main.preprocess(cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2GRAY))
+        gray = detect.preprocess(cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2GRAY))
         corners, ids, _ = detector.detectMarkers(gray)
         for corner, marker_id in zip(corners, [] if ids is None else ids.flatten().tolist()):
             near = marker_id in truth and np.linalg.norm(corner[0].mean(axis=0) - truth[marker_id]) < MATCH_DISTANCE_PX
@@ -31,9 +31,9 @@ def score(paths, detector):
             unmatched += not near
     return matched, unmatched, annotated
 
-def main_benchmark():
+def main():
     parser = argparse.ArgumentParser(description="Score detection against ground truth")
-    parser.add_argument("--footage", default="../test_footage/shadow-aruco/video_5")
+    parser.add_argument("--footage", default="test_footage/shadow-aruco/video_5")
     parser.add_argument("--dict", default="DICT_ARUCO_MIP_36h12")
     args = parser.parse_args()
 
@@ -42,10 +42,10 @@ def main_benchmark():
         print(f"[ERROR] No images in {args.footage}. See Test Footage in README.md.")
         exit(1)
 
-    matched, unmatched, annotated = score(paths, main.make_detector(args.dict))
+    matched, unmatched, annotated = score(paths, detect.make_detector(args.dict))
     detections = matched + unmatched
     print(f"frames={len(paths)} found={100 * matched / annotated:.1f}% "
           f"unmatched={100 * unmatched / max(detections, 1):.1f}%")
 
 if __name__ == "__main__":
-    main_benchmark()
+    main()

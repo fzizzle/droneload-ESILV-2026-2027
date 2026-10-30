@@ -1,7 +1,7 @@
 #!/bin/bash
 # check.sh - Run all checks. Prints one line per check, plus details on failure.
 
-cd "$(dirname "$0")" || exit 1
+cd "$(dirname "$0")/.." || exit 1
 fail=0
 
 run() {
@@ -16,8 +16,8 @@ run() {
     fi
 }
 
-run "shell syntax" bash -c 'for s in *.sh; do bash -n "$s" || exit 1; done'
-run "shellcheck"   shellcheck --severity=warning ./*.sh
+run "shell syntax" bash -c 'for s in scripts/*.sh; do bash -n "$s" || exit 1; done'
+run "shellcheck"   shellcheck --severity=warning scripts/*.sh
 run "ruff"         ruff check --quiet .
 run "pytest"       python3 -m pytest -q --tb=short
 

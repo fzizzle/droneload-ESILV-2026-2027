@@ -1,6 +1,6 @@
-# Write a short video of moving ArUco markers, for running main.py without a camera:
-#   python3 make_test_video.py
-#   python3 main.py --source test_markers.mp4
+# Write a short video of moving ArUco markers, for running the detector without a camera:
+#   python3 -m testing.make_test_video
+#   python3 -m droneload.vision --source test_markers.mp4
 import cv2
 import numpy as np
 

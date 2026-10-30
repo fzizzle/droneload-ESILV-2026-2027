@@ -11,7 +11,7 @@ if gst-inspect-1.0 qtiqmmfsrc > /dev/null 2>&1; then
     echo "      OK - qtiqmmfsrc found"
 else
     echo "      FAIL - qtiqmmfsrc not found"
-    echo "      -> Run ./setup.sh first"
+    echo "      -> Run ./scripts/setup.sh first"
     exit 1
 fi
 
@@ -19,7 +19,7 @@ fi
 echo "[2/2] Testing camera pipeline (Ctrl+C to stop)..."
 echo ""
 
-# Same pipeline as camera_rubikpi_csi.py, so a pass applies to main.py.
+# Same pipeline as camera_rubikpi_csi.py, so a pass applies to the detector.
 # If it fails, try "video/x-raw(memory:GBM)" + qtivtransform instead of plain
 # video/x-raw + videoconvert, and update camera_rubikpi_csi.py to match.
 gst-launch-1.0 qtiqmmfsrc camera=0 ! \
@@ -34,7 +34,7 @@ if [ $rc -eq 0 ] || [ $rc -eq 130 ]; then
     # 130 = Ctrl+C, which is normal
     echo ""
     echo "Pipeline OK - camera is working"
-    echo "You can now run: python3 main.py --source rubikpi-csi"
+    echo "You can now run: python3 -m droneload.vision --source rubikpi-csi"
 else
     echo ""
     echo "Pipeline FAILED - check error above"

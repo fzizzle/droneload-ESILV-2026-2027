@@ -15,16 +15,16 @@ La sortie est le centre de chaque marqueur, en pixels. Le programme n'estime ni 
 | Matériel | Pas encore choisi |
 | Marqueurs du projet (`DICT_4X4_50`) | Non testés sur des images réelles |
 
-Sur les images de test Shadow-ArUco, le détecteur a trouvé 56 % des marqueurs annotés, et 27 % de ses détections ne correspondaient pas aux annotations. Ces images utilisent un autre dictionnaire : ces chiffres ne s'appliquent donc pas forcément aux marqueurs du projet. Le travail restant est suivi dans `Detect Aruco Realtime/TODO.md`.
+Sur les images de test Shadow-ArUco, le détecteur a trouvé 56 % des marqueurs annotés, et 27 % de ses détections ne correspondaient pas aux annotations. Ces images utilisent un autre dictionnaire : ces chiffres ne s'appliquent donc pas forcément aux marqueurs du projet. Le travail restant est suivi dans `TODO.md`.
 
 ## Démarrage rapide
 
-Il faut Python 3 et un PC. Toutes les commandes se lancent depuis `Detect Aruco Realtime/`.
+Il faut Python 3 et un PC. Toutes les commandes se lancent depuis la racine du dépôt.
 
 ```bash
 pip install opencv-contrib-python
-python3 make_test_video.py                  # aucune caméra nécessaire
-python3 main.py --source test_markers.mp4
+python3 -m testing.make_test_video          # aucune caméra nécessaire
+python3 -m droneload.vision --source test_markers.mp4
 ```
 
 Les résultats sont écrits dans `detections.csv` et `aruco_debug.jpg`.
@@ -32,7 +32,7 @@ Les résultats sont écrits dans `detections.csv` et `aruco_debug.jpg`.
 ## Utilisation
 
 ```bash
-python3 main.py [--source SOURCE] [--dict DICTIONNAIRE]
+python3 -m droneload.vision [--source SOURCE] [--dict DICTIONNAIRE]
 ```
 
 Par défaut, `--source` vaut `0`, la première webcam. Valeurs acceptées :
@@ -54,7 +54,7 @@ Les sources vidéo et image s'arrêtent à la dernière image. Pour arrêter une
 
 1. Lit une image depuis la source.
 2. La convertit en niveaux de gris et applique un rehaussement de contraste CLAHE, qui améliore la détection en faible lumière.
-3. Détecte les marqueurs et écarte ceux dont un côté mesure moins de 10 pixels (`MIN_SIDE_PX` dans `main.py`).
+3. Détecte les marqueurs et écarte ceux dont un côté mesure moins de 10 pixels (`MIN_SIDE_PX` dans `detect.py`).
 4. Associe chaque ID à un label.
 5. Enregistre chaque ID au plus une fois par seconde (`WRITE_COOLDOWN_MS`), ce qui limite la taille du CSV. Cette limite suit le temps réel : une vidéo traitée plus vite que sa durée produit donc moins de lignes.
 
@@ -62,7 +62,7 @@ Les marqueurs doivent avoir une bordure blanche pour être détectés.
 
 ### Labels des marqueurs
 
-Les labels sont définis dans `ARUCO_LABELS`, dans `main.py`. Les autres ID apparaissent sous la forme `unknown_N`.
+Les labels sont définis dans `ARUCO_LABELS`, dans `detect.py`. Les autres ID apparaissent sous la forme `unknown_N`.
 
 | ID | Label |
 |----|-------|
@@ -92,28 +92,35 @@ timestamp_ms,id,label,cx,cy
 ## Structure du projet
 
 ```
-Detect Aruco Realtime/
-├── main.py                # Boucle de détection et options en ligne de commande
-├── camera_opencv.py       # Toute source lisible par cv2.VideoCapture
-├── camera_rubikpi_csi.py  # Caméra CSI du RubikPi (pipeline GStreamer)
-├── camera_picamera2.py    # Caméra du Raspberry Pi
-├── make_test_video.py     # Génère une vidéo de test avec des marqueurs en mouvement
-├── benchmark.py           # Évalue la détection par rapport à la vérité terrain
-├── test_main.py           # Tests unitaires et de bout en bout
-├── check.sh               # Lance tous les contrôles avec une sortie courte
-├── setup.sh               # Installe GStreamer et qtiqmmfsrc sur le RubikPi
-├── test_camera.sh         # Teste le pipeline CSI sans OpenCV
-├── build_opencv.sh        # Compile OpenCV avec GStreamer et aruco
-└── TODO.md                # Problèmes connus et travail restant
+droneload/
+└── vision/                     # Détection des marqueurs
+    ├── detect.py               # Boucle de détection et options en ligne de commande
+    ├── camera_opencv.py        # Toute source lisible par cv2.VideoCapture
+    ├── camera_rubikpi_csi.py   # Caméra CSI du RubikPi (pipeline GStreamer)
+    └── camera_picamera2.py     # Caméra du Raspberry Pi
+testing/
+├── make_test_video.py          # Génère une vidéo de test avec des marqueurs en mouvement
+└── benchmark.py                # Évalue la détection par rapport à la vérité terrain
+tests/                          # Tests unitaires et de bout en bout
+scripts/
+├── check.sh                    # Lance tous les contrôles avec une sortie courte
+├── setup.sh                    # Installe GStreamer et qtiqmmfsrc sur le RubikPi
+├── test_camera.sh              # Teste le pipeline CSI sans OpenCV
+└── build_opencv.sh             # Compile OpenCV avec GStreamer et aruco
+docs/                           # Architecture et règles du concours
+logs/                           # Journaux de branche et décisions
+TODO.md                         # Problèmes connus et travail restant
 ```
+
+Les modules de vol, navigation, charge utile, communication et mission sont prévus. Voir [`docs/architecture.md`](docs/architecture.md) (en anglais).
 
 ## Images de test
 
-La vidéo de `make_test_video.py` est facile à détecter : utilisez des images réelles pour juger la qualité de détection. Elles se placent dans `test_footage/`, à la racine du dépôt, un dossier ignoré par git.
+La vidéo de `testing/make_test_video.py` est facile à détecter : utilisez des images réelles pour juger la qualité de détection. Elles se placent dans `test_footage/`, à la racine du dépôt, un dossier ignoré par git.
 
 Aucun des deux jeux ci-dessous ne provient d'un drone ni n'utilise `DICT_4X4_50` : les deux nécessitent donc `--dict`.
 
-**Téléchargement, depuis la racine du dépôt :**
+**Téléchargement :**
 ```bash
 mkdir -p test_footage/fdcl-gwu test_footage/shadow-aruco
 curl -L -o test_footage/fdcl-gwu/test_video.mp4 \
@@ -122,10 +129,10 @@ curl -L https://zenodo.org/api/records/10791293/files/video_5.tar.gz/content \
     | tar -xz -C test_footage/shadow-aruco
 ```
 
-**Exécution, depuis `Detect Aruco Realtime/` :**
+**Exécution :**
 ```bash
-python3 main.py --source ../test_footage/fdcl-gwu/test_video.mp4 --dict DICT_ARUCO_ORIGINAL
-python3 main.py --source "../test_footage/shadow-aruco/video_5/%05d.png" --dict DICT_ARUCO_MIP_36h12
+python3 -m droneload.vision --source test_footage/fdcl-gwu/test_video.mp4 --dict DICT_ARUCO_ORIGINAL
+python3 -m droneload.vision --source "test_footage/shadow-aruco/video_5/%05d.png" --dict DICT_ARUCO_MIP_36h12
 ```
 
 | Jeu | Contenu | Source | Licence |
@@ -140,17 +147,18 @@ Les contributeurs et les agents de code suivent [`AGENTS.md`](AGENTS.md). Le tra
 **Agents :** lisez et utilisez les fichiers Markdown du projet, en n'ouvrant que ce dont la tâche a besoin :
 
 - [`AGENTS.md`](AGENTS.md) : règles pour tout travail dans ce dépôt
-- [`Detect Aruco Realtime/TODO.md`](Detect%20Aruco%20Realtime/TODO.md) : problèmes connus et travail restant
+- [`TODO.md`](TODO.md) : problèmes connus et travail restant
+- [`docs/architecture.md`](docs/architecture.md) : modules et dépendances entre eux (en anglais)
 - [`logs/DECISIONS.md`](logs/DECISIONS.md) : décisions durables
 - [`docs/contest-rules.md`](docs/contest-rules.md) : règles provisoires de Droneload 2027 (en anglais), pour les questions sur le concours
 - [`logs/`](logs/) : un journal par branche, où noter votre travail
 - [`README.md`](README.md) ou `README.fr.md` : ce que fait le projet et comment le lancer
 
-Avant de demander une relecture, lancez depuis `Detect Aruco Realtime/` :
+Avant de demander une relecture, lancez :
 
 ```bash
 pip install -r requirements-dev.txt
-./check.sh
+./scripts/check.sh
 ```
 
 ## Installation sur RubikPi 3
@@ -168,30 +176,29 @@ Il faut donc compiler OpenCV depuis les sources.
 
 ```bash
 git clone https://github.com/fzizzle/droneload-ESILV-2026-2027.git
-cd "droneload-ESILV-2026-2027/Detect Aruco Realtime"
-chmod +x setup.sh test_camera.sh build_opencv.sh
+cd droneload-ESILV-2026-2027
 ```
 
 ### 2. Installer GStreamer et qtiqmmfsrc
 
 ```bash
-./setup.sh
+./scripts/setup.sh
 ```
 
 ### 3. Tester la caméra
 
 ```bash
-./test_camera.sh
+./scripts/test_camera.sh
 ```
 
 Lancez ce test avant la compilation, qui prend 1 à 2 heures. Appuyez sur Ctrl+C après quelques secondes. Le script doit afficher `Pipeline OK`.
 
-En cas d'échec, essayez `video/x-raw(memory:GBM)` avec `qtivtransform` à la place de `video/x-raw` simple avec `videoconvert`. Faites la même modification dans `camera_rubikpi_csi.py`, car les deux fichiers doivent utiliser le même pipeline.
+En cas d'échec, essayez `video/x-raw(memory:GBM)` avec `qtivtransform` à la place de `video/x-raw` simple avec `videoconvert`. Faites la même modification dans `droneload/vision/camera_rubikpi_csi.py`, car les deux fichiers doivent utiliser le même pipeline.
 
 ### 4. Compiler OpenCV
 
 ```bash
-./build_opencv.sh
+./scripts/build_opencv.sh
 ```
 
 Le script compile OpenCV 4.10.0 avec GStreamer et les modules contrib. Vérifiez qu'il se termine par :
@@ -205,5 +212,5 @@ GStreamer: YES
 ### 5. Lancer le programme
 
 ```bash
-python3 main.py --source rubikpi-csi
+python3 -m droneload.vision --source rubikpi-csi
 ```

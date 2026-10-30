@@ -13,7 +13,7 @@ One or two lines: what and why.
 - What was chosen, and why.
 
 ## Verification
-- `./check.sh` result, and anything not tested.
+- `./scripts/check.sh` result, and anything not tested.
 
 ## Next Steps
 - What remains.
