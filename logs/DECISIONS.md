@@ -10,4 +10,4 @@ Lasting decisions, one line each. Keep this file short.
 - 2026-10-30: Expensive checks run in CI, because CI costs agents no tokens.
 - 2026-10-30: `ARUCO_LABELS` keeps the 2026 IDs until 2027 IDs are published.
 - 2026-10-30: Code is organised by module; see `docs/architecture.md`.
-- 2026-10-30: Code and working notes are in English; READMEs, `docs/` and `AGENTS.md` are in English and French.
+- 2026-10-30: Everything is in English, because a second language doubles each doc edit. Contributors translate for themselves.

@@ -1,7 +1,5 @@
 # Architecture
 
-**English** | [Français](architecture.fr.md)
-
 Each module owns one job. Modules that have not started hold only short READMEs.
 
 | Module | Job | State |

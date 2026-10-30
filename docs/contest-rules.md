@@ -1,7 +1,5 @@
 # Droneload 2027 Contest Summary
 
-**English** | [Français](contest-rules.fr.md)
-
 **Provisional.** This comes from the organisers' first-call slides and the team portal (27 Oct 2026), because no written 2027 rules exist yet. Where the slides say nothing, the 2026 rules are the best guide. Re-check every number when the 2027 PDF appears.
 
 ## Deadlines
