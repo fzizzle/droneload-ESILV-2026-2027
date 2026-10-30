@@ -1,5 +1,7 @@
 # Droneload: Real-Time ArUco Marker Detection
 
+**English** | [Français](README.fr.md)
+
 Detects ArUco markers from a camera or recorded footage, labels them, and logs their positions in the image. It was written for the RubikPi 3 (Qualcomm QCS6490), but runs on any machine with OpenCV.
 
 The output is the pixel centre of each marker. It does not estimate pose or distance, and it sends nothing to a flight controller.

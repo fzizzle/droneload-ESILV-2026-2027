@@ -9,7 +9,7 @@ Organise the repository by module, so work and agent reading stay within one are
 ## Steps
 - 2026-10-30: Moved code to `droneload/vision`, `testing`, `tests` and `scripts`, and removed `Detect Aruco Realtime/`.
 - 2026-10-30: Found that the earlier merge had deleted local `detections.csv` and `aruco_debug.jpg`. Restored both from `5971864` into `test_footage/sample-run/`.
-- 2026-10-30: Added `docs/architecture.md`, planned module folders, and updated paths in all docs. Added then removed French docs, to avoid double edits.
+- 2026-10-30: Added `docs/architecture.md`, planned module folders, and updated paths in all docs. Kept French for the main README only.
 
 ## Verification
 - `./scripts/check.sh` passed in a fresh clone and failed on each injected fault. Benchmark unchanged.

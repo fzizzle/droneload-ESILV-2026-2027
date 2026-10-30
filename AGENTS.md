@@ -55,6 +55,7 @@ Get a person's decision before you:
 
 - Never commit generated files or footage. Stage files by name.
 - Use UTF-8 and LF.
+- `README.md` and `README.fr.md` must stay in step. Other docs are in English only.
 
 ## Verification
 
@@ -81,5 +82,5 @@ For detection changes, also run `python3 -m testing.benchmark` before and after,
 ## Done Means
 
 - [ ] `./scripts/check.sh` passes
-- [ ] Log, `TODO.md` and README are up to date
+- [ ] Log, `TODO.md` and both READMEs are up to date
 - [ ] Pull request is open
