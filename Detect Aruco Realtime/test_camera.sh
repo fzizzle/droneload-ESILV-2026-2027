@@ -34,7 +34,7 @@ if [ $rc -eq 0 ] || [ $rc -eq 130 ]; then
     # 130 = Ctrl+C, which is normal
     echo ""
     echo "Pipeline OK - camera is working"
-    echo "You can now run: python3 main.py"
+    echo "You can now run: python3 main.py --source rubikpi-csi"
 else
     echo ""
     echo "Pipeline FAILED - check error above"

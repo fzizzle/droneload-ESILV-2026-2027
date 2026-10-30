@@ -27,6 +27,16 @@ Problems found while reviewing the project.
   OpenCV pads that line, so the slice can miss `YES`. Check the whole
   `GStreamer:` line instead.
 
+- [x] **Camera was hard-coded in `main.py`.** Replaced by `--source`.
+
+- [ ] **Check false positives and missed markers on real footage.**
+  On Shadow-ArUco `video_5` the detector found 56% of annotated markers, and
+  27% of its detections did not match the annotations. Those detections
+  include recurring wrong IDs. The cause has not been investigated, and this
+  footage does not use `DICT_4X4_50`.
+
+- [ ] **Record real `DICT_4X4_50` footage.** No public source was found.
+
 ## Repo hygiene
 
 - [x] **`rubikpi-script` is a broken submodule.** It is committed as a gitlink

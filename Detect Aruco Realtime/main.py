@@ -1,6 +1,5 @@
-#from camera_picamera2 import PiCamera2Source
-#from camera_rubikpiusb import RubikPiCamera
-from camera_rubikpi_csi import RubikPiCSICamera
+from camera_opencv import OpenCVCamera
+import argparse
 import cv2
 import csv
 import time
@@ -8,7 +7,7 @@ import os
 import numpy as np
 
 # ArUco settings 
-ARUCO_DICT_ID     = cv2.aruco.DICT_4X4_50
+ARUCO_DICT        = "DICT_4X4_50"
 MIN_SIDE_PX       = 10
 DETECTION_LOG     = "detections.csv"
 WRITE_COOLDOWN_MS = 1000
@@ -45,8 +44,8 @@ def preprocess(gray: np.ndarray) -> np.ndarray:
     """CLAHE adaptive contrast enhancement for variable lighting."""
     return CLAHE.apply(gray)
 
-def make_detector() -> cv2.aruco.ArucoDetector:
-    aruco_dict = cv2.aruco.getPredefinedDictionary(ARUCO_DICT_ID)
+def make_detector(dict_name: str = ARUCO_DICT) -> cv2.aruco.ArucoDetector:
+    aruco_dict = cv2.aruco.getPredefinedDictionary(getattr(cv2.aruco, dict_name))
     params = cv2.aruco.DetectorParameters()
 
     # Adaptive threshold range - handles bright/dark scenes
@@ -79,16 +78,32 @@ def init_csv(path):
         f.flush()
     return f, writer
 
-# Main 
+def make_camera(source):
+    if source == "rubikpi-csi":
+        from camera_rubikpi_csi import RubikPiCSICamera
+        return RubikPiCSICamera(camera=0, size=(1280, 720), fps=30)
+    if source == "picamera":
+        from camera_picamera2 import PiCamera2Source
+        return PiCamera2Source(size=(1280, 720))
+    return OpenCVCamera(source, size=(1280, 720), fps=30)
+
+# Main
 def main():
-    #camera = PiCamera2Source(size=(1280, 720))
-    #camera = RubikPiCamera(size=(1280, 720))
-    camera = RubikPiCSICamera(camera=0, size=(1280, 720), fps=30)
+    parser = argparse.ArgumentParser(description="Real-time ArUco marker detection")
+    parser.add_argument("--source", default="0",
+                        help="rubikpi-csi, picamera, or anything cv2.VideoCapture opens: "
+                             "device index, video file, image sequence, GStreamer pipeline "
+                             "(default: 0)")
+    parser.add_argument("--dict", default=ARUCO_DICT,
+                        help=f"cv2.aruco dictionary name (default: {ARUCO_DICT})")
+    args = parser.parse_args()
+
+    camera = make_camera(args.source)
     if not camera.open():
         print("[ERROR] Camera failed to open. Exiting.")
         exit(1)
 
-    detector         = make_detector()
+    detector         = make_detector(args.dict)
     csv_file, writer = init_csv(DETECTION_LOG)
     last_written     = {}
     last_save        = 0.0
@@ -100,6 +115,9 @@ def main():
         while True:
             ret, frame = camera.read()
             if not ret or frame is None:
+                if getattr(camera, "finite", False):
+                    print("[INFO] End of source.")
+                    break
                 print("[WARNING] Failed to read frame.")
                 time.sleep(0.05)
                 continue

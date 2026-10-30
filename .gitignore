@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 aruco_debug.jpg
 detections.csv
+test_markers.mp4
+test_footage/
