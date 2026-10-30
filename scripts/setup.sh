@@ -14,11 +14,11 @@ echo "[2/4] Installing numpy(about opencv,its will be built in build_openCV.sh).
 sudo apt install -y python3-numpy
 
 echo "[3/4] Installing RubikPi qtiqmmfsrc plugin..."
-cd ~
+cd ~ || exit 1
 git clone -b ubuntu_setup --single-branch https://github.com/rubikpi-ai/rubikpi-script.git
-cd rubikpi-script
+cd rubikpi-script || exit 1
 ./install_ppa_pkgs.sh
-cd ~
+cd ~ || exit 1
 
 echo "[4/4] Verifying..."
 if ! gst-inspect-1.0 qtiqmmfsrc > /dev/null 2>&1; then

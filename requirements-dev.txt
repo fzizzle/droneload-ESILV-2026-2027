@@ -1,0 +1,4 @@
+opencv-contrib-python-headless==4.10.0.84
+pytest
+ruff
+shellcheck-py

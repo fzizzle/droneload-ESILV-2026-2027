@@ -1,5 +1,4 @@
 import cv2
-import numpy as np
 
 class RubikPiCSICamera:
     def __init__(self, camera=0, size=(1280, 720), fps=30):

@@ -1,4 +1,4 @@
-from camera_opencv import OpenCVCamera
+from .camera_opencv import OpenCVCamera
 import argparse
 import cv2
 import csv
@@ -80,10 +80,10 @@ def init_csv(path):
 
 def make_camera(source):
     if source == "rubikpi-csi":
-        from camera_rubikpi_csi import RubikPiCSICamera
+        from .camera_rubikpi_csi import RubikPiCSICamera
         return RubikPiCSICamera(camera=0, size=(1280, 720), fps=30)
     if source == "picamera":
-        from camera_picamera2 import PiCamera2Source
+        from .camera_picamera2 import PiCamera2Source
         return PiCamera2Source(size=(1280, 720))
     return OpenCVCamera(source, size=(1280, 720), fps=30)
 

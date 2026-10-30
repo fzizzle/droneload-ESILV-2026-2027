@@ -57,7 +57,7 @@ cmake \
     -D WITH_V4L=ON \
     -D WITH_FFMPEG=ON \
     -D BUILD_opencv_python3=ON \
-    -D PYTHON3_EXECUTABLE=$(which python3) \
+    -D PYTHON3_EXECUTABLE="$(which python3)" \
     -D OPENCV_GENERATE_PKGCONFIG=ON \
     -D BUILD_EXAMPLES=OFF \
     -D BUILD_TESTS=OFF \
