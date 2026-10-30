@@ -26,7 +26,7 @@ Some contributors use free plans.
 2. Create `logs/YYYY-MM-DD-<branch-name>.md` from `logs/TEMPLATE.md`, replacing `/` with `-`. Keep it to 20 lines and update it as you work.
 3. Keep the branch to one purpose. Put unrelated problems in `TODO.md`.
 4. Add lasting decisions to `logs/DECISIONS.md`, one line each.
-5. Open a pull request saying what changed, how it was verified and what remains.
+5. Commit to your branch as you work, without waiting to be asked. When finished, push it and open a pull request saying what changed, how it was verified and what remains.
 
 Push only to `origin`. Never force-push shared branches or edit another agent's log entries.
 

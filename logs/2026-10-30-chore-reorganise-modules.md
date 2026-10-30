@@ -12,7 +12,8 @@ Organise the repository by module, so work and agent reading stay within one are
 - 2026-10-30: Added `docs/architecture.md`, planned module folders, and updated paths in all docs. Added then removed French docs, to avoid double edits.
 
 ## Verification
-- `./scripts/check.sh` passed. Benchmark unchanged: found=56.4% unmatched=26.6%.
+- `./scripts/check.sh` passed in a fresh clone and failed on each injected fault. Benchmark unchanged.
+- Fresh Haiku agents followed the branch, log, commit and stop rules.
 - Not tested: CI on GitHub, and the scripts on a board.
 
 ## Next Steps
