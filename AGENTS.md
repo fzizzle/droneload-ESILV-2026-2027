@@ -55,7 +55,6 @@ Get a person's decision before you:
 
 - Never commit generated files or footage. Stage files by name.
 - Use UTF-8 and LF.
-- Write everything in English.
 
 ## Verification
 
