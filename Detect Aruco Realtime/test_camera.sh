@@ -19,16 +19,18 @@ fi
 echo "[2/2] Testing camera pipeline (Ctrl+C to stop)..."
 echo ""
 
+# Same pipeline as camera_rubikpi_csi.py, so a pass applies to main.py.
+# If it fails, try "video/x-raw(memory:GBM)" + qtivtransform instead of plain
+# video/x-raw + videoconvert, and update camera_rubikpi_csi.py to match.
 gst-launch-1.0 qtiqmmfsrc camera=0 ! \
-    "video/x-raw(memory:GBM),format=NV12,width=1280,height=720,framerate=30/1" ! \
-    qtivtransform ! \
-    "video/x-raw,format=BGRx" ! \
+    "video/x-raw,format=NV12,width=1280,height=720,framerate=30/1" ! \
     videoconvert ! \
     "video/x-raw,format=BGR" ! \
     fakesink
+rc=$?
 
 # Check exit code
-if [ $? -eq 0 ] || [ $? -eq 130 ]; then
+if [ $rc -eq 0 ] || [ $rc -eq 130 ]; then
     # 130 = Ctrl+C, which is normal
     echo ""
     echo "Pipeline OK - camera is working"

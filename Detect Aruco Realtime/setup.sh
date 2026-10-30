@@ -21,23 +21,6 @@ cd rubikpi-script
 cd ~
 
 echo "[4/4] Verifying..."
-python3 -c "import cv2; print('OpenCV:', cv2.__version__); print('aruco OK:', hasattr(cv2, 'aruco'))"
-
-GSTREAMER=$(python3 -c "
-import cv2
-info = cv2.getBuildInformation()
-idx = info.find('GStreamer')
-print('YES' if idx != -1 and 'YES' in info[idx:idx+20] else 'NO')
-")
-echo "GStreamer in OpenCV: $GSTREAMER"
-
-if [ "$GSTREAMER" = "NO" ]; then
-    echo "[WARNING] OpenCV has no GStreamer support - CSI camera will NOT work."
-    echo "[WARNING] Try manually: sudo apt install -y libopencv-dev python3-opencv"
-else
-    echo "[OK] GStreamer supported - CSI camera should work."
-fi
-
 if ! gst-inspect-1.0 qtiqmmfsrc > /dev/null 2>&1; then
     echo "[WARNING] qtiqmmfsrc not found - CSI camera may not work."
 else

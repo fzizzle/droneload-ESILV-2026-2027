@@ -1,5 +1,5 @@
 #from camera_picamera2 import PiCamera2Source
-#from camera_rubikpi import RubikPiCamera
+#from camera_rubikpiusb import RubikPiCamera
 from camera_rubikpi_csi import RubikPiCSICamera
 import cv2
 import csv
@@ -15,8 +15,9 @@ WRITE_COOLDOWN_MS = 1000
 DEBUG_IMAGE_PATH  = "aruco_debug.jpg"
 SAVE_EVERY_SEC    = 2.0
 LOG_EVERY_SEC     = 2.0
+CLAHE             = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
 
-# labels 
+# labels
 ARUCO_LABELS = {
     0:  "zone_de_decollage",
     1:  "robot",
@@ -42,8 +43,7 @@ def now_ms() -> int:
 
 def preprocess(gray: np.ndarray) -> np.ndarray:
     """CLAHE adaptive contrast enhancement for variable lighting."""
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    return clahe.apply(gray)
+    return CLAHE.apply(gray)
 
 def make_detector() -> cv2.aruco.ArucoDetector:
     aruco_dict = cv2.aruco.getPredefinedDictionary(ARUCO_DICT_ID)
@@ -116,13 +116,16 @@ def main():
 
             vis            = frame.copy()
             detected_info  = []
+            kept_corners   = []
+            kept_ids       = []
 
             if ids is not None and len(corners) > 0:
-                cv2.aruco.drawDetectedMarkers(vis, corners, ids)
-
                 for corner, marker_id in zip(corners, ids.flatten()):
                     if marker_min_side(corner) < MIN_SIDE_PX:
                         continue
+
+                    kept_corners.append(corner)
+                    kept_ids.append(marker_id)
 
                     label = ARUCO_LABELS.get(int(marker_id), f"unknown_{marker_id}")
                     cx, cy = center_of(corner)
@@ -134,7 +137,10 @@ def main():
                         csv_file.flush()
                         last_written[marker_id] = ts
 
-            # Terminal log 
+                if kept_ids:
+                    cv2.aruco.drawDetectedMarkers(vis, kept_corners, np.array(kept_ids).reshape(-1, 1))
+
+            # Terminal log
             if now - last_log >= LOG_EVERY_SEC:
                 last_log = now
                 print(f"\n[{time.strftime('%H:%M:%S')}] detect={detect_ms:.1f}ms")

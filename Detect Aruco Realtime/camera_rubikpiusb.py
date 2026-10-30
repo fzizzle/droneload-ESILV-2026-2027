@@ -1,4 +1,4 @@
-# camera_rubikpi.py
+# camera_rubikpiusb.py
 import cv2
 
 class RubikPiCamera:

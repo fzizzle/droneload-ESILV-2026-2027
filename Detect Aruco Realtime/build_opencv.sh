@@ -95,10 +95,9 @@ print('OpenCV version:', cv2.__version__)
 print('aruco OK:', hasattr(cv2, 'aruco') and hasattr(cv2.aruco, 'ArucoDetector'))
 
 info = cv2.getBuildInformation()
-idx = info.find('GStreamer')
-if idx != -1:
-    snippet = info[idx:idx+30]
-    if 'YES' in snippet:
+lines = [l for l in info.splitlines() if l.strip().startswith('GStreamer:')]
+if lines:
+    if 'YES' in lines[0]:
         print('GStreamer: YES')
     else:
         print('GStreamer: NO - CSI camera will not work')
