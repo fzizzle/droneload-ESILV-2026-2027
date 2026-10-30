@@ -63,8 +63,13 @@ Problems found while reviewing the project.
 
 ## Hardware to get
 
-Not in the loan kit. Check team 450's box before buying: its inventory marks
-some items as present and does not record others.
+Not in the loan kit. Team 450's drone is going back to the organisers, so do
+not count on anything fitted to it. Check what stays with us before buying: the
+inventory marks some box items as present and does not record others.
+
+- [ ] **Before the drone goes back:** save its ArduPilot parameter file and
+  photograph its wiring. The Pixhawk there is calibrated and flew a stable
+  hover, so both are useful references for the kit drone.
 
 - [ ] **Two cameras:** one downward, one forward. Team 450 used InnoMaker GS
   IMX296 global-shutter modules; whether we have them is not recorded.
