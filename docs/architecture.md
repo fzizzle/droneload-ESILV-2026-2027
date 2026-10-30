@@ -13,6 +13,16 @@ Each module owns one job. Modules that have not started hold only short READMEs.
 
 `testing/` holds tools that never run on the drone: the simulator setup, benchmark and test video generator. `tests/` holds automated tests, and `scripts/` holds setup and check scripts.
 
+## Requirements
+
+Each module's README lists its requirements, with a source:
+
+- **2027 slides:** provisional contest rules. See `docs/contest-rules.md`.
+- **2026 rules:** last year's rules, which apply until the 2027 text says otherwise.
+- **Proposed:** a team target from the software plan, not a contest rule. The team can change it.
+
+Update a requirement when its source changes.
+
 ## Dependencies
 
 - `mission` calls the other modules. They do not call `mission`.
