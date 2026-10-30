@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+aruco_debug.jpg
+detections.csv
