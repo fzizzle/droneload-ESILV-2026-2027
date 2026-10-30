@@ -7,6 +7,7 @@
 Record the team's assumption that the drone uses the organisers' loan kit.
 
 ## Steps
+- 2026-10-30: Added the items still to get to `TODO.md`.
 - 2026-10-30: Updated `AGENTS.md`, both READMEs, `logs/DECISIONS.md` and the flight, vision and payload READMEs.
 
 ## Verification
@@ -14,5 +15,5 @@ Record the team's assumption that the drone uses the organisers' loan kit.
 - No code changed.
 
 ## Next Steps
-- Choose the companion computer, cameras, grabber and rangefinder.
+- Get the items under Hardware to get in `TODO.md`.
 - Confirm whether the kit rules out the +50 design bonus.

@@ -61,6 +61,27 @@ Problems found while reviewing the project.
 - [x] **CLAHE is recreated every frame** in `preprocess()`. Create it once at
   startup (minor performance win).
 
+## Hardware to get
+
+Not in the loan kit. Check team 450's box before buying: its inventory marks
+some items as present and does not record others.
+
+- [ ] **Two cameras:** one downward, one forward. Team 450 used InnoMaker GS
+  IMX296 global-shutter modules; whether we have them is not recorded.
+- [ ] **Companion computer:** request the kit's, which the slides show as a
+  Raspberry Pi 3 B+, or get something faster. Team 450's Raspberry Pi 4 is not
+  recorded in the box inventory.
+- [ ] **Grabber:** choose one first. Two Namvo KK-P20 electromagnets are in the
+  box. Team 450's claw parts are not.
+- [ ] **Rangefinder:** a ToF sensor is in the box; confirm it works. Buy one
+  only if it does not.
+- [ ] **Level converter:** needed between a 3.3 V Raspberry Pi and a 5 V
+  Arduino or robot link. Team 450's is not recorded in the box.
+- [ ] **Robot radio link:** two HC-12 modules, only if 2027 allows radio to the
+  robot. Team 450's are not recorded in the box.
+- [ ] **Test supplies:** printed `DICT_4X4_50` markers (20 × 20 cm), A3 posters
+  and a camera calibration checkerboard.
+
 ## Possible features
 
 - [ ] Output is pixel centre only — no pose/distance estimation and nothing is
