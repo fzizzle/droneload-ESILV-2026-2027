@@ -144,7 +144,7 @@ The last line should say `Detections saved to detections.csv`. The results are i
 |------|-------|
 | Detection, labels and logging | Tested on a PC with generated and real footage |
 | RubikPi CSI camera | Not tested on a board; the pipeline may need changing |
-| Hardware | Not chosen yet |
+| Hardware | Assuming the organisers' loan kit; companion computer and cameras not chosen |
 | Project markers (`DICT_4X4_50`) | Not tested on real footage |
 
 On the Shadow-ArUco test footage, the detector found 56% of annotated markers, and 27% of its detections did not match the annotations. That footage uses a different dictionary, so these figures may not apply to project markers. `TODO.md` tracks open work.

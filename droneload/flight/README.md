@@ -4,7 +4,21 @@ Sets up the flight controller so the drone holds position indoors, and gives the
 
 **Status:** Not started. Nothing here commands a drone yet. Get a person's decision before writing code that does.
 
-**Assumed, not decided:** ArduPilot on the Pixhawk, reached over MAVLink. The previous team flew this setup, and the organisers suggest it.
+**Hardware:** assume the organisers' loan kit, listed below.
+
+**Assumed, not decided:** ArduPilot on the Pixhawk 2, reached over MAVLink. The previous team flew this setup, and the organisers suggest it.
+
+## Loan Kit
+
+| Item | Reference |
+|------|-----------|
+| Frame, flight controller and power | DJI F450, Pixhawk 2, GPS, power module, ESCs, brushless motors, props, battery |
+| Radio | Flysky FS-i6 with receiver |
+| Indoor position | Marvelmind beacons, PMW3901 optical flow |
+| Telemetry | 433 MHz kit |
+| Charging | IMAX B6 charger, LiPo bag |
+
+**Not in the kit list:** cameras, a grabber and a rangefinder. The companion computer is available on request, and the slides show a Raspberry Pi 3 B+. The GPS is not usable indoors.
 
 ## Requirements
 

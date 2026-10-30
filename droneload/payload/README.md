@@ -2,7 +2,7 @@
 
 Grabs the object and releases it over the target.
 
-**Status:** Not started. The grabber is not chosen: a servo claw, an electromagnet or an electromagnetic suction cup.
+**Status:** Not started. The loan kit has no grabber, and one is not chosen: a servo claw, an electromagnet or an electromagnetic suction cup.
 
 ## Requirements
 

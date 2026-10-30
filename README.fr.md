@@ -144,7 +144,7 @@ La dernière ligne doit indiquer `Detections saved to detections.csv`. Les résu
 |---------|------|
 | Détection, labels et enregistrement | Testés sur PC, sur des images générées et réelles |
 | Caméra CSI du RubikPi | Non testée sur la carte ; le pipeline devra peut-être être adapté |
-| Matériel | Pas encore choisi |
+| Matériel | Kit de prêt des organisateurs retenu par hypothèse ; ordinateur de bord et caméras non choisis |
 | Marqueurs du projet (`DICT_4X4_50`) | Non testés sur des images réelles |
 
 Sur les images de test Shadow-ArUco, le détecteur a trouvé 56 % des marqueurs annotés, et 27 % de ses détections ne correspondaient à aucune annotation. Ces images utilisent un autre dictionnaire, si bien que ces chiffres ne valent pas forcément pour les marqueurs du projet. Le travail restant figure dans `TODO.md`.

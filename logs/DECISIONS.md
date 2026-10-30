@@ -2,7 +2,7 @@
 
 Lasting decisions, one line each. Keep this file short.
 
-- 2026-10-30: Hardware is undecided, so sources are chosen with `--source` through `cv2.VideoCapture`.
+- 2026-10-30: Assume the loan kit for the drone. Companion computer and cameras are undecided, so sources are chosen with `--source` through `cv2.VideoCapture`.
 - 2026-10-30: `DICT_4X4_50` stays the default dictionary; `--dict` exists for test footage.
 - 2026-10-30: `AGENTS.md` is the single rules file; `CLAUDE.md` only imports it.
 - 2026-10-30: `ruff` lints but does not format, because `detect.py` uses aligned assignments.
