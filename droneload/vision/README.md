@@ -4,6 +4,8 @@ Reads the cameras and recognises what the drone needs to see: ArUco markers, tar
 
 **Status:** ArUco detection works on a PC, and logs each marker's centre in pixels. Pose, posters, floor lines and live cameras are not done.
 
+**Hardware:** cameras are not in the loan kit and are not chosen. The kit's companion computer is on request, and the slides show a Raspberry Pi 3 B+, so check the speed targets on the real board.
+
 **Run it:** `python -m droneload.vision --source test_markers.mp4`. Options are in the main README.
 
 ## Requirements

@@ -6,7 +6,7 @@ Rules for every agent and contributor. This file loads into each agent session, 
 
 - ArUco marker detection for the Droneload 2027 contest (ESILV PI2). The output is logged pixel positions only.
 - Automatic flight earns most flight points (670 of 1,320 total), and 2027 rules are provisional. Open `docs/contest-rules.md` only for contest questions.
-- Hardware is not chosen, so keep code hardware-independent.
+- Assume the organisers' loan kit: F450 frame, Pixhawk 2, PMW3901 optical flow and Marvelmind beacons. The companion computer and cameras are not chosen, so keep camera code hardware-independent.
 - Owners: not recorded yet. Ask the project lead.
 
 ## Keep Usage Low
@@ -34,7 +34,7 @@ Push only to `origin`. Never force-push shared branches or edit another agent's 
 
 Get a person's decision before you:
 
-- choose or assume hardware
+- choose or assume hardware beyond the loan kit
 - change marker IDs, labels, the default dictionary or the CSV format
 - add a dependency
 - push to `upstream` (`YUu-8/Droneload`, the previous team's repository)
