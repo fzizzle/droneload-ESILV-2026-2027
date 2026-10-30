@@ -2,9 +2,141 @@
 
 **English** | [Français](README.fr.md)
 
-Detects ArUco markers from a camera or recorded footage, labels them, and logs their positions in the image. It was written for the RubikPi 3 (Qualcomm QCS6490), but runs on any machine with OpenCV.
+Droneload is the software for our entry in the Droneload 2027 contest, a student competition run by Planète Sciences. Teams build a multirotor that flies missions on its own indoors: it reads ArUco markers, drops light objects on targets and works with a ground robot.
 
-The output is the pixel centre of each marker. It does not estimate pose or distance, and it sends nothing to a flight controller.
+So far, this repository contains the ArUco detection. It reads a camera or recorded footage, labels each marker, and logs the marker's centre in pixels. It does not estimate pose or distance yet, and it sends nothing to a flight controller. It was written for the RubikPi 3 (Qualcomm QCS6490), but runs on any machine with OpenCV.
+
+## Project Structure
+
+```
+droneload/
+├── flight/  navigation/  payload/  comms/  mission/   # Planned
+└── vision/                     # Marker detection
+    ├── detect.py               # Detection loop and command-line options
+    ├── camera_opencv.py        # Any source cv2.VideoCapture can open
+    ├── camera_rubikpi_csi.py   # RubikPi CSI camera (GStreamer pipeline)
+    └── camera_picamera2.py     # Raspberry Pi camera
+testing/
+├── make_test_video.py          # Generates a test video of moving markers
+└── benchmark.py                # Scores detection against ground truth
+tests/                          # Unit and end-to-end tests
+scripts/
+├── check.sh                    # Runs all checks with short output
+├── setup.sh                    # Installs GStreamer and qtiqmmfsrc on the RubikPi
+├── test_camera.sh              # Tests the CSI pipeline without OpenCV
+└── build_opencv.sh             # Builds OpenCV with GStreamer and aruco
+docs/                           # Architecture and contest rules
+logs/                           # Branch logs and decisions
+TODO.md                         # Known problems and open work
+```
+
+`flight`, `navigation`, `payload`, `comms` and `mission` are planned and hold only a short README. See [`docs/architecture.md`](docs/architecture.md).
+
+## Installation
+
+Follow the section for your computer. You only do this once. To run the project on a RubikPi, see [RubikPi 3 Installation](#rubikpi-3-installation).
+
+### Mac
+
+**1. Install the tools.** Skip any you already have.
+
+- Python 3: download it from [python.org/downloads](https://www.python.org/downloads/) and run the installer.
+- Visual Studio Code: download it from [code.visualstudio.com](https://code.visualstudio.com/) and drag it into Applications.
+
+**2. Open Terminal.** Press Cmd+Space, type `Terminal`, and press Return.
+
+**3. Install Git and download the project.** Run these commands one at a time. If the first says the tools are already installed, carry on. Otherwise, click **Install** in the window that appears and wait for it to finish.
+
+```bash
+xcode-select --install
+cd ~/Documents
+git clone https://github.com/fzizzle/droneload-ESILV-2026-2027.git
+```
+
+**4. Go to the project folder.**
+
+```bash
+cd droneload-ESILV-2026-2027
+```
+
+**5. Open the project in VS Code.** Open VS Code, press Cmd+Shift+P, type `Shell Command: Install 'code' command in PATH`, and press Return. Then go back to Terminal and run:
+
+```bash
+code .
+```
+
+**6. Set up Python.** In VS Code, choose **Terminal > New Terminal**, then run:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-dev.txt
+```
+
+The line in the terminal now starts with `(.venv)`. Run the `source` line again each time you open a new terminal.
+
+**7. Test it.** This needs no camera:
+
+```bash
+python -m testing.make_test_video
+python -m droneload.vision --source test_markers.mp4
+```
+
+The last line should say `Detections saved to detections.csv`. The results are in `detections.csv` and `aruco_debug.jpg`.
+
+### Windows
+
+**1. Install the tools.** Skip any you already have.
+
+- Git: download it from [git-scm.com](https://git-scm.com/downloads) and accept the default options.
+- Python 3: download it from [python.org/downloads](https://www.python.org/downloads/). On the first screen of the installer, tick **Add python.exe to PATH**.
+- Visual Studio Code: download it from [code.visualstudio.com](https://code.visualstudio.com/) and accept the default options.
+
+**2. Open PowerShell.** Press the Windows key, type `PowerShell`, and press Enter. If it was already open, close it and open it again so it finds the new tools.
+
+**3. Download the project.** Run these commands one at a time:
+
+```powershell
+cd $HOME\Documents
+git clone https://github.com/fzizzle/droneload-ESILV-2026-2027.git
+```
+
+**4. Go to the project folder.**
+
+```powershell
+cd droneload-ESILV-2026-2027
+```
+
+**5. Open the project in VS Code.**
+
+```powershell
+code .
+```
+
+**6. Set up Python.** In VS Code, choose **Terminal > New Terminal**, then run:
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements-dev.txt
+```
+
+If the second line says that running scripts is disabled, run this once, then run that line again:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+```
+
+The line in the terminal now starts with `(.venv)`. Run the `Activate.ps1` line again each time you open a new terminal.
+
+**7. Test it.** This needs no camera:
+
+```powershell
+python -m testing.make_test_video
+python -m droneload.vision --source test_markers.mp4
+```
+
+The last line should say `Detections saved to detections.csv`. The results are in `detections.csv` and `aruco_debug.jpg`.
 
 ## Status
 
@@ -17,22 +149,10 @@ The output is the pixel centre of each marker. It does not estimate pose or dist
 
 On the Shadow-ArUco test footage, the detector found 56% of annotated markers, and 27% of its detections did not match the annotations. That footage uses a different dictionary, so these figures may not apply to project markers. `TODO.md` tracks open work.
 
-## Quick Start
-
-Requires Python 3 and a PC. Run all commands from the repository root.
-
-```bash
-pip install opencv-contrib-python
-python3 -m testing.make_test_video          # no camera needed
-python3 -m droneload.vision --source test_markers.mp4
-```
-
-Results go to `detections.csv` and `aruco_debug.jpg`.
-
 ## Usage
 
 ```bash
-python3 -m droneload.vision [--source SOURCE] [--dict DICTIONARY]
+python -m droneload.vision [--source SOURCE] [--dict DICTIONARY]
 ```
 
 `--source` defaults to `0`, the first webcam. It accepts:
@@ -89,39 +209,13 @@ timestamp_ms,id,label,cx,cy
 
 **`aruco_debug.jpg`:** the latest frame with accepted markers drawn, updated every 2 seconds.
 
-## Project Structure
-
-```
-droneload/
-├── flight/  navigation/  payload/  comms/  mission/   # Planned
-└── vision/                     # Marker detection
-    ├── detect.py               # Detection loop and command-line options
-    ├── camera_opencv.py        # Any source cv2.VideoCapture can open
-    ├── camera_rubikpi_csi.py   # RubikPi CSI camera (GStreamer pipeline)
-    └── camera_picamera2.py     # Raspberry Pi camera
-testing/
-├── make_test_video.py          # Generates a test video of moving markers
-└── benchmark.py                # Scores detection against ground truth
-tests/                          # Unit and end-to-end tests
-scripts/
-├── check.sh                    # Runs all checks with short output
-├── setup.sh                    # Installs GStreamer and qtiqmmfsrc on the RubikPi
-├── test_camera.sh              # Tests the CSI pipeline without OpenCV
-└── build_opencv.sh             # Builds OpenCV with GStreamer and aruco
-docs/                           # Architecture and contest rules
-logs/                           # Branch logs and decisions
-TODO.md                         # Known problems and open work
-```
-
-`flight`, `navigation`, `payload`, `comms` and `mission` are planned and hold only a short README. See [`docs/architecture.md`](docs/architecture.md).
-
 ## Test Footage
 
 `testing/make_test_video.py` output is easy to detect, so use real footage to judge detection quality. Footage belongs in `test_footage/` at the repository root, which git ignores.
 
 Neither set below is drone footage or uses `DICT_4X4_50`, so both need `--dict`.
 
-**Download:**
+**Download.** On Windows, run this in **Git Bash**:
 ```bash
 mkdir -p test_footage/fdcl-gwu test_footage/shadow-aruco
 curl -L -o test_footage/fdcl-gwu/test_video.mp4 \
@@ -132,8 +226,8 @@ curl -L https://zenodo.org/api/records/10791293/files/video_5.tar.gz/content \
 
 **Run:**
 ```bash
-python3 -m droneload.vision --source test_footage/fdcl-gwu/test_video.mp4 --dict DICT_ARUCO_ORIGINAL
-python3 -m droneload.vision --source "test_footage/shadow-aruco/video_5/%05d.png" --dict DICT_ARUCO_MIP_36h12
+python -m droneload.vision --source test_footage/fdcl-gwu/test_video.mp4 --dict DICT_ARUCO_ORIGINAL
+python -m droneload.vision --source "test_footage/shadow-aruco/video_5/%05d.png" --dict DICT_ARUCO_MIP_36h12
 ```
 
 | Set | Content | Source | License |
@@ -158,8 +252,14 @@ Contributors and coding agents follow [`AGENTS.md`](AGENTS.md). Work happens on 
 Before asking for review, run:
 
 ```bash
-pip install -r requirements-dev.txt
 ./scripts/check.sh
+```
+
+On Windows, run it in **Git Bash** instead of PowerShell, from the project folder:
+
+```bash
+source .venv/Scripts/activate
+bash scripts/check.sh
 ```
 
 ## RubikPi 3 Installation
