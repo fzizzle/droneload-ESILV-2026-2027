@@ -19,6 +19,6 @@ run() {
 run "shell syntax" bash -c 'for s in scripts/*.sh; do bash -n "$s" || exit 1; done'
 run "shellcheck"   shellcheck --severity=warning scripts/*.sh
 run "ruff"         ruff check --quiet .
-run "pytest"       python3 -m pytest -q --tb=short
+run "pytest"       python -m pytest -q --tb=short
 
 exit $fail

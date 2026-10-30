@@ -59,19 +59,13 @@ Get a person's decision before you:
 
 ## Verification
 
-From the repository root, once:
-
-```bash
-pip install -r requirements-dev.txt
-```
-
-Before review:
+Set up with the README, then before review:
 
 ```bash
 ./scripts/check.sh
 ```
 
-For detection changes, also run `python3 -m testing.benchmark` before and after, and log both results. The baseline is `found=56.4% unmatched=26.6%`. The footage is listed in the README. Passing the generated test video does not show detection quality is good.
+For detection changes, also run `python -m testing.benchmark` before and after, and log both results. The baseline is `found=56.4% unmatched=26.6%`. The footage is listed in the README. Passing the generated test video does not show detection quality is good.
 
 ## Reporting
 
