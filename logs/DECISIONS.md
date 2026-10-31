@@ -11,7 +11,7 @@ Lasting decisions, one line each. Keep this file short.
 - 2026-10-31: `ARUCO_LABELS` follows the V0 rules: IDs 0-9, with `fenetre_recto_*` and `fenetre_verso_*`.
 - 2026-10-31: Stabilisation sits inside `flight`, and ArduPilot does it, not companion computer code.
 - 2026-10-31: Proposed: global-shutter cameras with fixed short exposure, because simulated wobble hurts detection more than blur.
-- 2026-10-31: `vision/stabilisation` holds software steadiness work; `flight/stabilisation` holds flight stability.
+- 2026-10-31: `vision/tracking` keeps detections steady; `flight/stabilisation` holds flight stability. Whole-image stabilisation is left out.
 - 2026-10-30: Code is organised by module; see `docs/architecture.md`.
 - 2026-10-30: Install instructions use a `.venv` and the `python` command, which works on Mac, Windows and Linux.
 - 2026-10-30: Team 450's drone goes back to the organisers and is not reused.

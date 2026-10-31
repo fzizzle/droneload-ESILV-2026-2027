@@ -13,7 +13,7 @@ Each module owns one job. Modules that have not started hold only short READMEs.
 
 `droneload/flight/stabilisation` holds flight controller settings and tuning. It is part of `flight`, not a separate module.
 
-`droneload/vision/stabilisation` holds software that steadies vision results. It is part of `vision`.
+`droneload/vision/tracking` keeps detections steady from frame to frame. It is part of `vision`.
 
 `testing/` holds tools that never run on the drone: the simulator setup, benchmark and test video generator. `tests/` holds automated tests, and `scripts/` holds setup and check scripts.
 

@@ -4,10 +4,10 @@
 **Status:** ready for review
 
 ## Goal
-Give software vision stabilisation a visible home inside `vision`.
+Give frame-to-frame detection work a visible home inside `vision`.
 
 ## Steps
-- 2026-10-31: Added `droneload/vision/stabilisation/README.md`, and updated `docs/architecture.md` and both READMEs.
+- 2026-10-31: Added `droneload/vision/stabilisation/`, then renamed it `tracking/` and dropped whole-image stabilisation.
 
 ## Verification
 - Links checked. No code changed.
