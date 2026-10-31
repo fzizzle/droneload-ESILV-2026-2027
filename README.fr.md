@@ -182,7 +182,7 @@ Pour être détectés, les marqueurs doivent être entourés d'une bordure blanc
 
 ### Labels des marqueurs
 
-Les labels sont définis dans `ARUCO_LABELS`, dans `detect.py`. Les autres ID apparaissent sous la forme `unknown_N`.
+Les labels sont définis dans `ARUCO_LABELS`, dans `detect.py`. Les autres ID apparaissent sous la forme `unknown_N`. Ce sont les labels de 2026 : le règlement V0 de 2027 n'utilise que les ID 0 à 9.
 
 | ID | Label |
 |----|-------|

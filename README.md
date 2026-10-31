@@ -182,7 +182,7 @@ Markers need a white border to be detected.
 
 ### Marker Labels
 
-Labels are defined in `ARUCO_LABELS` in `detect.py`. Other IDs appear as `unknown_N`.
+Labels are defined in `ARUCO_LABELS` in `detect.py`. Other IDs appear as `unknown_N`. These are the 2026 labels: the 2027 V0 rules use only IDs 0-9.
 
 | ID | Label |
 |----|-------|
