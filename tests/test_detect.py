@@ -21,7 +21,9 @@ def test_center_of():
     assert detect.center_of(corner) == (5.0, 10.0)
 
 def test_all_project_markers_have_labels():
-    assert set(detect.ARUCO_LABELS) == set(range(16))
+    assert set(detect.ARUCO_LABELS) == set(range(10))
+    assert detect.ARUCO_LABELS[8] == "fenetre_verso_bas"
+    assert detect.ARUCO_LABELS[9] == "fenetre_verso_haut"
 
 def test_source_parsing(tmp_path):
     video = tmp_path / "video.mp4"

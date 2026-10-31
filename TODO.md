@@ -37,9 +37,7 @@ Problems found while reviewing the project.
 
 - [ ] **Record real `DICT_4X4_50` footage.** No public source was found.
 
-- [ ] **Update `ARUCO_LABELS` for the V0 rules, once the team agrees.** V0 uses
-  IDs 0-9, with 8 and 9 on the window's far side. The code still has the 2026
-  labels for IDs 4-15. `tests/test_detect.py` checks IDs 0-15.
+- [x] **Update `ARUCO_LABELS` for the V0 rules.** Labels now cover IDs 0-9.
 
 ## Repo hygiene
 
