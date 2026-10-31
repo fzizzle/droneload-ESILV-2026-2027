@@ -15,7 +15,8 @@ droneload/
     ├── detect.py               # Detection loop and command-line options
     ├── camera_opencv.py        # Any source cv2.VideoCapture can open
     ├── camera_rubikpi_csi.py   # RubikPi CSI camera (GStreamer pipeline)
-    └── camera_picamera2.py     # Raspberry Pi camera
+    ├── camera_picamera2.py     # Raspberry Pi camera
+    └── stabilisation/          # Planned: steadies vision results
 testing/
 ├── make_test_video.py          # Generates a test video of moving markers
 ├── benchmark.py                # Scores detection against ground truth

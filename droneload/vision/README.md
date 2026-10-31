@@ -49,6 +49,8 @@ The organisers warn that camera vibration is usually a big problem. `python -m t
 - Rolling-shutter wobble does much more damage than blur, especially on small markers, which is why this module proposes a global shutter.
 - Real results will be worse, because real images have noise, tilt and uneven light. Measure on footage from a flying drone as soon as possible.
 
+Software methods that reduce vibration's effects are planned in [`stabilisation/`](stabilisation/README.md).
+
 ## Risks
 
 - Vibration blurs and distorts images. See Vibration above.
