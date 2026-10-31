@@ -76,14 +76,13 @@ Not in the loan kit. Team 450's drone is going back to the organisers, so do
 not count on anything fitted to it. Check what stays with us before buying: the
 inventory marks some box items as present and does not record others.
 
-- [ ] **Two cameras:** one downward, one forward, preferably global shutter,
-  because vibration distorts rolling-shutter images. Team 450 used InnoMaker GS
-  IMX296 modules; whether we have them is not recorded.
+- [ ] **Confirm the Qualcomm computer's exact model.** Do this before buying
+  cameras.
+- [ ] **Buy two cameras:** one downward, one forward, preferably global shutter,
+  because vibration distorts rolling-shutter images. If the board is a Rubik Pi
+  3, prefer USB (UVC) cameras. Test one on the board before buying the second.
 - [ ] **Camera damping:** soft mounts for both cameras, and spare propellers to
   balance.
-- [ ] **Companion computer:** request the kit's, which the slides show as a
-  Raspberry Pi 3 B+, or get something faster. Team 450's Raspberry Pi 4 is not
-  recorded in the box inventory.
 - [ ] **Grabber:** choose one first. Two Namvo KK-P20 electromagnets are in the
   box. Team 450's claw parts are not.
 - [ ] **Rangefinder:** a ToF sensor is in the box; confirm it works. Buy one

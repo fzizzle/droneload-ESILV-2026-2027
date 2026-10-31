@@ -20,7 +20,7 @@ Stabilisation and position hold are in [`stabilisation/`](stabilisation/README.m
 | Telemetry | 433 MHz kit |
 | Charging | IMAX B6 charger, LiPo bag |
 
-**Not in the kit list:** cameras, a grabber and a rangefinder. The companion computer is available on request, and the slides show a Raspberry Pi 3 B+. The GPS is not usable indoors.
+**Not in the kit list:** a grabber and a rangefinder. The team must buy cameras. The organisers provide a Qualcomm companion computer, exact model unconfirmed. The GPS is not usable indoors.
 
 ## Requirements
 
