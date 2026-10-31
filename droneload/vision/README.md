@@ -22,7 +22,8 @@ Reads the cameras and recognises what the drone needs to see: ArUco markers, tar
 | Poster recognition | 98% of targets named, 95% of decoys rejected, under 200 ms per frame on the companion computer | Proposed |
 | Camera capture | 30 frames per second, with no visible blur on a marker at 1.5 m in a hover | Proposed |
 | Camera shutter | Global shutter, because vibration distorts rolling-shutter images | Proposed |
-| Camera connection | USB (UVC) if the board is a Rubik Pi 3, because its listed CSI cameras are rolling shutter. Support for a specific camera is unverified | Proposed |
+| Camera connection | USB (UVC) if the board is a Rubik Pi 3, because its official list has no global-shutter camera. Support for a specific camera is unverified | Proposed |
+| Camera colour | Colour, because the safe path lines and posters need it | Proposed |
 | Exposure | Fixed and short: start at 5 ms, and raise gain to compensate | Proposed |
 | Camera mount | Soft-mounted, away from the motors, with cables that do not transmit vibration | Proposed |
 

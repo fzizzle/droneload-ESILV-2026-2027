@@ -79,8 +79,10 @@ inventory marks some box items as present and does not record others.
 - [ ] **Confirm the Qualcomm computer's exact model.** Do this before buying
   cameras.
 - [ ] **Buy two cameras:** one downward, one forward, preferably global shutter,
-  because vibration distorts rolling-shutter images. If the board is a Rubik Pi
-  3, prefer USB (UVC) cameras. Test one on the board before buying the second.
+  in colour, because vibration distorts rolling-shutter images and the path and
+  posters need colour. If the board is a Rubik Pi 3, prefer USB (UVC) cameras,
+  starting with the Arducam AR0234. Check fixed exposure on the board before
+  buying the second.
 - [ ] **Camera damping:** soft mounts for both cameras, and spare propellers to
   balance.
 - [ ] **Grabber:** choose one first. Two Namvo KK-P20 electromagnets are in the
