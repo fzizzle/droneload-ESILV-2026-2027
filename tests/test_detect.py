@@ -3,8 +3,9 @@ import sys
 
 import cv2
 import numpy as np
+import pytest
 
-from droneload.vision import detect
+from droneload.vision import detect, pose
 from testing import make_test_video, vibration_test
 from droneload.vision.camera_opencv import OpenCVCamera
 
@@ -86,3 +87,44 @@ def test_vibration_helpers():
     assert vibration_test.rolling_wobble(frame, 10, 0).shape == frame.shape
     assert vibration_test.blur_rate(frame, 0, detector) == 1.0
     assert vibration_test.blur_rate(frame, 40, detector) < 1.0
+
+CAMERA_MATRIX = np.array([[900, 0, 640], [0, 900, 360], [0, 0, 1]], dtype=np.float64)
+NO_DISTORTION = np.zeros(5)
+
+def render_marker(position_m):
+    """Render a 20 cm marker facing the camera, and return the image."""
+    side = 600
+    marker = cv2.aruco.generateImageMarker(cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50), 0, side)
+    half = pose.MARKER_SIZE_M / 2
+    points = np.array([[-half, -half, 0], [half, -half, 0], [half, half, 0], [-half, half, 0]], dtype=np.float32)
+    corners, _ = cv2.projectPoints(points, np.zeros(3), np.array(position_m, dtype=np.float64),
+                                   CAMERA_MATRIX, NO_DISTORTION)
+    source = np.array([[0, 0], [side, 0], [side, side], [0, side]], dtype=np.float32)
+    warp = cv2.getPerspectiveTransform(source, corners.reshape(4, 2).astype(np.float32))
+    return cv2.warpPerspective(marker, warp, (1280, 720), borderValue=255)
+
+def test_marker_offset_from_exact_corners():
+    half = pose.MARKER_SIZE_M / 2
+    points = np.array([[-half, -half, 0], [half, -half, 0], [half, half, 0], [-half, half, 0]], dtype=np.float32)
+    corners, _ = cv2.projectPoints(points, np.zeros(3), np.array([0.1, -0.2, 1.5]), CAMERA_MATRIX, NO_DISTORTION)
+    offset = pose.marker_offset(corners.reshape(1, 4, 2).astype(np.float32), CAMERA_MATRIX, NO_DISTORTION)
+
+    assert offset == pytest.approx((0.1, -0.2, 1.5), abs=0.001)
+
+def test_marker_offset_from_detected_image():
+    for position in [(0.0, 0.0, 1.0), (0.3, -0.1, 1.5), (-0.4, 0.2, 2.5)]:
+        corners, ids, _ = detect.make_detector().detectMarkers(render_marker(position))
+        assert ids is not None and ids[0][0] == 0
+        offset = pose.marker_offset(corners[0], CAMERA_MATRIX, NO_DISTORTION)
+        assert offset == pytest.approx(position, abs=0.02 * position[2])
+
+def test_load_calibration(tmp_path):
+    path = tmp_path / "camera.yaml"
+    storage = cv2.FileStorage(str(path), cv2.FILE_STORAGE_WRITE)
+    storage.write("camera_matrix", CAMERA_MATRIX)
+    storage.write("dist_coeffs", NO_DISTORTION)
+    storage.release()
+
+    matrix, coeffs = pose.load_calibration(path)
+    assert np.array_equal(matrix, CAMERA_MATRIX)
+    assert coeffs.size == 5

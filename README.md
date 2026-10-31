@@ -4,7 +4,7 @@
 
 Droneload is the software for our entry in the Droneload 2027 contest, a student competition run by Planète Sciences. Teams build a multirotor that flies missions on its own indoors: it reads ArUco markers, drops light objects on targets and works with a ground robot.
 
-So far, this repository contains the ArUco detection. It reads a camera or recorded footage, labels each marker, and logs the marker's centre in pixels. It does not estimate pose or distance yet, and it sends nothing to a flight controller. It was written for the RubikPi 3 (Qualcomm QCS6490), but runs on any machine with OpenCV.
+So far, this repository contains the ArUco detection. It reads a camera or recorded footage, labels each marker, and logs the marker's centre in pixels. The detection loop does not use marker distance yet, and it sends nothing to a flight controller. It was written for the RubikPi 3 (Qualcomm QCS6490), but runs on any machine with OpenCV.
 
 ## Project Structure
 
@@ -13,6 +13,7 @@ droneload/
 ├── flight/  navigation/  payload/  comms/  mission/   # Planned
 └── vision/                     # Marker detection
     ├── detect.py               # Detection loop and command-line options
+    ├── pose.py                 # Marker position in metres
     ├── camera_opencv.py        # Any source cv2.VideoCapture can open
     ├── camera_rubikpi_csi.py   # RubikPi CSI camera (GStreamer pipeline)
     ├── camera_picamera2.py     # Raspberry Pi camera

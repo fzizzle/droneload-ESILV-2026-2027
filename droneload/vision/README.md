@@ -2,7 +2,7 @@
 
 Reads the cameras and recognises what the drone needs to see: ArUco markers, target posters and floor lines.
 
-**Status:** ArUco detection works on a PC, and logs each marker's centre in pixels. Pose, posters, floor lines and live cameras are not done.
+**Status:** ArUco detection works on a PC, and logs each marker's centre in pixels. `pose.py` turns a detected marker into a position in metres, but it is tested only on simulated images and is not yet used by the detection loop. Posters, floor lines and live cameras are not done.
 
 **Hardware:** cameras are not in the loan kit and are not chosen. The kit's companion computer is on request, and the slides show a Raspberry Pi 3 B+, so check the speed targets on the real board.
 
@@ -34,6 +34,24 @@ Reads the cameras and recognises what the drone needs to see: ArUco markers, tar
 | Detection time | About 3 ms per frame | On a PC at 1280 × 720, not on the drone |
 
 The 95% target has not been tested, because no real `DICT_4X4_50` photo set exists yet.
+
+## Position Accuracy
+
+`marker_offset()` in `pose.py` uses OpenCV `solvePnP` and returns the marker's centre in metres from the camera: x right, y down, z forward. It needs a calibration file for the real camera.
+
+Simulated with a 900 px focal length at 1280 × 720, 40 placements per distance, with no noise, blur or lens distortion:
+
+| Distance | Mean error | Worst error |
+|----------|------------|-------------|
+| 1 m | 0.5 cm | 0.6 cm |
+| 2 m | 2.1 cm | 2.3 cm |
+| 3 m | 5.0 cm | 5.3 cm |
+| 5 m | 13.4 cm | 14.8 cm |
+| 8 m | 34.3 cm | 58.9 cm |
+
+- Error grows quickly with distance, so close in before relying on a marker for landing or the window.
+- The mean is close to the worst case, which suggests a consistent bias. Corner refinement may reduce it, but that changes detection, so it needs the benchmark.
+- These are best-case numbers for this lens. Real accuracy depends on calibration and on the marker being printed at exactly 20 cm.
 
 ## Vibration
 

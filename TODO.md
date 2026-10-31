@@ -37,6 +37,12 @@ Problems found while reviewing the project.
 
 - [ ] **Record real `DICT_4X4_50` footage.** No public source was found.
 
+- [ ] **Add a camera calibration tool.** `pose.py` needs a calibration file with
+  `camera_matrix` and `dist_coeffs`. Use OpenCV's checkerboard calibration.
+
+- [ ] **Use marker positions in the detection loop.** This may change the CSV
+  format, which needs a person's decision.
+
 - [ ] **Measure vibration in flight.** `testing/vibration_test.py` is simulated.
   Record markers from a flying drone, and set a fixed short exposure on live
   cameras. Only `camera_picamera2.py` sets exposure today.
