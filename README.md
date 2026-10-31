@@ -18,7 +18,8 @@ droneload/
     └── camera_picamera2.py     # Raspberry Pi camera
 testing/
 ├── make_test_video.py          # Generates a test video of moving markers
-└── benchmark.py                # Scores detection against ground truth
+├── benchmark.py                # Scores detection against ground truth
+└── vibration_test.py           # Simulates blur and wobble, and measures detection
 tests/                          # Unit and end-to-end tests
 scripts/
 ├── check.sh                    # Runs all checks with short output

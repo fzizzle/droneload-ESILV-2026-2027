@@ -22,6 +22,10 @@ ArduPilot on the flight controller does the stabilising. Python on the companion
 | Wobbles or oscillates | Poor tuning or vibration | Autotune or PID tuning; check the frame and propeller balance |
 | Holds position but wanders over time | Sensor drift | Correct from ArUco markers, with velocity commands through `flight` |
 
+## Vibration
+
+Vibration affects both flight and the cameras, so it should be reduced at the source: balance the propellers, tighten the frame and motors, and soft-mount the flight controller and cameras. Check ArduPilot's vibration logs after test flights. Their use on this drone is unverified. Camera requirements are in the `vision` README.
+
 ## Open Questions
 
 - Does optical flow need a rangefinder on this setup? It is not on the kit list. Unverified: check the ArduPilot documentation.

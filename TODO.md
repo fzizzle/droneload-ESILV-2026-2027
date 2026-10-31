@@ -37,6 +37,10 @@ Problems found while reviewing the project.
 
 - [ ] **Record real `DICT_4X4_50` footage.** No public source was found.
 
+- [ ] **Measure vibration in flight.** `testing/vibration_test.py` is simulated.
+  Record markers from a flying drone, and set a fixed short exposure on live
+  cameras. Only `camera_picamera2.py` sets exposure today.
+
 - [x] **Update `ARUCO_LABELS` for the V0 rules.** Labels now cover IDs 0-9.
 
 ## Repo hygiene
@@ -66,8 +70,11 @@ Not in the loan kit. Team 450's drone is going back to the organisers, so do
 not count on anything fitted to it. Check what stays with us before buying: the
 inventory marks some box items as present and does not record others.
 
-- [ ] **Two cameras:** one downward, one forward. Team 450 used InnoMaker GS
-  IMX296 global-shutter modules; whether we have them is not recorded.
+- [ ] **Two cameras:** one downward, one forward, preferably global shutter,
+  because vibration distorts rolling-shutter images. Team 450 used InnoMaker GS
+  IMX296 modules; whether we have them is not recorded.
+- [ ] **Camera damping:** soft mounts for both cameras, and spare propellers to
+  balance.
 - [ ] **Companion computer:** request the kit's, which the slides show as a
   Raspberry Pi 3 B+, or get something faster. Team 450's Raspberry Pi 4 is not
   recorded in the box inventory.
