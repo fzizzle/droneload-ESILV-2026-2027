@@ -12,11 +12,11 @@ Reads the cameras and recognises what the drone needs to see: ArUco markers, tar
 
 | Requirement | Value | Source |
 |-------------|-------|--------|
-| Marker dictionary | 4x4, IDs 0-15 (`DICT_4X4_50` covers them) | 2026 rules |
-| Marker size | 20 × 20 cm | 2026 rules |
-| Show automatic detections on the organisers' screen during the run | Required | 2026 rules |
-| Recognise a delivery zone | 10 points, twice; −5 if done manually | 2027 slides |
-| Reject posters that are not targets | Four decoys appeared on the day in 2026 | 2026 rules |
+| Marker dictionary | 4x4, IDs 0-9 (`DICT_4X4_50` covers them) | 2027 V0 |
+| Marker size | 20 × 20 cm | 2027 V0 |
+| Show automatic detections on the organisers' screen during the run | Required | 2027 V0 |
+| Recognise a delivery zone | 10 points, twice; −5 if done manually | 2027 V0 |
+| Reject posters that are not targets | 2 to 4 decoy images, revealed at the final | 2027 V0 |
 | Marker detection | 95% found with the right ID, on 100 photos from 0.5 to 3 m, tilted up to 45° | Proposed |
 | Marker position | Offset in metres, using `solvePnP` and camera calibration | Proposed |
 | Poster recognition | 98% of targets named, 95% of decoys rejected, under 200 ms per frame on the companion computer | Proposed |
@@ -35,10 +35,10 @@ The 95% target has not been tested, because no real `DICT_4X4_50` photo set exis
 ## Risks
 
 - Vibration blurs images. The organisers warned about this, so plan short exposure and camera damping.
-- Lighting may vary: the 2026 drop test ran in an outdoor cage.
+- The contest is indoors, but the venue's lighting is unknown.
 - The previous team's detection worked on good-quality still images only.
-- The 2027 marker IDs are not published, so `ARUCO_LABELS` may change.
-- The 2027 target posters are not known yet.
+- `ARUCO_LABELS` follows V0, so check it against each new version of the rules.
+- The target images are not published. The 2027 theme is "Saveurs savantes".
 
 ## Uses
 

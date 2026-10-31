@@ -24,18 +24,21 @@ Sets up the flight controller so the drone holds position indoors, and gives the
 
 | Requirement | Value | Source |
 |-------------|-------|--------|
-| Size and mass | 500 mm class at most, 3 kg at most, with computer and cameras included | 2027 slides |
-| Endurance | At least 5 minutes | 2027 slides |
-| Radio range | At least 200 m | 2027 slides |
-| Pilot takeover | Possible at any moment | 2027 slides |
-| Failsafe | Automatic landing or stop on radio loss or low battery | 2027 slides |
-| Kill-motor function | Required | 2027 slides |
-| Positioning | No GNSS indoors: use optical flow, rangefinder, beacons or vision | 2027 slides |
-| Beacons | Allowed in the flight area, not on the mat | 2027 slides |
-| Powering up | Needs approval from the on-site operations director, or the team is disqualified | 2026 rules |
-| Stable-flight video | By RCE2, 23 January 2027, for +15 points | 2027 slides |
-| Two-minute cage flight, or a drop video | At RCE3, 24-25 April 2027, for +45 points | 2027 slides |
-| Automatic take-off and landing | 10 points each | 2027 slides |
+| Size and mass | 500 mm class at most, 3 kg at most, with computer and cameras included | 2027 V0 |
+| Endurance | At least 5 minutes | 2027 V0 |
+| Radio range | At least 200 m | 2027 V0 |
+| Pilot takeover | Possible at any moment | 2027 V0 |
+| Failsafe | Automatic landing or stop on radio loss or low battery | 2027 V0 |
+| Kill-motor function | Required | 2027 V0 |
+| Positioning | No GNSS indoors: use optical flow, rangefinder, beacons or vision | 2027 V0 |
+| Beacons | Unlimited, but outside the playing field | 2027 V0 |
+| Floor pattern for optical flow | Details given at RCE2 | 2027 V0 |
+| Powering up | Needs approval from the on-site operations director, or the team is disqualified | 2027 V0 |
+| Qualification | Fly well for 2 minutes; the failsafe is tested | 2027 V0 |
+| After qualification | Changing the motor type, flight controller, its programming, remote or frame type needs approval | 2027 V0 |
+| Stable-flight video | By RCE2, 23 January 2027, for +15 points | 2027 V0 |
+| Two-minute cage flight, or a drop video | At RCE3, 24-25 April 2027, for +45 points | 2027 V0 |
+| Automatic take-off and landing | 10 points each | 2027 V0 |
 | Position hold | Within 0.5 m for 2 minutes, with no stick input | Proposed |
 | Connection loss | Send zero velocity when the mission stops sending commands | Proposed |
 | Pilot takeover in code | Any mode change away from Guided ends the mission | Proposed |

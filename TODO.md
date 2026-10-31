@@ -37,8 +37,7 @@ Problems found while reviewing the project.
 
 - [ ] **Record real `DICT_4X4_50` footage.** No public source was found.
 
-- [ ] **Update `ARUCO_LABELS` when 2027 IDs are published.** The labels match
-  the 2026 rules, which had two windows. 2027 has one window with 6 markers.
+- [x] **Update `ARUCO_LABELS` for the V0 rules.** Labels now cover IDs 0-9.
 
 ## Repo hygiene
 
@@ -78,8 +77,8 @@ inventory marks some box items as present and does not record others.
   only if it does not.
 - [ ] **Level converter:** needed between a 3.3 V Raspberry Pi and a 5 V
   Arduino or robot link. Team 450's is not recorded in the box.
-- [ ] **Robot radio link:** two HC-12 modules, only if 2027 allows radio to the
-  robot. Team 450's are not recorded in the box.
+- [ ] **Robot link:** V0 shows a team module on the robot. Team 450 used two
+  HC-12 radio modules, which are not recorded in the box.
 - [ ] **Test supplies:** printed `DICT_4X4_50` markers (20 × 20 cm), A3 posters
   and a camera calibration checkerboard.
 

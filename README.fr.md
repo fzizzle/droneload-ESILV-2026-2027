@@ -182,15 +182,15 @@ Pour être détectés, les marqueurs doivent être entourés d'une bordure blanc
 
 ### Labels des marqueurs
 
-Les labels sont définis dans `ARUCO_LABELS`, dans `detect.py`. Les autres ID apparaissent sous la forme `unknown_N`.
+Les labels sont définis dans `ARUCO_LABELS`, dans `detect.py`. Les autres ID apparaissent sous la forme `unknown_N`. Ils suivent le règlement V0 de 2027.
 
 | ID | Label |
 |----|-------|
 | 0 | `zone_de_decollage` |
 | 1 | `robot` |
 | 2-3 | `align` |
-| 4-11 | `fenetre_facile_*` (recto/verso, droite/gauche, haut/bas) |
-| 12-15 | `fenetre_difficile_*` (recto/verso, haut/bas) |
+| 4-7 | `fenetre_recto_*` (droite/gauche, haut/bas) |
+| 8-9 | `fenetre_verso_*` (haut/bas) |
 
 ### Sorties
 
@@ -198,7 +198,7 @@ Les labels sont définis dans `ARUCO_LABELS`, dans `detect.py`. Les autres ID ap
 ```
 [14:32:01] detect=3.2ms
   ID= 0  label=zone_de_decollage                         center=(640.0,360.0)
-  ID= 4  label=fenetre_facile_recto_droite_bas           center=(213.5,180.2)
+  ID= 4  label=fenetre_recto_droite_bas                  center=(213.5,180.2)
 ```
 
 **`detections.csv` :**
