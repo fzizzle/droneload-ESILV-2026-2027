@@ -4,7 +4,7 @@ Reads the cameras and recognises what the drone needs to see: ArUco markers, tar
 
 **Status:** ArUco detection works on a PC, and logs each marker's centre in pixels. `pose.py` turns a detected marker into a position in metres, but it is tested only on simulated images and is not yet used by the detection loop. Posters, floor lines and live cameras are not done.
 
-**Hardware:** cameras are not in the loan kit and are not chosen. The kit's companion computer is on request, and the slides show a Raspberry Pi 3 B+, so check the speed targets on the real board.
+**Hardware:** the team must buy cameras, which are not chosen. The organisers provide a Qualcomm computer, exact model unconfirmed, so check the speed targets on the real board.
 
 **Run it:** `python -m droneload.vision --source test_markers.mp4`. Options are in the main README.
 
@@ -22,6 +22,8 @@ Reads the cameras and recognises what the drone needs to see: ArUco markers, tar
 | Poster recognition | 98% of targets named, 95% of decoys rejected, under 200 ms per frame on the companion computer | Proposed |
 | Camera capture | 30 frames per second, with no visible blur on a marker at 1.5 m in a hover | Proposed |
 | Camera shutter | Global shutter, because vibration distorts rolling-shutter images | Proposed |
+| Camera connection | USB (UVC) if the board is a Rubik Pi 3, because its official list has no global-shutter camera. Support for a specific camera is unverified | Proposed |
+| Camera colour | Colour, because the safe path lines and posters need it | Proposed |
 | Exposure | Fixed and short: start at 5 ms, and raise gain to compensate | Proposed |
 | Camera mount | Soft-mounted, away from the motors, with cables that do not transmit vibration | Proposed |
 
