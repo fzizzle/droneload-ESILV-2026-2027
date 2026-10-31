@@ -8,6 +8,8 @@ Sets up the flight controller so the drone holds position indoors, and gives the
 
 **Assumed, not decided:** ArduPilot on the Pixhawk 2, reached over MAVLink. The previous team flew this setup, and the organisers suggest it.
 
+Stabilisation and position hold are in [`stabilisation/`](stabilisation/README.md).
+
 ## Loan Kit
 
 | Item | Reference |
