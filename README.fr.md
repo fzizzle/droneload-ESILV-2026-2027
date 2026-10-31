@@ -18,7 +18,8 @@ droneload/
     └── camera_picamera2.py     # Caméra du Raspberry Pi
 testing/
 ├── make_test_video.py          # Génère une vidéo de test avec des marqueurs en mouvement
-└── benchmark.py                # Évalue la détection par rapport à la vérité terrain
+├── benchmark.py                # Évalue la détection par rapport à la vérité terrain
+└── vibration_test.py           # Simule le flou et les ondulations, et mesure la détection
 tests/                          # Tests unitaires et de bout en bout
 scripts/
 ├── check.sh                    # Lance tous les contrôles avec une sortie courte

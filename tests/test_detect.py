@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 
 from droneload.vision import detect
-from testing import make_test_video
+from testing import make_test_video, vibration_test
 from droneload.vision.camera_opencv import OpenCVCamera
 
 def logged_ids():
@@ -75,3 +75,14 @@ def test_generated_video_end_to_end(tmp_path, monkeypatch):
     detect.main()
 
     assert logged_ids() == set(make_test_video.MARKER_IDS)
+
+def test_vibration_helpers():
+    frame = vibration_test.make_frame(120)
+    detector = detect.make_detector()
+
+    assert vibration_test.is_found(frame, detector)
+    assert vibration_test.motion_blur(frame, 0, 0) is frame
+    assert vibration_test.motion_blur(frame, 10, 45).shape == frame.shape
+    assert vibration_test.rolling_wobble(frame, 10, 0).shape == frame.shape
+    assert vibration_test.blur_rate(frame, 0, detector) == 1.0
+    assert vibration_test.blur_rate(frame, 40, detector) < 1.0
