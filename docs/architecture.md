@@ -11,6 +11,8 @@ Each module owns one job. Modules that have not started hold only short READMEs.
 | `droneload/comms` | Talks to robot PULL-E and reads its replies | Not started |
 | `droneload/mission` | Runs each challenge step by step and shows the jury what the drone detects | Not started |
 
+`droneload/flight/stabilisation` holds flight controller settings and tuning. It is part of `flight`, not a separate module.
+
 `testing/` holds tools that never run on the drone: the simulator setup, benchmark and test video generator. `tests/` holds automated tests, and `scripts/` holds setup and check scripts.
 
 ## Requirements
