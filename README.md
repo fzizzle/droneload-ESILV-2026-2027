@@ -4,13 +4,15 @@
 
 Droneload is the software for our entry in the Droneload 2027 contest, a student competition run by Planète Sciences. Teams build a multirotor that flies missions on its own indoors: it reads ArUco markers, drops light objects on targets and works with a ground robot.
 
-So far, this repository contains the ArUco detection. It reads a camera or recorded footage, labels each marker, and logs the marker's centre in pixels. The detection loop does not use marker distance yet, and it sends nothing to a flight controller. It was written for the RubikPi 3 (Qualcomm QCS6490), but runs on any machine with OpenCV.
+So far, this repository contains the ArUco detection and a first simulator flight. The detection reads a camera or recorded footage, labels each marker, and logs the marker's centre in pixels. It does not use marker distance yet. The `flight` module flies a short demo in the ArduPilot simulator, and refuses to connect to a real drone. It was written for the RubikPi 3 (Qualcomm QCS6490), but runs on any machine with OpenCV.
 
 ## Project Structure
 
 ```
 droneload/
-├── flight/  navigation/  payload/  comms/  mission/   # Planned
+├── flight/                     # MAVLink commands, simulator only
+│   └── vehicle.py              # Take-off, move, land and pilot takeover
+├── navigation/  payload/  comms/  mission/   # Planned
 └── vision/                     # Marker detection
     ├── detect.py               # Detection loop and command-line options
     ├── pose.py                 # Marker position in metres
@@ -25,6 +27,7 @@ testing/
 tests/                          # Unit and end-to-end tests
 scripts/
 ├── check.sh                    # Runs all checks with short output
+├── sim.sh                      # Downloads and runs the ArduPilot simulator
 ├── setup.sh                    # Installs GStreamer and qtiqmmfsrc on the RubikPi
 ├── test_camera.sh              # Tests the CSI pipeline without OpenCV
 └── build_opencv.sh             # Builds OpenCV with GStreamer and aruco
@@ -33,7 +36,7 @@ logs/                           # Branch logs and decisions
 TODO.md                         # Known problems and open work
 ```
 
-`flight`, `navigation`, `payload`, `comms` and `mission` are planned and hold only a short README. See [`docs/architecture.md`](docs/architecture.md).
+`navigation`, `payload`, `comms` and `mission` are planned and hold only a short README. See [`docs/architecture.md`](docs/architecture.md).
 
 ## Installation
 
@@ -149,6 +152,7 @@ The last line should say `Detections saved to detections.csv`. The results are i
 | RubikPi CSI camera | Not tested on a board; the pipeline may need changing |
 | Hardware | Assuming the organisers' loan kit, with a Qualcomm companion computer (model unconfirmed); cameras to be bought |
 | Project markers (`DICT_4X4_50`) | Not tested on real footage |
+| Flight demo | Tested in the ArduPilot 4.7.2 simulator only, not on a drone |
 
 On the Shadow-ArUco test footage, the detector found 56% of annotated markers, and 27% of its detections did not match the annotations. That footage uses a different dictionary, so these figures may not apply to project markers. `TODO.md` tracks open work.
 
@@ -172,6 +176,22 @@ python -m droneload.vision [--source SOURCE] [--dict DICTIONARY]
 `--dict` takes a `cv2.aruco` dictionary name and defaults to `DICT_4X4_50`.
 
 Video and image sources stop at the last frame. Press Ctrl+C to stop a live source.
+
+### Simulator Flight
+
+The simulator needs Linux x86_64. On Windows, use WSL. Start it in one terminal:
+
+```bash
+./scripts/sim.sh
+```
+
+Then fly the demo in another: take off to 1 m, move 1 m forward and land.
+
+```bash
+python -m droneload.flight
+```
+
+If the flight mode changes during the demo, as when a pilot takes over, the program stops sending commands. It only connects to a simulator on this computer. `DRONELOAD_SITL=1 python -m pytest tests/test_flight_sitl.py` runs the same flight as a test, which CI also runs.
 
 ## How It Works
 

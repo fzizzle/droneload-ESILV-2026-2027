@@ -4,13 +4,15 @@
 
 Droneload est le logiciel de notre équipe pour le concours Droneload 2027, une compétition étudiante organisée par Planète Sciences. Les équipes construisent un multirotor qui effectue seul des missions en intérieur : il lit des marqueurs ArUco, largue de petits objets sur des cibles et coopère avec un robot au sol.
 
-Pour l'instant, ce dépôt contient la détection ArUco. Le programme lit une caméra ou une vidéo, attribue un label à chaque marqueur et enregistre son centre en pixels. La boucle de détection n'utilise pas encore la distance des marqueurs, et n'envoie rien au contrôleur de vol. Il a été écrit pour le RubikPi 3 (Qualcomm QCS6490), mais il fonctionne sur toute machine équipée d'OpenCV.
+Pour l'instant, ce dépôt contient la détection ArUco et un premier vol en simulateur. La détection lit une caméra ou une vidéo, attribue un label à chaque marqueur et enregistre son centre en pixels. Elle n'utilise pas encore la distance des marqueurs. Le module `flight` effectue un court vol de démonstration dans le simulateur ArduPilot, et refuse de se connecter à un vrai drone. Il a été écrit pour le RubikPi 3 (Qualcomm QCS6490), mais il fonctionne sur toute machine équipée d'OpenCV.
 
 ## Structure du projet
 
 ```
 droneload/
-├── flight/  navigation/  payload/  comms/  mission/   # Prévus
+├── flight/                     # Commandes MAVLink, simulateur uniquement
+│   └── vehicle.py              # Décollage, déplacement, atterrissage et reprise en main
+├── navigation/  payload/  comms/  mission/   # Prévus
 └── vision/                     # Détection des marqueurs
     ├── detect.py               # Boucle de détection et options en ligne de commande
     ├── pose.py                 # Position du marqueur en mètres
@@ -25,6 +27,7 @@ testing/
 tests/                          # Tests unitaires et de bout en bout
 scripts/
 ├── check.sh                    # Lance tous les contrôles avec une sortie courte
+├── sim.sh                      # Télécharge et lance le simulateur ArduPilot
 ├── setup.sh                    # Installe GStreamer et qtiqmmfsrc sur le RubikPi
 ├── test_camera.sh              # Teste le pipeline CSI sans OpenCV
 └── build_opencv.sh             # Compile OpenCV avec GStreamer et aruco
@@ -33,7 +36,7 @@ logs/                           # Journaux de branche et décisions
 TODO.md                         # Problèmes connus et travail restant
 ```
 
-`flight`, `navigation`, `payload`, `comms` et `mission` sont prévus et ne contiennent qu'un court README. Voir [`docs/architecture.md`](docs/architecture.md) (en anglais).
+`navigation`, `payload`, `comms` et `mission` sont prévus et ne contiennent qu'un court README. Voir [`docs/architecture.md`](docs/architecture.md) (en anglais).
 
 ## Installation
 
@@ -149,6 +152,7 @@ La dernière ligne doit indiquer `Detections saved to detections.csv`. Les résu
 | Caméra CSI du RubikPi | Non testée sur la carte ; le pipeline devra peut-être être adapté |
 | Matériel | Kit de prêt des organisateurs retenu par hypothèse, avec un ordinateur de bord Qualcomm (modèle à confirmer) ; caméras à acheter |
 | Marqueurs du projet (`DICT_4X4_50`) | Non testés sur des images réelles |
+| Vol de démonstration | Testé uniquement dans le simulateur ArduPilot 4.7.2, pas sur un drone |
 
 Sur les images de test Shadow-ArUco, le détecteur a trouvé 56 % des marqueurs annotés, et 27 % de ses détections ne correspondaient à aucune annotation. Ces images utilisent un autre dictionnaire, si bien que ces chiffres ne valent pas forcément pour les marqueurs du projet. Le travail restant figure dans `TODO.md`.
 
@@ -172,6 +176,22 @@ Par défaut, `--source` vaut `0`, soit la première webcam. Valeurs possibles :
 `--dict` prend le nom d'un dictionnaire `cv2.aruco` et vaut `DICT_4X4_50` par défaut.
 
 Avec une vidéo ou des images, le programme s'arrête à la dernière image. Avec une source en direct, appuyez sur Ctrl+C pour l'arrêter.
+
+### Vol en simulateur
+
+Le simulateur nécessite Linux x86_64. Sous Windows, utilisez WSL. Lancez-le dans un terminal :
+
+```bash
+./scripts/sim.sh
+```
+
+Puis lancez la démonstration dans un autre : décollage à 1 m, déplacement de 1 m vers l'avant et atterrissage.
+
+```bash
+python -m droneload.flight
+```
+
+Si le mode de vol change pendant la démonstration, par exemple quand un pilote reprend la main, le programme cesse d'envoyer des commandes. Il ne se connecte qu'à un simulateur sur cet ordinateur. `DRONELOAD_SITL=1 python -m pytest tests/test_flight_sitl.py` effectue le même vol sous forme de test, que la CI lance aussi.
 
 ## Fonctionnement
 

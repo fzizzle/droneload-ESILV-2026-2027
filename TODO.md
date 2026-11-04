@@ -49,6 +49,16 @@ Problems found while reviewing the project.
 
 - [x] **Update `ARUCO_LABELS` for the V0 rules.** Labels now cover IDs 0-9.
 
+- [ ] **Simulate indoor positioning.** The simulator flies on GPS. Set it up
+  with optical flow and a rangefinder, then beacons, to match the loan kit.
+
+- [ ] **Stop the drone if the mission stops sending commands.** The `flight`
+  README proposes sending zero velocity; the demo has no watchdog yet.
+
+- [ ] **Decide when `flight` may connect to a real drone.** It refuses
+  anything but a local simulator. Needs a person's decision and a
+  propellers-off bench test first.
+
 ## Repo hygiene
 
 - [x] **`rubikpi-script` is a broken submodule.** It is committed as a gitlink
