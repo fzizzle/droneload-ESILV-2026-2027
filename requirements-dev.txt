@@ -1,4 +1,5 @@
 opencv-contrib-python-headless==4.10.0.84
+pymavlink==2.4.50
 pytest
 ruff
 shellcheck-py
