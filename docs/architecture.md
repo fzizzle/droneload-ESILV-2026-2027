@@ -5,7 +5,7 @@ Each module owns one job. Modules that have not started hold only short READMEs.
 | Module | Job | State |
 |--------|-----|-------|
 | `droneload/vision` | Reads cameras and recognises ArUco markers, target posters and floor lines | ArUco detection only |
-| `droneload/flight` | Talks to the flight controller over MAVLink and holds its settings | Not started |
+| `droneload/flight` | Talks to the flight controller over MAVLink and holds its settings | Simulator demo only |
 | `droneload/navigation` | Centres on targets, searches the field and crosses the window | Not started |
 | `droneload/payload` | Grabs and releases the disc | Not started |
 | `droneload/comms` | Talks to robot PULL-E and reads its replies | Not started |

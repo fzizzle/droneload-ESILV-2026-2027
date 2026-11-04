@@ -2,7 +2,11 @@
 
 Sets up the flight controller so the drone holds position indoors, and gives the rest of the code one safe way to command it.
 
-**Status:** Not started. Nothing here commands a drone yet. Get a person's decision before writing code that does.
+**Status:** `vehicle.py` flies a demo in the ArduPilot simulator: take-off, a move and a landing, over MAVLink with `pymavlink`. It refuses any connection except a simulator on the same computer, so it has never commanded a drone. Get a person's decision before allowing one.
+
+**Run it:** `./scripts/sim.sh`, then `python -m droneload.flight` in another terminal.
+
+**Simulator limits:** the simulator uses its default GPS position, not optical flow or beacons, so indoor positioning is not simulated yet.
 
 **Hardware:** assume the organisers' loan kit, listed below.
 
@@ -47,10 +51,10 @@ Stabilisation and position hold are in [`stabilisation/`](stabilisation/README.m
 
 ## Done When
 
-- A simulator script takes off to 1 m, moves 1 m forward and lands.
-- Changing mode in mid-flight stops the script.
-- Failsafes are tested with propellers removed.
-- Flight controller settings are committed here.
+- [x] A simulator script takes off to 1 m, moves 1 m forward and lands.
+- [x] Changing mode in mid-flight stops the script.
+- [ ] Failsafes are tested with propellers removed.
+- [ ] Flight controller settings are committed here.
 
 ## Risks
 

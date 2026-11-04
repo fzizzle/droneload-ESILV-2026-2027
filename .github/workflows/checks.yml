@@ -16,3 +16,7 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements-dev.txt
       - run: bash scripts/check.sh
+      - name: Fly in the ArduPilot simulator
+        run: |
+          bash scripts/sim.sh --download-only
+          DRONELOAD_SITL=1 python -m pytest -q tests/test_flight_sitl.py
