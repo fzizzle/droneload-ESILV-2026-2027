@@ -1,0 +1,4 @@
+# Failsafe settings for ArduPilot Copter 4.7. Loaded by scripts/sim.sh.
+# Land if the companion computer sends no heartbeat for 3 s (it sends one each second).
+FS_GCS_ENABLE    5
+FS_GCS_TIMEOUT   3

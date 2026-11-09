@@ -191,7 +191,7 @@ Puis lancez la démonstration dans un autre : décollage à 1 m, déplacement de
 python -m droneload.flight
 ```
 
-Si le mode de vol change pendant la démonstration, par exemple quand un pilote reprend la main, le programme cesse d'envoyer des commandes. Il ne se connecte qu'à un simulateur sur cet ordinateur. `DRONELOAD_SITL=1 python -m pytest tests/test_flight_sitl.py` effectue le même vol sous forme de test, que la CI lance aussi.
+Si le mode de vol change pendant la démonstration, par exemple quand un pilote reprend la main, le programme cesse d'envoyer des commandes. Si le programme s'arrête, le simulateur atterrit de lui-même au bout de 3 s. Il ne se connecte qu'à un simulateur sur cet ordinateur. `DRONELOAD_SITL=1 python -m pytest tests/test_flight_sitl.py` effectue le même vol sous forme de test, que la CI lance aussi.
 
 ## Fonctionnement
 

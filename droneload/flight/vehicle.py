@@ -18,6 +18,9 @@ LAND_MODE         = "LAND"
 POSITION_RATE_HZ  = 10        # LOCAL_POSITION_NED stream rate
 RECV_TIMEOUT_S    = 0.5       # longest wait for one message
 HEARTBEAT_TIMEOUT_S = 30
+HEARTBEAT_PERIOD_S = 1        # if these stop, ArduPilot's GCS failsafe lands the drone
+FAILSAFE_PARAM    = "FS_GCS_ENABLE"   # set in failsafe.parm
+PARAM_TIMEOUT_S   = 5
 BOOT_TIMEOUT_S    = 60        # commands sent while booting can be undone
 MODE_TIMEOUT_S    = 10
 ARM_TIMEOUT_S     = 60        # the simulator needs time for its position estimate
@@ -42,6 +45,10 @@ class FlightTimeout(Exception):
     """The vehicle did not do what was asked in time."""
 
 
+class FailsafeOff(Exception):
+    """The flight controller would not land if this program stopped."""
+
+
 def is_simulator(url):
     """True if url reaches a simulator on this computer, not a real drone."""
     parts = url.split(":")
@@ -59,6 +66,7 @@ class Vehicle:
         self.armed         = False
         self.position      = None   # (north, east, down) in metres from home
         self.expected_mode = None   # None while no mode is being held
+        self.last_beat     = None   # when this program last sent a heartbeat
 
     @classmethod
     def connect(cls, url):
@@ -84,7 +92,17 @@ class Vehicle:
         self._wait(lambda msg: self.mode == mode, MODE_TIMEOUT_S, f"mode {mode}")
         self.expected_mode = mode
 
+    def param(self, name):
+        self.master.mav.param_request_read_send(
+            self.master.target_system, self.master.target_component, name.encode(), -1)
+        msg = self._wait(lambda msg: msg is not None and msg.get_type() == "PARAM_VALUE"
+                         and msg.param_id == name, PARAM_TIMEOUT_S, f"parameter {name}")
+        return msg.param_value
+
     def arm(self):
+        """Arms only if the flight controller lands when this program stops."""
+        if not self.param(FAILSAFE_PARAM):
+            raise FailsafeOff(f"{FAILSAFE_PARAM} is 0: load droneload/flight/failsafe.parm")
         deadline = time.monotonic() + ARM_TIMEOUT_S
         while not self.armed:
             if time.monotonic() > deadline:
@@ -128,12 +146,20 @@ class Vehicle:
     def _wait(self, done, timeout_s, what):
         deadline = time.monotonic() + timeout_s
         while time.monotonic() < deadline:
+            self._heartbeat()
             msg = self.master.recv_match(blocking=True, timeout=RECV_TIMEOUT_S)
             if msg is not None:
                 self._update(msg)
             if done(msg):
                 return msg
         raise FlightTimeout(what)
+
+    def _heartbeat(self):
+        now = time.monotonic()
+        if self.last_beat is None or now - self.last_beat >= HEARTBEAT_PERIOD_S:
+            self.master.mav.heartbeat_send(mavutil.mavlink.MAV_TYPE_ONBOARD_CONTROLLER,
+                                           mavutil.mavlink.MAV_AUTOPILOT_INVALID, 0, 0, 0)
+            self.last_beat = now
 
     def _update(self, msg):
         kind = msg.get_type()
@@ -184,7 +210,9 @@ def main(argv=None):
     try:
         demo(vehicle, args.alt, args.forward)
     except PilotTakeover as e:
-        sys.exit(f"Pilot took over (mode {e}). Mission stopped.")
+        sys.exit(f"Mode changed to {e} by the pilot or a failsafe. Mission stopped.")
+    except FailsafeOff as e:
+        sys.exit(f"Not arming: {e}")
     except FlightTimeout as e:
         sys.exit(f"Timed out: {e}")
     print("Demo flight complete.")

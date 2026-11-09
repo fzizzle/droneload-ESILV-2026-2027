@@ -11,6 +11,7 @@ PARAMS_URL="https://raw.githubusercontent.com/ArduPilot/ardupilot/Copter-$VERSIO
 BIN_SHA256="caed35e4cb796ec06cac40b09566a18251771486b1cbac5e2bf16b7a5ed5045d"
 PARAMS_SHA256="5e01345b45d1c6190b28bece5638bbdd4cf1cce35e05bbbf480ab24d2b51aa0e"
 DIR="${XDG_CACHE_HOME:-$HOME/.cache}/droneload/sitl-$VERSION"
+FAILSAFE="$(cd "$(dirname "$0")/.." && pwd)/droneload/flight/failsafe.parm"
 
 download_only=0
 speedup=1
@@ -47,4 +48,4 @@ chmod +x arducopter
 [ "$download_only" -eq 1 ] && exit 0
 
 echo "Simulator listening on tcp:127.0.0.1:5760. Ctrl+C stops it."
-exec ./arducopter --model quad --speedup "$speedup" --defaults copter.parm --wipe
+exec ./arducopter --model quad --speedup "$speedup" --defaults "copter.parm,$FAILSAFE" --wipe

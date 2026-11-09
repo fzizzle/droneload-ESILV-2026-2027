@@ -191,7 +191,7 @@ Then fly the demo in another: take off to 1 m, move 1 m forward and land.
 python -m droneload.flight
 ```
 
-If the flight mode changes during the demo, as when a pilot takes over, the program stops sending commands. It only connects to a simulator on this computer. `DRONELOAD_SITL=1 python -m pytest tests/test_flight_sitl.py` runs the same flight as a test, which CI also runs.
+If the flight mode changes during the demo, as when a pilot takes over, the program stops sending commands. If the program stops, the simulator lands on its own after 3 s. It only connects to a simulator on this computer. `DRONELOAD_SITL=1 python -m pytest tests/test_flight_sitl.py` runs the same flight as a test, which CI also runs.
 
 ## How It Works
 
