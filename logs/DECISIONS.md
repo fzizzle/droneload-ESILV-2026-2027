@@ -16,6 +16,8 @@ Lasting decisions, one line each. Keep this file short.
 - 2026-11-04: `flight` uses `pymavlink` with ArduPilot; DroneKit is unmaintained and MAVSDK targets PX4.
 - 2026-11-04: The simulator is ArduPilot's prebuilt SITL binary, pinned to Copter 4.7.2 with a checksum. Gazebo is not used yet.
 - 2026-11-04: `flight` connects only to a local simulator until a person approves flying a drone.
+- 2026-11-09: If the program stops, ArduPilot's GCS failsafe lands after 3 s without a heartbeat (`flight/failsafe.parm`), instead of Python sending zero velocity.
+- 2026-11-09: The simulator flies without GPS, on optical flow and a rangefinder. Estimator settings are in `flight/stabilisation/indoor.parm`; simulated sensors are in `testing/sitl_sensors.parm`.
 - 2026-10-30: Code is organised by module; see `docs/architecture.md`.
 - 2026-10-30: Install instructions use a `.venv` and the `python` command, which works on Mac, Windows and Linux.
 - 2026-10-30: Team 450's drone goes back to the organisers and is not reused.

@@ -49,11 +49,20 @@ Problems found while reviewing the project.
 
 - [x] **Update `ARUCO_LABELS` for the V0 rules.** Labels now cover IDs 0-9.
 
-- [ ] **Simulate indoor positioning.** The simulator flies on GPS. Set it up
-  with optical flow and a rangefinder, then beacons, to match the loan kit.
+- [x] **Simulate indoor positioning.** The simulator flies on optical flow and
+  a rangefinder, without GPS.
 
-- [ ] **Stop the drone if the mission stops sending commands.** The `flight`
-  README proposes sending zero velocity; the demo has no watchdog yet.
+- [ ] **Simulate Marvelmind beacons** as a second position source.
+
+- [ ] **Set the indoor origin to the venue.** `flight` sends the simulator's
+  home as the estimator's origin; the compass check fails if they differ.
+
+- [ ] **Set PMW3901 and rangefinder drivers** in `stabilisation/indoor.parm`
+  once the rangefinder is known. Only simulator drivers exist.
+
+- [x] **Stop the drone if the mission stops sending commands.** ArduPilot's
+  GCS failsafe lands after 3 s without a heartbeat. Check it on the Pixhawk
+  with propellers off.
 
 - [ ] **Decide when `flight` may connect to a real drone.** It refuses
   anything but a local simulator. Needs a person's decision and a

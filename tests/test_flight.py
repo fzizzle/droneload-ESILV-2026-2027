@@ -21,14 +21,21 @@ def position(north, east, down):
     return mav.MAVLink_local_position_ned_message(0, north, east, down, 0, 0, 0)
 
 
+def param(name, value):
+    return mav.MAVLink_param_value_message(name.encode(), value,
+                                           mav.MAV_PARAM_TYPE_REAL32, 1, 0)
+
+
 class FakeMaster:
     """Plays queued messages back, and records what was sent."""
 
     target_system = 1
     target_component = 1
 
-    def __init__(self, messages):
+    def __init__(self, messages, params=None, ignored_origins=None):
         self.messages = list(messages)
+        self.ignored_origins = ignored_origins   # None: never answer
+        self.params = {"FS_GCS_ENABLE": 5, **(params or {})}
         self.sent = []
         self.mav = self
 
@@ -44,11 +51,30 @@ class FakeMaster:
     def set_position_target_local_ned_send(self, *args):
         self.sent.append(("position", args))
 
+    def set_gps_global_origin_send(self, system, lat, lon, alt):
+        self.sent.append(("origin", lat, lon, alt))
+        if self.ignored_origins == 0:
+            self.messages.insert(0, mav.MAVLink_gps_global_origin_message(lat, lon, alt))
+        elif self.ignored_origins:
+            self.ignored_origins -= 1   # the estimator has not started yet
+
+    def heartbeat_send(self, kind, autopilot, *args):
+        self.sent.append(("heartbeat", kind, autopilot))
+
+    def param_request_read_send(self, system, component, name, index):
+        name = name.decode()
+        if name in self.params:
+            self.messages.insert(0, param(name, self.params[name]))
+
+
+def sent(master, kind):
+    return [s for s in master.sent if s[0] == kind]
+
 
 @pytest.fixture(autouse=True)
 def short_timeouts(monkeypatch):
     for name in ("MODE_TIMEOUT_S", "ARM_TIMEOUT_S", "ARM_RETRY_S", "TAKEOFF_TIMEOUT_S",
-                 "MOVE_TIMEOUT_S", "LAND_TIMEOUT_S", "BOOT_TIMEOUT_S"):
+                 "MOVE_TIMEOUT_S", "LAND_TIMEOUT_S", "BOOT_TIMEOUT_S", "ORIGIN_TIMEOUT_S"):
         monkeypatch.setattr(fl, name, 0.2)
 
 
@@ -91,7 +117,7 @@ def test_takeoff_waits_for_height():
     v = fl.Vehicle(FakeMaster([position(0, 0, -0.5), position(0, 0, -0.95)]))
     v.takeoff(1.0)
     assert v.altitude() == pytest.approx(0.95)
-    assert v.master.sent[0][1] == mav.MAV_CMD_NAV_TAKEOFF
+    assert sent(v.master, "command")[0][1] == mav.MAV_CMD_NAV_TAKEOFF
 
 
 def test_move_waits_for_distance():
@@ -99,7 +125,7 @@ def test_move_waits_for_distance():
                                position(3, 3, -1)]))
     v.move(1.0)
     assert v.position == (3, 3, -1)
-    frame, mask, forward = v.master.sent[0][1][3:6]
+    frame, mask, forward = sent(v.master, "position")[0][1][3:6]
     assert (frame, mask, forward) == (mav.MAV_FRAME_BODY_OFFSET_NED,
                                       fl.POSITION_ONLY_MASK, 1.0)
 
@@ -117,3 +143,47 @@ def test_demo_does_not_land_after_takeover():
     with pytest.raises(fl.PilotTakeover):
         fl.demo(fl.Vehicle(master))
     assert ("mode", "LAND") not in master.sent
+
+
+def test_waiting_sends_heartbeats(monkeypatch):
+    monkeypatch.setattr(fl, "HEARTBEAT_PERIOD_S", 0)
+    v = fl.Vehicle(FakeMaster([position(0, 0, -0.5), position(0, 0, -1)]))
+    v.takeoff(1.0)
+    beats = sent(v.master, "heartbeat")
+    assert len(beats) >= 2
+    assert beats[0][1:] == (mav.MAV_TYPE_ONBOARD_CONTROLLER, mav.MAV_AUTOPILOT_INVALID)
+
+
+def test_heartbeats_limited_to_one_per_period(monkeypatch):
+    monkeypatch.setattr(fl, "HEARTBEAT_PERIOD_S", 60)
+    v = fl.Vehicle(FakeMaster([position(0, 0, -0.2), position(0, 0, -0.5),
+                               position(0, 0, -1)]))
+    v.takeoff(1.0)
+    assert len(sent(v.master, "heartbeat")) == 1
+
+
+def test_reads_parameter():
+    v = fl.Vehicle(FakeMaster([], params={"FS_GCS_TIMEOUT": 3}))
+    assert v.param("FS_GCS_TIMEOUT") == 3
+
+
+def test_refuses_to_arm_without_failsafe():
+    master = FakeMaster([heartbeat("GUIDED", armed=True)], params={"FS_GCS_ENABLE": 0})
+    with pytest.raises(fl.FailsafeOff):
+        fl.Vehicle(master).arm()
+    assert not sent(master, "command")
+
+
+def test_sets_origin_until_confirmed(monkeypatch):
+    monkeypatch.setattr(fl, "ORIGIN_RETRY_S", 0.01)
+    lat, lon, alt = fl.ORIGIN
+    v = fl.Vehicle(FakeMaster([], ignored_origins=1))
+    v.set_origin()
+    tries = sent(v.master, "origin")
+    assert len(tries) == 2
+    assert tries[0][1:] == (round(lat * 1e7), round(lon * 1e7), round(alt * 1000))
+
+
+def test_origin_times_out():
+    with pytest.raises(fl.FlightTimeout, match="origin"):
+        fl.Vehicle(FakeMaster([])).set_origin()

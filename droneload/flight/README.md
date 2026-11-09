@@ -4,9 +4,11 @@ Sets up the flight controller so the drone holds position indoors, and gives the
 
 **Status:** `vehicle.py` flies a demo in the ArduPilot simulator: take-off, a move and a landing, over MAVLink with `pymavlink`. It refuses any connection except a simulator on the same computer, so it has never commanded a drone. Get a person's decision before allowing one.
 
+**Watchdog:** `vehicle.py` sends a heartbeat each second while it waits on the drone. [`failsafe.parm`](failsafe.parm) sets ArduPilot's GCS failsafe to land if the heartbeats stop for 3 s, for example when the program crashes or hangs. `arm()` refuses to arm if that failsafe is off. A mission that runs other code between commands must call into `Vehicle` at least every 2 s.
+
 **Run it:** `./scripts/sim.sh`, then `python -m droneload.flight` in another terminal.
 
-**Simulator limits:** the simulator uses its default GPS position, not optical flow or beacons, so indoor positioning is not simulated yet.
+**Simulator:** GPS is off. The drone holds position with simulated optical flow and a downward rangefinder ([`stabilisation/indoor.parm`](stabilisation/indoor.parm) and `testing/sitl_sensors.parm`). Beacons are not simulated yet. Without GPS the estimator needs an origin, so `Vehicle.connect()` sends `ORIGIN`, the simulator's home. Set the venue's position there before any real flight.
 
 **Hardware:** assume the organisers' loan kit, listed below.
 
@@ -46,15 +48,16 @@ Stabilisation and position hold are in [`stabilisation/`](stabilisation/README.m
 | Two-minute cage flight, or a drop video | At RCE3, 24-25 April 2027, for +45 points | 2027 V0 |
 | Automatic take-off and landing | 10 points each | 2027 V0 |
 | Position hold | Within 0.5 m for 2 minutes, with no stick input | Proposed |
-| Connection loss | Send zero velocity when the mission stops sending commands | Proposed |
+| Connection loss | Land when the program sends no heartbeat for 3 s, using ArduPilot's GCS failsafe | Proposed |
 | Pilot takeover in code | Any mode change away from Guided ends the mission | Proposed |
 
 ## Done When
 
 - [x] A simulator script takes off to 1 m, moves 1 m forward and lands.
 - [x] Changing mode in mid-flight stops the script.
+- [x] The simulator lands when the script stops sending heartbeats.
 - [ ] Failsafes are tested with propellers removed.
-- [ ] Flight controller settings are committed here.
+- [ ] Flight controller settings are committed here. Failsafe settings are in `failsafe.parm`.
 
 ## Risks
 
