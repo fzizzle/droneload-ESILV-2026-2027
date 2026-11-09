@@ -1,0 +1,8 @@
+# Simulated optical flow and downward rangefinder. Simulator only: never load on a drone.
+SIM_FLOW_ENABLE  1
+FLOW_TYPE        10
+RNGFND1_TYPE     100
+# The simulated rangefinder reads 0 m on the ground; with a higher minimum the
+# estimator has no height above ground and refuses a position before take-off.
+RNGFND1_MIN      0
+RNGFND1_MAX      4

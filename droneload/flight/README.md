@@ -8,7 +8,7 @@ Sets up the flight controller so the drone holds position indoors, and gives the
 
 **Run it:** `./scripts/sim.sh`, then `python -m droneload.flight` in another terminal.
 
-**Simulator limits:** the simulator uses its default GPS position, not optical flow or beacons, so indoor positioning is not simulated yet.
+**Simulator:** GPS is off. The drone holds position with simulated optical flow and a downward rangefinder ([`stabilisation/indoor.parm`](stabilisation/indoor.parm) and `testing/sitl_sensors.parm`). Beacons are not simulated yet. Without GPS the estimator needs an origin, so `Vehicle.connect()` sends `ORIGIN`, the simulator's home. Set the venue's position there before any real flight.
 
 **Hardware:** assume the organisers' loan kit, listed below.
 

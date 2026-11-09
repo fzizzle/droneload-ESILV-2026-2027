@@ -23,7 +23,8 @@ droneload/
 testing/
 ├── make_test_video.py          # Génère une vidéo de test avec des marqueurs en mouvement
 ├── benchmark.py                # Évalue la détection par rapport à la vérité terrain
-└── vibration_test.py           # Simule le flou et les ondulations, et mesure la détection
+├── vibration_test.py           # Simule le flou et les ondulations, et mesure la détection
+└── sitl_sensors.parm           # Flux optique et télémètre simulés
 tests/                          # Tests unitaires et de bout en bout
 scripts/
 ├── check.sh                    # Lance tous les contrôles avec une sortie courte
@@ -191,7 +192,7 @@ Puis lancez la démonstration dans un autre : décollage à 1 m, déplacement de
 python -m droneload.flight
 ```
 
-Si le mode de vol change pendant la démonstration, par exemple quand un pilote reprend la main, le programme cesse d'envoyer des commandes. Si le programme s'arrête, le simulateur atterrit de lui-même au bout de 3 s. Il ne se connecte qu'à un simulateur sur cet ordinateur. `DRONELOAD_SITL=1 python -m pytest tests/test_flight_sitl.py` effectue le même vol sous forme de test, que la CI lance aussi.
+Si le mode de vol change pendant la démonstration, par exemple quand un pilote reprend la main, le programme cesse d'envoyer des commandes. Si le programme s'arrête, le simulateur atterrit de lui-même au bout de 3 s. Le simulateur n'a pas de GPS : il tient sa position grâce à un flux optique et un télémètre simulés, comme le kit de prêt, et ne simule pas encore les balises. Il ne se connecte qu'à un simulateur sur cet ordinateur. `DRONELOAD_SITL=1 python -m pytest tests/test_flight_sitl.py` effectue le même vol sous forme de test, que la CI lance aussi.
 
 ## Fonctionnement
 
