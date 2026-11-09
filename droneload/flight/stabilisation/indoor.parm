@@ -1,0 +1,7 @@
+# Indoor position for ArduPilot Copter 4.7: optical flow, no GPS. Loaded by scripts/sim.sh.
+# Sensor drivers depend on the hardware, so they are not set here.
+GPS1_TYPE        0
+EK3_SRC1_POSXY   0
+EK3_SRC1_VELXY   5
+EK3_SRC1_POSZ    1
+EK3_SRC1_VELZ    0

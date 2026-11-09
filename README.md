@@ -23,7 +23,8 @@ droneload/
 testing/
 ├── make_test_video.py          # Generates a test video of moving markers
 ├── benchmark.py                # Scores detection against ground truth
-└── vibration_test.py           # Simulates blur and wobble, and measures detection
+├── vibration_test.py           # Simulates blur and wobble, and measures detection
+└── sitl_sensors.parm           # Simulated optical flow and rangefinder
 tests/                          # Unit and end-to-end tests
 scripts/
 ├── check.sh                    # Runs all checks with short output
@@ -152,7 +153,7 @@ The last line should say `Detections saved to detections.csv`. The results are i
 | RubikPi CSI camera | Not tested on a board; the pipeline may need changing |
 | Hardware | Assuming the organisers' loan kit, with a Qualcomm companion computer (model unconfirmed); cameras to be bought |
 | Project markers (`DICT_4X4_50`) | Not tested on real footage |
-| Flight demo | Tested in the ArduPilot 4.7.2 simulator only, not on a drone |
+| Flight demo | Tested in the ArduPilot 4.7.2 simulator only, on simulated optical flow without GPS, not on a drone |
 
 On the Shadow-ArUco test footage, the detector found 56% of annotated markers, and 27% of its detections did not match the annotations. That footage uses a different dictionary, so these figures may not apply to project markers. `TODO.md` tracks open work.
 
@@ -191,7 +192,7 @@ Then fly the demo in another: take off to 1 m, move 1 m forward and land.
 python -m droneload.flight
 ```
 
-If the flight mode changes during the demo, as when a pilot takes over, the program stops sending commands. If the program stops, the simulator lands on its own after 3 s. It only connects to a simulator on this computer. `DRONELOAD_SITL=1 python -m pytest tests/test_flight_sitl.py` runs the same flight as a test, which CI also runs.
+If the flight mode changes during the demo, as when a pilot takes over, the program stops sending commands. If the program stops, the simulator lands on its own after 3 s. The simulator has no GPS: it holds position with simulated optical flow and a rangefinder, like the loan kit, and does not simulate beacons yet. It only connects to a simulator on this computer. `DRONELOAD_SITL=1 python -m pytest tests/test_flight_sitl.py` runs the same flight as a test, which CI also runs.
 
 ## How It Works
 

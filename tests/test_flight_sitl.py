@@ -1,5 +1,6 @@
 """Flies in the ArduPilot simulator. Opt in: DRONELOAD_SITL=1 python -m pytest tests/test_flight_sitl.py"""
 
+import math
 import os
 import subprocess
 import time
@@ -43,10 +44,27 @@ def wait_landed(v):
     v._wait(lambda msg: not v.armed, fl.LAND_TIMEOUT_S, "landing")
 
 
-def test_demo_flight(vehicle):
+def true_position(v):
+    """North and east in metres from the simulator's own position, not the estimate."""
+    v.master.mav.command_long_send(
+        v.master.target_system, v.master.target_component,
+        mavutil.mavlink.MAV_CMD_REQUEST_MESSAGE, 0,
+        mavutil.mavlink.MAVLINK_MSG_ID_SIMSTATE, 0, 0, 0, 0, 0, 0)
+    msg = v._wait(lambda m: m is not None and m.get_type() == "SIMSTATE", 5, "SIMSTATE")
+    lat, lon, _ = fl.ORIGIN
+    metres_per_deg = 6378137 * math.pi / 180
+    return ((msg.lat / 1e7 - lat) * metres_per_deg,
+            (msg.lng / 1e7 - lon) * metres_per_deg * math.cos(math.radians(lat)))
+
+
+def test_demo_flight_on_optical_flow(vehicle):
+    start = true_position(vehicle)
     fl.demo(vehicle)
     assert not vehicle.armed
     assert fl.horizontal_distance((0, 0), vehicle.position) == pytest.approx(1.0, abs=0.3)
+    # The estimate comes from optical flow; check the drone really moved
+    moved = fl.horizontal_distance(start, true_position(vehicle))
+    assert moved == pytest.approx(1.0, abs=0.3)
 
 
 def test_pilot_takeover(vehicle):

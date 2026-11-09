@@ -22,6 +22,8 @@ HEARTBEAT_PERIOD_S = 1        # if these stop, ArduPilot's GCS failsafe lands th
 FAILSAFE_PARAM    = "FS_GCS_ENABLE"   # set in failsafe.parm
 PARAM_TIMEOUT_S   = 5
 BOOT_TIMEOUT_S    = 60        # commands sent while booting can be undone
+ORIGIN_TIMEOUT_S  = 30
+ORIGIN_RETRY_S    = 1         # the estimator ignores an origin sent before it starts
 MODE_TIMEOUT_S    = 10
 ARM_TIMEOUT_S     = 60        # the simulator needs time for its position estimate
 ARM_RETRY_S       = 2
@@ -31,6 +33,10 @@ LAND_TIMEOUT_S    = 60
 ALT_TOLERANCE_M   = 0.1
 MOVE_TOLERANCE_M  = 0.15
 DEMO_ALT_M        = 1.0
+# No GPS indoors, so the estimator needs an origin. This is the simulator's
+# default home; the compass check fails unless the two match. Set the venue's
+# position here before any real flight.
+ORIGIN            = (-35.363261, 149.165230, 584.0)   # lat, lon in degrees, alt in m
 DEMO_FORWARD_M    = 1.0
 
 # Position only: ignore velocity, acceleration, yaw and yaw rate
@@ -75,11 +81,27 @@ class Vehicle:
             raise FlightTimeout(f"no heartbeat from {url}")
         vehicle = cls(master)
         vehicle.wait_booted()
+        vehicle.set_origin()
         vehicle.request_position_stream()
         return vehicle
 
     def wait_booted(self):
         self._wait(lambda msg: self.booted, BOOT_TIMEOUT_S, "boot")
+
+    def set_origin(self, lat=None, lon=None, alt_m=None):
+        lat, lon, alt_m = ORIGIN if lat is None else (lat, lon, alt_m)
+        deadline = time.monotonic() + ORIGIN_TIMEOUT_S
+        while time.monotonic() < deadline:
+            self.master.mav.set_gps_global_origin_send(
+                self.master.target_system, round(lat * 1e7), round(lon * 1e7),
+                round(alt_m * 1000))
+            try:
+                return self._wait(lambda msg: msg is not None
+                                  and msg.get_type() == "GPS_GLOBAL_ORIGIN",
+                                  ORIGIN_RETRY_S, "origin")
+            except FlightTimeout:
+                pass
+        raise FlightTimeout("origin")
 
     def request_position_stream(self):
         self._command(mavutil.mavlink.MAV_CMD_SET_MESSAGE_INTERVAL,

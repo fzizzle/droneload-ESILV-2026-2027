@@ -32,8 +32,9 @@ class FakeMaster:
     target_system = 1
     target_component = 1
 
-    def __init__(self, messages, params=None):
+    def __init__(self, messages, params=None, ignored_origins=None):
         self.messages = list(messages)
+        self.ignored_origins = ignored_origins   # None: never answer
         self.params = {"FS_GCS_ENABLE": 5, **(params or {})}
         self.sent = []
         self.mav = self
@@ -49,6 +50,13 @@ class FakeMaster:
 
     def set_position_target_local_ned_send(self, *args):
         self.sent.append(("position", args))
+
+    def set_gps_global_origin_send(self, system, lat, lon, alt):
+        self.sent.append(("origin", lat, lon, alt))
+        if self.ignored_origins == 0:
+            self.messages.insert(0, mav.MAVLink_gps_global_origin_message(lat, lon, alt))
+        elif self.ignored_origins:
+            self.ignored_origins -= 1   # the estimator has not started yet
 
     def heartbeat_send(self, kind, autopilot, *args):
         self.sent.append(("heartbeat", kind, autopilot))
@@ -66,7 +74,7 @@ def sent(master, kind):
 @pytest.fixture(autouse=True)
 def short_timeouts(monkeypatch):
     for name in ("MODE_TIMEOUT_S", "ARM_TIMEOUT_S", "ARM_RETRY_S", "TAKEOFF_TIMEOUT_S",
-                 "MOVE_TIMEOUT_S", "LAND_TIMEOUT_S", "BOOT_TIMEOUT_S"):
+                 "MOVE_TIMEOUT_S", "LAND_TIMEOUT_S", "BOOT_TIMEOUT_S", "ORIGIN_TIMEOUT_S"):
         monkeypatch.setattr(fl, name, 0.2)
 
 
@@ -164,3 +172,18 @@ def test_refuses_to_arm_without_failsafe():
     with pytest.raises(fl.FailsafeOff):
         fl.Vehicle(master).arm()
     assert not sent(master, "command")
+
+
+def test_sets_origin_until_confirmed(monkeypatch):
+    monkeypatch.setattr(fl, "ORIGIN_RETRY_S", 0.01)
+    lat, lon, alt = fl.ORIGIN
+    v = fl.Vehicle(FakeMaster([], ignored_origins=1))
+    v.set_origin()
+    tries = sent(v.master, "origin")
+    assert len(tries) == 2
+    assert tries[0][1:] == (round(lat * 1e7), round(lon * 1e7), round(alt * 1000))
+
+
+def test_origin_times_out():
+    with pytest.raises(fl.FlightTimeout, match="origin"):
+        fl.Vehicle(FakeMaster([])).set_origin()
