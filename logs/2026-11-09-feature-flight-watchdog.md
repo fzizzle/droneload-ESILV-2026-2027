@@ -7,8 +7,7 @@
 Stop the drone if the mission program stops, as a safety net before more simulator work.
 
 ## Steps
-- 2026-11-09: `Vehicle` sends a heartbeat each second while waiting, and refuses to arm unless `FS_GCS_ENABLE` is set.
-- 2026-11-09: Added `droneload/flight/failsafe.parm` (land after 3 s without heartbeat), loaded by `sim.sh`.
+- 2026-11-09: `Vehicle` sends 1 Hz heartbeats and refuses to arm unless `FS_GCS_ENABLE` is set. `failsafe.parm` lands after 3 s without one; `sim.sh` loads it.
 - 2026-11-09: Split the simulator test into demo, takeover and failsafe tests sharing one simulator.
 - 2026-11-09: First run failed: at 5x speed-up, 1 Hz heartbeats are 5 s apart in sim time, so the failsafe fired. The test now scales the period.
 
