@@ -19,7 +19,7 @@ droneload/
     ├── camera_opencv.py        # Toute source lisible par cv2.VideoCapture
     ├── camera_rubikpi_csi.py   # Caméra CSI du RubikPi (pipeline GStreamer)
     ├── camera_picamera2.py     # Caméra du Raspberry Pi
-    └── tracking/               # Prévu : stabilise les détections d'une image à l'autre
+    └── tracking/               # Confirme les marqueurs sur plusieurs images et lisse leur position
 testing/
 ├── make_test_video.py          # Génère une vidéo de test avec des marqueurs en mouvement
 ├── benchmark.py                # Évalue la détection par rapport à la vérité terrain
@@ -155,12 +155,12 @@ La dernière ligne doit indiquer `Detections saved to detections.csv`. Les résu
 | Marqueurs du projet (`DICT_4X4_50`) | Non testés sur des images réelles |
 | Vol de démonstration | Testé uniquement dans le simulateur ArduPilot 4.7.2, pas sur un drone |
 
-Sur les images de test Shadow-ArUco, le détecteur a trouvé 56 % des marqueurs annotés, et 27 % de ses détections ne correspondaient à aucune annotation. Ces images utilisent un autre dictionnaire, si bien que ces chiffres ne valent pas forcément pour les marqueurs du projet. Le travail restant figure dans `TODO.md`.
+Sur les images de test Shadow-ArUco, le détecteur a trouvé 56 % des marqueurs annotés, et 27 % de ses détections ne correspondaient à aucune annotation. Avec le suivi, il en a trouvé 53 %, et 3 % ne correspondaient pas. Ces images utilisent un autre dictionnaire, si bien que ces chiffres ne valent pas forcément pour les marqueurs du projet. Le travail restant figure dans `TODO.md`.
 
 ## Utilisation
 
 ```bash
-python -m droneload.vision [--source SOURCE] [--dict DICTIONNAIRE]
+python -m droneload.vision [--source SOURCE] [--dict DICTIONNAIRE] [--no-track]
 ```
 
 Par défaut, `--source` vaut `0`, soit la première webcam. Valeurs possibles :
@@ -175,6 +175,8 @@ Par défaut, `--source` vaut `0`, soit la première webcam. Valeurs possibles :
 | `picamera` | Caméra du Raspberry Pi, nécessite `picamera2` |
 
 `--dict` prend le nom d'un dictionnaire `cv2.aruco` et vaut `DICT_4X4_50` par défaut.
+
+Un marqueur n'est signalé qu'après avoir été vu sur 3 des 5 dernières images, et sa position est lissée. `--no-track` signale chaque détection, ce qu'exige une image seule.
 
 Avec une vidéo ou des images, le programme s'arrête à la dernière image. Avec une source en direct, appuyez sur Ctrl+C pour l'arrêter.
 

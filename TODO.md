@@ -33,7 +33,8 @@ Problems found while reviewing the project.
   On Shadow-ArUco `video_5` the detector found 56% of annotated markers, and
   27% of its detections did not match the annotations. Those detections
   include recurring wrong IDs. The cause has not been investigated, and this
-  footage does not use `DICT_4X4_50`.
+  footage does not use `DICT_4X4_50`. Tracking cuts unmatched detections to 2.7%, with
+  53.2% found.
 
 - [ ] **Record real `DICT_4X4_50` footage.** No public source was found.
 
@@ -121,8 +122,9 @@ Each runs on a PC, against the simulator, recorded footage or a stub. Items
 already listed above are not repeated: calibration tool, `DICT_4X4_50`
 footage and Marvelmind simulation.
 
-- [ ] **Tracking in `vision/tracking`.** Confirm markers across frames and
-  smooth their positions. Plan: `docs/plans/2026-11-13-vision-tracking.md`.
+- [x] **Tracking in `vision/tracking`.** Confirm markers across frames and
+  smooth their positions. Skipping blurred frames and using drone motion are
+  still open; see `droneload/vision/tracking/README.md`.
 - [ ] **`comms` protocol layer.** A state machine for the V0 robot protocol
   (`D`/`G`/`A` commands, `N`/`F`/`S` replies, target digit), tested against a
   fake serial port. `pyserial` is a new dependency and needs a person's OK.
