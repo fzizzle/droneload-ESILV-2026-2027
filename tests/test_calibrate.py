@@ -1,8 +1,11 @@
+import sys
+
 import cv2
 import numpy as np
 import pytest
 
-from droneload.vision import calibrate, pose
+from droneload.vision import calibrate, detect, pose
+from test_detect import render_marker
 
 CAMERA_MATRIX = np.array([[900, 0, 640], [0, 900, 360], [0, 0, 1]], dtype=np.float64)
 NO_DISTORTION = np.zeros(5)
@@ -93,3 +96,56 @@ def test_saved_calibration_loads_in_pose(tmp_path):
     assert storage.getNode("image_width").real() == 1280
     assert storage.getNode("image_height").real() == 720
     assert storage.getNode("rms_px").real() == pytest.approx(0.3)
+
+def write_frames(folder, images):
+    folder.mkdir()
+    for i, image in enumerate(images):
+        cv2.imwrite(str(folder / f"{i:03d}.png"), image)
+    return str(folder / "%03d.png")
+
+def run_main(monkeypatch, source, output):
+    monkeypatch.setattr(sys, "argv", ["calibrate", "--source", source, "--output", str(output)])
+    calibrate.main()
+
+def test_main_writes_calibration(tmp_path, monkeypatch):
+    source = write_frames(tmp_path / "frames", [render_board(r, t) for r, t in views(20)])
+    monkeypatch.setattr(calibrate, "MIN_GAP_FRAMES", 1)
+    run_main(monkeypatch, source, tmp_path / "camera.yaml")
+
+    matrix, _ = pose.load_calibration(tmp_path / "camera.yaml")
+    assert matrix[0, 0] == pytest.approx(900, rel=0.02)
+
+def test_main_spaces_frames(tmp_path, monkeypatch, capsys):
+    rvec, tvec = views(1)[0]
+    source = write_frames(tmp_path / "frames", [render_board(rvec, tvec)] * 30)
+    monkeypatch.setattr(calibrate, "MIN_FRAMES", 1)
+    run_main(monkeypatch, source, tmp_path / "camera.yaml")
+
+    out = capsys.readouterr().out
+    assert "captured 2/" in out and "captured 3/" not in out
+    assert (tmp_path / "camera.yaml").exists()
+
+def test_main_fails_without_board(tmp_path, monkeypatch, capsys):
+    source = write_frames(tmp_path / "frames", [np.full((720, 1280), 255, np.uint8)] * 12)
+    with pytest.raises(SystemExit) as stop:
+        run_main(monkeypatch, source, tmp_path / "camera.yaml")
+
+    assert stop.value.code == 1
+    assert not (tmp_path / "camera.yaml").exists()
+    assert "9x6" in [line for line in capsys.readouterr().out.splitlines() if "[ERROR]" in line][0]
+
+def test_main_warns_on_high_rms(tmp_path, monkeypatch, capsys):
+    source = write_frames(tmp_path / "frames", [render_board(r, t) for r, t in views(20)])
+    monkeypatch.setattr(calibrate, "MIN_GAP_FRAMES", 1)
+    monkeypatch.setattr(calibrate, "MAX_RMS_PX", 0)
+    run_main(monkeypatch, source, tmp_path / "camera.yaml")
+
+    assert "[WARNING]" in capsys.readouterr().out
+    assert (tmp_path / "camera.yaml").exists()
+
+def test_calibrated_pose_distance():
+    matrix, coeffs, _ = calibrate.calibrate(found_corners(15), IMAGE_SIZE, (9, 6), SQUARE_M)
+    corners, ids, _ = detect.make_detector().detectMarkers(render_marker((0.1, 0.0, 1.5)))
+    assert ids is not None
+    offset = pose.marker_offset(corners[0], matrix, coeffs)
+    assert offset[2] == pytest.approx(1.5, rel=0.03)

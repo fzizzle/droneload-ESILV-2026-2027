@@ -25,3 +25,4 @@ Lasting decisions, one line each. Keep this file short.
 - 2026-11-13: With tracking on, CSV rows hold the smoothed position of confirmed markers; the columns are unchanged. Approved by the project lead.
 - 2026-11-13: Detection reports a marker only after it is seen in 3 of the last 5 frames, with its position smoothed; `--no-track` turns this off.
 - 2026-11-13: `requirements-dev.txt` uses the GUI `opencv-contrib-python` wheel, not the headless one, so `--show` can open a window. Approved by the project lead.
+- 2026-11-13: Calibration uses a checkerboard with 9 × 6 inner corners and 25 mm squares by default, and writes OpenCV YAML with `camera_matrix`, `dist_coeffs`, `image_width`, `image_height` and `rms_px`.

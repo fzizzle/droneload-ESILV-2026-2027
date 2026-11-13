@@ -186,6 +186,16 @@ python -m droneload.vision --source "test_footage/shadow-aruco/video_5/%05d.png"
 
 Video and image sources stop at the last frame. Press Ctrl+C to stop a live source.
 
+### Camera Calibration
+
+Distances in metres need a calibration file for each camera. Print a checkerboard with 10 × 7 squares, measure one square, then run:
+
+```bash
+python -m droneload.vision.calibrate --source 0 --square 0.025
+```
+
+Move and tilt the board across the whole image until 20 frames are captured. The tool writes `camera.yaml` and prints the RMS error; under 1 px is good. Options: `--board 9x6` (inner corners), `--frames 20` and `--output camera.yaml`. Details are in `droneload/vision/README.md`.
+
 ### Simulator Flight
 
 The simulator needs Linux x86_64. On Windows, use WSL. Start it in one terminal:
