@@ -62,7 +62,8 @@ Simulated with a 900 px focal length at 1280 × 720, 40 placements per distance,
 
 - Print a checkerboard with 10 × 7 squares (9 × 6 inner corners) on stiff, flat card. Measure one square and pass it with `--square`, in metres.
 - Move the board across the whole image, including the corners, and tilt it up to about 45°. Hold it still enough that frames are sharp.
-- Aim for an RMS error under 1 px. The tool warns above that.
+- A frame is kept only when the board has moved at least 20 px from every kept frame, so holding it still adds nothing.
+- Aim for an RMS error under 1 px; the tool warns above that. A low RMS is not enough on its own: boards that never turn give a focal length about 8% wrong with an RMS of 0.3 px. The tool also warns when the board's orientation varied by less than 20° across the kept frames.
 - Recalibrate after changing the resolution, lens or focus. The file records the image size it was made at.
 
 Tested on rendered images: focal length within 2%, and a marker at 1.5 m measured within 3% with the resulting calibration. On a webcam, only opening the camera was checked, without a board. Not tested on the drone's cameras.

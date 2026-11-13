@@ -74,12 +74,22 @@ def test_find_board_none_on_blank():
 def test_calibrate_recovers_known_camera():
     corners = found_corners(15)
     assert all(c is not None for c in corners)
-    matrix, _, rms = calibrate.calibrate(corners, IMAGE_SIZE, (9, 6), SQUARE_M)
+    matrix, _, rms, spread = calibrate.calibrate(corners, IMAGE_SIZE, (9, 6), SQUARE_M)
     assert matrix[0, 0] == pytest.approx(900, rel=0.02)
     assert matrix[1, 1] == pytest.approx(900, rel=0.02)
     assert matrix[0, 2] == pytest.approx(640, abs=10)
     assert matrix[1, 2] == pytest.approx(360, abs=10)
     assert rms < 0.5
+    assert spread > calibrate.MIN_TILT_SPREAD_DEG
+
+def test_parallel_views_report_no_tilt():
+    # The board moved but never turned: a low RMS hides a wrong focal length
+    rvec = np.array([0.3, 0.2, 0.0])
+    shifts = [(x, y) for x in (-0.12, -0.1, -0.08) for y in (-0.08, -0.06, -0.04, -0.02)]
+    corners = [calibrate.find_board(render_board(rvec, np.array([x, y, 0.6])), (9, 6)) for x, y in shifts]
+    _, _, rms, spread = calibrate.calibrate(corners, IMAGE_SIZE, (9, 6), SQUARE_M)
+    assert rms < calibrate.MAX_RMS_PX
+    assert spread < calibrate.MIN_TILT_SPREAD_DEG
 
 def test_calibrate_rejects_too_few_frames():
     with pytest.raises(ValueError, match=r"5.*10|10.*5"):
@@ -109,21 +119,20 @@ def run_main(monkeypatch, source, output):
 
 def test_main_writes_calibration(tmp_path, monkeypatch):
     source = write_frames(tmp_path / "frames", [render_board(r, t) for r, t in views(20)])
-    monkeypatch.setattr(calibrate, "MIN_GAP_FRAMES", 1)
     run_main(monkeypatch, source, tmp_path / "camera.yaml")
 
     matrix, _ = pose.load_calibration(tmp_path / "camera.yaml")
     assert matrix[0, 0] == pytest.approx(900, rel=0.02)
 
-def test_main_spaces_frames(tmp_path, monkeypatch, capsys):
+def test_still_board_keeps_one_frame(tmp_path, monkeypatch, capsys):
     rvec, tvec = views(1)[0]
     source = write_frames(tmp_path / "frames", [render_board(rvec, tvec)] * 30)
-    monkeypatch.setattr(calibrate, "MIN_FRAMES", 1)
-    run_main(monkeypatch, source, tmp_path / "camera.yaml")
+    with pytest.raises(SystemExit):
+        run_main(monkeypatch, source, tmp_path / "camera.yaml")
 
     out = capsys.readouterr().out
-    assert "captured 2/" in out and "captured 3/" not in out
-    assert (tmp_path / "camera.yaml").exists()
+    assert "captured 1/" in out and "captured 2/" not in out
+    assert "more positions" in [line for line in out.splitlines() if "[ERROR]" in line][0]
 
 def test_main_fails_without_board(tmp_path, monkeypatch, capsys):
     source = write_frames(tmp_path / "frames", [np.full((720, 1280), 255, np.uint8)] * 12)
@@ -136,15 +145,14 @@ def test_main_fails_without_board(tmp_path, monkeypatch, capsys):
 
 def test_main_warns_on_high_rms(tmp_path, monkeypatch, capsys):
     source = write_frames(tmp_path / "frames", [render_board(r, t) for r, t in views(20)])
-    monkeypatch.setattr(calibrate, "MIN_GAP_FRAMES", 1)
-    monkeypatch.setattr(calibrate, "MAX_RMS_PX", 0)
+    monkeypatch.setattr(calibrate, "MIN_TILT_SPREAD_DEG", 180)
     run_main(monkeypatch, source, tmp_path / "camera.yaml")
 
     assert "[WARNING]" in capsys.readouterr().out
     assert (tmp_path / "camera.yaml").exists()
 
 def test_calibrated_pose_distance():
-    matrix, coeffs, _ = calibrate.calibrate(found_corners(15), IMAGE_SIZE, (9, 6), SQUARE_M)
+    matrix, coeffs, _, _ = calibrate.calibrate(found_corners(15), IMAGE_SIZE, (9, 6), SQUARE_M)
     corners, ids, _ = detect.make_detector().detectMarkers(render_marker((0.1, 0.0, 1.5)))
     assert ids is not None
     offset = pose.marker_offset(corners[0], matrix, coeffs)

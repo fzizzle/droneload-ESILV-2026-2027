@@ -194,7 +194,7 @@ Les distances en mètres demandent un fichier de calibration pour chaque caméra
 python -m droneload.vision.calibrate --source 0 --square 0.025
 ```
 
-Déplacez et inclinez le damier sur toute l'image jusqu'à capturer 20 images. L'outil écrit `camera.yaml` et affiche l'erreur RMS ; moins de 1 px est bon. Options : `--board 9x6` (coins intérieurs), `--frames 20` et `--output camera.yaml`. Les détails sont dans `droneload/vision/README.md`.
+Déplacez et inclinez le damier sur toute l'image jusqu'à capturer 20 images. L'outil écrit `camera.yaml` et affiche l'erreur RMS ; moins de 1 px est bon. Il prévient si l'erreur est plus élevée ou si le damier n'a pas été assez incliné. Options : `--board 9x6` (coins intérieurs), `--frames 20` et `--output camera.yaml`. Les détails sont dans `droneload/vision/README.md`.
 
 ### Vol en simulateur
 

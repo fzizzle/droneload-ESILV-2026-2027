@@ -9,7 +9,8 @@ A checkerboard calibration command that writes the file `pose.py` reads (plan: `
 ## Steps
 - 2026-11-13: Added `calibrate.py` functions with 6 tests on rendered boards: focal length within 2%, RMS under 0.5 px.
 - 2026-11-13: Added `python -m droneload.vision.calibrate` with 5 more tests, including a marker at 1.5 m measured within 3%.
-- 2026-11-13: Webcam smoke test: camera opened, Ctrl+C handled, no board shown, so it exited with an error and wrote nothing. No real calibration was done.
+- 2026-11-13: Webcam smoke test: camera opened and Ctrl+C was handled; no board was shown, so no real calibration.
+- 2026-11-13: Review fixes: frames kept by board movement, not frame count (photo folders now work); warning when board tilt varies under 20°, since parallel views gave fx 8% wrong at RMS 0.28 px.
 
 ## Decisions
 - `camera.yaml` is gitignored until the team decides where camera files live.

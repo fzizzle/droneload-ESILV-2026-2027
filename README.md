@@ -194,7 +194,7 @@ Distances in metres need a calibration file for each camera. Print a checkerboar
 python -m droneload.vision.calibrate --source 0 --square 0.025
 ```
 
-Move and tilt the board across the whole image until 20 frames are captured. The tool writes `camera.yaml` and prints the RMS error; under 1 px is good. Options: `--board 9x6` (inner corners), `--frames 20` and `--output camera.yaml`. Details are in `droneload/vision/README.md`.
+Move and tilt the board across the whole image until 20 frames are captured. The tool writes `camera.yaml` and prints the RMS error; under 1 px is good. It warns if the error is higher or the board was not tilted enough. Options: `--board 9x6` (inner corners), `--frames 20` and `--output camera.yaml`. Details are in `droneload/vision/README.md`.
 
 ### Simulator Flight
 
