@@ -15,6 +15,10 @@ WRITE_COOLDOWN_MS = 1000
 DEBUG_IMAGE_PATH  = "aruco_debug.jpg"
 SAVE_EVERY_SEC    = 2.0
 LOG_EVERY_SEC     = 2.0
+SHOW_WINDOW       = "droneload"
+RECORD_FPS        = 30
+RECORD_CODEC      = "mp4v"
+REJECTED_COLOR    = (128, 128, 128)  # markers the tracker has not confirmed
 CLAHE             = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
 
 # labels
@@ -81,6 +85,12 @@ def print_detections(detect_ms, detected_info):
     else:
         print("  No markers detected.")
 
+def draw_status(vis, detect_ms, fps, confirmed, rejected):
+    """Draw detection time, frame rate and marker counts in the top-left corner."""
+    text = f"detect {detect_ms:.1f} ms  {fps:.0f} fps  confirmed {confirmed}  rejected {rejected}"
+    cv2.rectangle(vis, (0, 0), (520, 36), (0, 0, 0), -1)
+    cv2.putText(vis, text, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1, cv2.LINE_AA)
+
 def make_camera(source):
     if source == "rubikpi-csi":
         from .camera_rubikpi_csi import RubikPiCSICamera
@@ -101,6 +111,10 @@ def main():
                         help=f"cv2.aruco dictionary name (default: {ARUCO_DICT})")
     parser.add_argument("--no-track", action="store_true",
                         help="report every detection, without confirming it across frames")
+    parser.add_argument("--show", action="store_true",
+                        help="show the annotated video in a window; press q to stop")
+    parser.add_argument("--record", metavar="FILE",
+                        help="save the annotated video to FILE, e.g. out.mp4")
     args = parser.parse_args()
 
     camera = make_camera(args.source)
@@ -115,6 +129,9 @@ def main():
     last_save        = 0.0
     last_log         = 0.0
     last_frame       = None
+    recorder         = None
+    last_tick        = None
+    fps              = 0.0
 
     print("[INFO] Starting detection loop... Press Ctrl+C to stop.")
 
@@ -150,12 +167,14 @@ def main():
 
             found = []
             corner_of = {}
+            raw_corners = []
             if ids is not None and len(corners) > 0:
                 for corner, marker_id in zip(corners, ids.flatten()):
                     if marker_min_side(corner) < MIN_SIDE_PX:
                         continue
                     found.append((int(marker_id), *center_of(corner)))
                     corner_of.setdefault(int(marker_id), []).append(corner)
+                    raw_corners.append(corner)
 
             if tracker is not None:
                 found = tracker.update(found)
@@ -175,8 +194,32 @@ def main():
                     csv_file.flush()
                     last_written[marker_id] = ts
 
+            rejected = [c for c in raw_corners if not any(c is k for k in kept_corners)]
+            if rejected:
+                cv2.aruco.drawDetectedMarkers(vis, rejected, borderColor=REJECTED_COLOR)
             if kept_ids:
                 cv2.aruco.drawDetectedMarkers(vis, kept_corners, np.array(kept_ids).reshape(-1, 1))
+
+            tick = time.perf_counter()
+            if last_tick is not None:
+                # Frames processed per second, smoothed so the number is readable
+                dt  = max(tick - last_tick, 1e-6)
+                fps = 0.9 * fps + 0.1 / dt if fps else 1 / dt
+            last_tick = tick
+            draw_status(vis, detect_ms, fps, len(kept_corners), len(rejected))
+
+            if args.record:
+                if recorder is None:
+                    height, width = vis.shape[:2]
+                    recorder = cv2.VideoWriter(args.record, cv2.VideoWriter_fourcc(*RECORD_CODEC),
+                                               RECORD_FPS, (width, height))
+                recorder.write(vis)
+
+            if args.show:
+                cv2.imshow(SHOW_WINDOW, vis)
+                if cv2.waitKey(1) & 0xFF == ord("q"):
+                    print("\n[INFO] Stopping...")
+                    break
 
             # Terminal log
             if now - last_log >= LOG_EVERY_SEC:
@@ -197,6 +240,11 @@ def main():
     finally:
         camera.release()
         csv_file.close()
+        if recorder is not None:
+            recorder.release()
+            print(f"[INFO] Video saved to {args.record}")
+        if args.show:
+            cv2.destroyAllWindows()
         print(f"[INFO] Camera released. Detections saved to {DETECTION_LOG}")
 
 

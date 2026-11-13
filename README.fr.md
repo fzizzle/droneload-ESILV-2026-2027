@@ -160,7 +160,7 @@ Sur les images de test Shadow-ArUco, le détecteur a trouvé 56 % des marqueurs 
 ## Utilisation
 
 ```bash
-python -m droneload.vision [--source SOURCE] [--dict DICTIONNAIRE] [--no-track]
+python -m droneload.vision [--source SOURCE] [--dict DICTIONNAIRE] [--no-track] [--show] [--record FICHIER]
 ```
 
 Par défaut, `--source` vaut `0`, soit la première webcam. Valeurs possibles :
@@ -177,6 +177,12 @@ Par défaut, `--source` vaut `0`, soit la première webcam. Valeurs possibles :
 `--dict` prend le nom d'un dictionnaire `cv2.aruco` et vaut `DICT_4X4_50` par défaut.
 
 Un marqueur n'est signalé qu'après avoir été vu sur 3 des 5 dernières images, et sa position est lissée. `--no-track` signale chaque détection, ce qu'exige une image seule.
+
+`--show` affiche la vidéo annotée dans une fenêtre ; appuyez sur `q` pour arrêter. `--record out.mp4` enregistre la même vidéo. Les marqueurs confirmés sont entourés en vert avec leur ID, les autres en gris, et le coin supérieur gauche indique le temps de détection, les images par seconde et les deux nombres. Par exemple, pour observer le suivi sur les images Shadow-ArUco :
+
+```bash
+python -m droneload.vision --source "test_footage/shadow-aruco/video_5/%05d.png" --dict DICT_ARUCO_MIP_36h12 --show
+```
 
 Avec une vidéo ou des images, le programme s'arrête à la dernière image. Avec une source en direct, appuyez sur Ctrl+C pour l'arrêter.
 
