@@ -33,7 +33,8 @@ Problems found while reviewing the project.
   On Shadow-ArUco `video_5` the detector found 56% of annotated markers, and
   27% of its detections did not match the annotations. Those detections
   include recurring wrong IDs. The cause has not been investigated, and this
-  footage does not use `DICT_4X4_50`.
+  footage does not use `DICT_4X4_50`. Tracking cuts unmatched detections to 2.7%, with
+  53.2% found.
 
 - [ ] **Record real `DICT_4X4_50` footage.** No public source was found.
 
@@ -114,6 +115,30 @@ inventory marks some box items as present and does not record others.
   HC-12 radio modules, which are not recorded in the box.
 - [ ] **Test supplies:** printed `DICT_4X4_50` markers (20 × 20 cm), A3 posters
   and a camera calibration checkerboard.
+
+## Can be built before hardware
+
+Each runs on a PC, against the simulator, recorded footage or a stub. Items
+already listed above are not repeated: calibration tool, `DICT_4X4_50`
+footage and Marvelmind simulation.
+
+- [x] **Tracking in `vision/tracking`.** Confirm markers across frames and
+  smooth their positions. Skipping blurred frames and using drone motion are
+  still open; see `droneload/vision/tracking/README.md`.
+- [ ] **`comms` protocol layer.** A state machine for the V0 robot protocol
+  (`D`/`G`/`A` commands, `N`/`F`/`S` replies, target digit), tested against a
+  fake serial port. `pyserial` is a new dependency and needs a person's OK.
+- [ ] **`mission` state machine.** Steps, timeouts and the "operator only
+  confirms" rule, run against stubbed modules.
+- [ ] **Poster and floor-line vision.** Prototype A3 target recognition, decoy
+  rejection and safe-path line detection on synthetic or phone images.
+- [ ] **`navigation` in the simulator.** Centre over a marker, follow a path
+  and cross the window, using simulated detections. It commands a simulated
+  drone, so it needs a person's OK first.
+- [ ] **Detection display for the jury.** An overlay or stream of what the
+  drone detects, built on recorded footage.
+- [ ] **Drop-accuracy bench test.** 20 drops each from 0.5, 1 and 1.5 m of a
+  50 g disc onto an A3 sheet, to help choose the grabber.
 
 ## Possible features
 

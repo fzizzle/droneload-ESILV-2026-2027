@@ -32,6 +32,7 @@ Reads the cameras and recognises what the drone needs to see: ArUco markers, tar
 | Test | Result | Note |
 |------|--------|------|
 | Shadow-ArUco `video_5` | 56.4% found, 26.6% of detections unmatched | Dark room and another dictionary, so not comparable with the 95% target |
+| Same, with tracking (`--track`) | 53.2% found, 2.7% unmatched | Confirmed in 3 of the last 5 frames |
 | Generated test video | All 3 markers in all 150 frames | Easy footage; proves the program runs, not its quality |
 | Detection time | About 3 ms per frame | On a PC at 1280 × 720, not on the drone |
 
