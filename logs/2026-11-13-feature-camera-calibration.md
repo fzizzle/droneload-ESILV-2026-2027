@@ -7,16 +7,15 @@
 A checkerboard calibration command that writes the file `pose.py` reads (plan: `docs/plans/2026-11-13-camera-calibration.md`).
 
 ## Steps
-- 2026-11-13: Added `calibrate.py` functions with 6 tests on rendered boards: focal length within 2%, RMS under 0.5 px.
-- 2026-11-13: Added `python -m droneload.vision.calibrate` with 5 more tests, including a marker at 1.5 m measured within 3%.
+- 2026-11-13: Added `calibrate.py` and `python -m droneload.vision.calibrate`, tested on rendered boards: focal length within 2%, a marker at 1.5 m within 3%.
 - 2026-11-13: Webcam smoke test: camera opened and Ctrl+C was handled; no board was shown, so no real calibration.
 - 2026-11-13: Review fixes: frames kept by board movement, not frame count (photo folders now work); warning when board tilt varies under 20°, since parallel views gave fx 8% wrong at RMS 0.28 px.
 
 ## Decisions
-- `camera.yaml` is gitignored until the team decides where camera files live.
+- `camera.yaml` is gitignored until the team decides where camera files live. Tilt is checked directly, because fx's standard deviation proved unreliable.
 
 ## Verification
 - `./scripts/check.sh` passes. Not tested on the drone's cameras or with a printed board.
 
 ## Next Steps
-- Calibrate each camera once bought, and decide where the files are kept.
+- Calibrate each camera once bought; decide where files are kept; deferred minors are in the PR.
