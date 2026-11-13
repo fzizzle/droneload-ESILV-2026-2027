@@ -19,7 +19,7 @@ droneload/
     ├── camera_opencv.py        # Any source cv2.VideoCapture can open
     ├── camera_rubikpi_csi.py   # RubikPi CSI camera (GStreamer pipeline)
     ├── camera_picamera2.py     # Raspberry Pi camera
-    └── tracking/               # Planned: keeps detections steady between frames
+    └── tracking/               # Confirms markers across frames and smooths positions
 testing/
 ├── make_test_video.py          # Generates a test video of moving markers
 ├── benchmark.py                # Scores detection against ground truth
@@ -155,12 +155,12 @@ The last line should say `Detections saved to detections.csv`. The results are i
 | Project markers (`DICT_4X4_50`) | Not tested on real footage |
 | Flight demo | Tested in the ArduPilot 4.7.2 simulator only, on simulated optical flow without GPS, not on a drone |
 
-On the Shadow-ArUco test footage, the detector found 56% of annotated markers, and 27% of its detections did not match the annotations. That footage uses a different dictionary, so these figures may not apply to project markers. `TODO.md` tracks open work.
+On the Shadow-ArUco test footage, the detector found 56% of annotated markers, and 27% of its detections did not match the annotations. With tracking, it found 53% and 2% did not match. That footage uses a different dictionary, so these figures may not apply to project markers. `TODO.md` tracks open work.
 
 ## Usage
 
 ```bash
-python -m droneload.vision [--source SOURCE] [--dict DICTIONARY]
+python -m droneload.vision [--source SOURCE] [--dict DICTIONARY] [--no-track]
 ```
 
 `--source` defaults to `0`, the first webcam. It accepts:
@@ -175,6 +175,8 @@ python -m droneload.vision [--source SOURCE] [--dict DICTIONARY]
 | `picamera` | Raspberry Pi camera, needs `picamera2` |
 
 `--dict` takes a `cv2.aruco` dictionary name and defaults to `DICT_4X4_50`.
+
+A marker is reported only once it is seen in 3 of the last 5 frames, and its position is smoothed. `--no-track` reports every detection instead, which a single image needs.
 
 Video and image sources stop at the last frame. Press Ctrl+C to stop a live source.
 

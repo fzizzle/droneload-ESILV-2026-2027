@@ -36,29 +36,46 @@ def test_source_parsing(tmp_path):
     assert OpenCVCamera(str(video)).finite
     assert OpenCVCamera("frames/%03d.jpg").finite
 
+class FakeCamera:
+    finite = True
+
+    def __init__(self, frames):
+        self.frames = frames
+
+    def open(self):
+        return True
+
+    def read(self):
+        return (True, self.frames.pop()) if self.frames else (False, None)
+
+    def release(self):
+        pass
+
+def one_marker_frame():
+    aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
+    frame = np.full((720, 1280, 3), 255, np.uint8)
+    frame[100:300, 100:300] = cv2.cvtColor(cv2.aruco.generateImageMarker(aruco_dict, 0, 200), cv2.COLOR_GRAY2BGR)
+    return frame
+
+@pytest.mark.parametrize("argv, expected", [(["detect"], set()), (["detect", "--no-track"], {0})])
+def test_single_frame_needs_no_track(tmp_path, monkeypatch, argv, expected):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(detect, "make_camera", lambda source: FakeCamera([one_marker_frame()]))
+    monkeypatch.setattr(sys, "argv", argv)
+    detect.main()
+
+    assert logged_ids() == expected
+
 def test_size_filter(tmp_path, monkeypatch):
     aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
     frame = np.full((720, 1280, 3), 255, np.uint8)
     frame[100:300, 100:300] = cv2.cvtColor(cv2.aruco.generateImageMarker(aruco_dict, 0, 200), cv2.COLOR_GRAY2BGR)
     frame[100:160, 700:760] = cv2.cvtColor(cv2.aruco.generateImageMarker(aruco_dict, 1, 60), cv2.COLOR_GRAY2BGR)
 
-    class FakeCamera:
-        frames = [frame]
-        finite = True
-
-        def open(self):
-            return True
-
-        def read(self):
-            return (True, self.frames.pop()) if self.frames else (False, None)
-
-        def release(self):
-            pass
-
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(detect, "MIN_SIDE_PX", 100)
-    monkeypatch.setattr(detect, "make_camera", lambda source: FakeCamera())
-    monkeypatch.setattr(sys, "argv", ["detect"])
+    monkeypatch.setattr(detect, "make_camera", lambda source: FakeCamera([frame]))
+    monkeypatch.setattr(sys, "argv", ["detect", "--no-track"])
     detect.main()
 
     assert logged_ids() == {0}
