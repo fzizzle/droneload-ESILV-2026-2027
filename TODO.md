@@ -135,8 +135,9 @@ footage and Marvelmind simulation.
 - [ ] **`navigation` in the simulator.** Centre over a marker, follow a path
   and cross the window, using simulated detections. It commands a simulated
   drone, so it needs a person's OK first.
-- [ ] **Detection display for the jury.** An overlay or stream of what the
-  drone detects, built on recorded footage.
+- [ ] **Detection display for the jury.** `--show` and `--record` give an
+  annotated video on a PC. Still to decide: how it reaches the organisers'
+  screen from the drone.
 - [ ] **Drop-accuracy bench test.** 20 drops each from 0.5, 1 and 1.5 m of a
   50 g disc onto an A3 sheet, to help choose the grabber.
 

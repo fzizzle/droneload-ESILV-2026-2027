@@ -160,7 +160,7 @@ On the Shadow-ArUco test footage, the detector found 56% of annotated markers, a
 ## Usage
 
 ```bash
-python -m droneload.vision [--source SOURCE] [--dict DICTIONARY] [--no-track]
+python -m droneload.vision [--source SOURCE] [--dict DICTIONARY] [--no-track] [--show] [--record FILE]
 ```
 
 `--source` defaults to `0`, the first webcam. It accepts:
@@ -177,6 +177,12 @@ python -m droneload.vision [--source SOURCE] [--dict DICTIONARY] [--no-track]
 `--dict` takes a `cv2.aruco` dictionary name and defaults to `DICT_4X4_50`.
 
 A marker is reported only once it is seen in 3 of the last 5 frames, and its position is smoothed. `--no-track` reports every detection instead, which a single image needs.
+
+`--show` plays the annotated video in a window; press `q` to stop. `--record out.mp4` saves the same video. Confirmed markers are outlined in green with their ID, unconfirmed ones in grey, and the top-left corner shows detection time, frames per second and both counts. For example, to watch tracking on the Shadow-ArUco footage:
+
+```bash
+python -m droneload.vision --source "test_footage/shadow-aruco/video_5/%05d.png" --dict DICT_ARUCO_MIP_36h12 --show
+```
 
 Video and image sources stop at the last frame. Press Ctrl+C to stop a live source.
 

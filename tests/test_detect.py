@@ -150,3 +150,55 @@ def test_load_calibration(tmp_path):
     matrix, coeffs = pose.load_calibration(path)
     assert np.array_equal(matrix, CAMERA_MATRIX)
     assert coeffs.size == 5
+
+def green_mask(image):
+    return (image[:, :, 1] > 150) & (image[:, :, 0] < 100) & (image[:, :, 2] < 100)
+
+def test_record_writes_annotated_video(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    make_test_video.main()
+    monkeypatch.setattr(sys, "argv", ["detect", "--source", make_test_video.OUTPUT, "--record", "out.mp4"])
+    detect.main()
+
+    video = cv2.VideoCapture("out.mp4")
+    frames = []
+    while True:
+        ok, frame = video.read()
+        if not ok:
+            break
+        frames.append(frame)
+    assert len(frames) == 150
+    assert green_mask(frames[-1]).any()
+
+def test_unconfirmed_markers_drawn_grey(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(detect, "make_camera", lambda source: FakeCamera([one_marker_frame()]))
+    monkeypatch.setattr(sys, "argv", ["detect"])
+    detect.main()
+
+    image = cv2.imread(detect.DEBUG_IMAGE_PATH)
+    grey = (np.abs(image.astype(int) - detect.REJECTED_COLOR).sum(axis=2) < 30)
+    assert grey[90:310, 90:310].any()
+    assert not green_mask(image)[90:310, 90:310].any()
+
+def test_status_line_drawn(tmp_path, monkeypatch):
+    blank = np.full((720, 1280, 3), 255, np.uint8)
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(detect, "make_camera", lambda source: FakeCamera([blank]))
+    monkeypatch.setattr(sys, "argv", ["detect"])
+    detect.main()
+
+    assert (cv2.imread(detect.DEBUG_IMAGE_PATH)[:60, :400] < 200).any()
+
+def test_show_displays_frames_until_q(tmp_path, monkeypatch):
+    shown = []
+    keys = iter([-1, ord("q"), -1])
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(detect, "make_camera", lambda source: FakeCamera([one_marker_frame()] * 3))
+    monkeypatch.setattr(detect.cv2, "imshow", lambda name, image: shown.append(image))
+    monkeypatch.setattr(detect.cv2, "waitKey", lambda delay: next(keys))
+    monkeypatch.setattr(detect.cv2, "destroyAllWindows", lambda: None)
+    monkeypatch.setattr(sys, "argv", ["detect", "--show"])
+    detect.main()
+
+    assert len(shown) == 2
