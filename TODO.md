@@ -38,7 +38,8 @@ Problems found while reviewing the project.
 
 - [ ] **Record real `DICT_4X4_50` footage.** No public source was found.
 
-- [ ] **Add a camera calibration tool.** `pose.py` needs a calibration file with
+- [ ] **Add a camera calibration tool.** Plan: `docs/plans/2026-11-13-camera-calibration.md`.
+  `pose.py` needs a calibration file with
   `camera_matrix` and `dist_coeffs`. Use OpenCV's checkerboard calibration.
 
 - [ ] **Use marker positions in the detection loop.** This may change the CSV
