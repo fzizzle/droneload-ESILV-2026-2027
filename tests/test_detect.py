@@ -94,6 +94,11 @@ def test_generated_video_end_to_end(tmp_path, monkeypatch):
 
     assert logged_ids() == set(make_test_video.MARKER_IDS)
 
+    # The debug image must show confirmed markers even when the video is short
+    image = cv2.imread(detect.DEBUG_IMAGE_PATH)
+    green = (image[:, :, 1] > 150) & (image[:, :, 0] < 100) & (image[:, :, 2] < 100)
+    assert green.any()
+
 def test_vibration_helpers():
     frame = vibration_test.make_frame(120)
     detector = detect.make_detector()

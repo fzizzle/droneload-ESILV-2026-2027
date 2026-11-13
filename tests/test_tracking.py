@@ -44,3 +44,18 @@ def test_follows_steady_motion():
 def test_output_sorted_by_id():
     out = run([[(9, 0, 0), (0, 300, 300)]] * 3)
     assert [m[0] for m in out[-1]] == [0, 9]
+
+def test_false_positive_does_not_break_confirmed_track():
+    out = run([[(3, 100, 100)]] * 3 + [[(3, 400, 400)], [(3, 100, 100)]])
+    assert out[-2] == []
+    assert [m[0] for m in out[-1]] == [3]
+
+def test_follows_fast_motion():
+    out = run([[(5, 30 * i, 0)] for i in range(10)])
+    assert all([m[0] for m in o] == [5] for o in out[2:])
+
+def test_one_miss_while_moving_keeps_track():
+    frames = [[(5, 20 * i, 0)] for i in range(10)]
+    frames[5] = []
+    out = run(frames)
+    assert [m[0] for m in out[6]] == [5]

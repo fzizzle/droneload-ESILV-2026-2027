@@ -6,14 +6,22 @@ import math
 # Tracking settings
 CONFIRM_FRAMES = 3     # hits needed in the window before a marker is reported
 WINDOW_FRAMES  = 5     # recent frames remembered per marker
-MAX_JUMP_PX    = 40.0  # farther than this from the track starts a new track
+MAX_JUMP_PX    = 40.0  # farthest move per frame from the last detection
 SMOOTHING      = 0.6   # weight of the new position; 1.0 means no smoothing
 
 @dataclass
 class _Track:
-    cx: float
+    cx: float              # smoothed position, reported
     cy: float
+    raw: tuple = None      # last detected position, used for the jump check
+    since_hit: int = 1     # frames since the last detection
     hits: deque = field(default_factory=lambda: deque([True], maxlen=WINDOW_FRAMES))
+
+    def __post_init__(self):
+        self.raw = (self.cx, self.cy)
+
+    def confirmed(self):
+        return sum(self.hits) >= CONFIRM_FRAMES
 
 class MarkerTracker:
     """Keeps one track per marker ID and reports only confirmed markers."""
@@ -27,25 +35,35 @@ class MarkerTracker:
         for marker_id, cx, cy in detections:
             by_id.setdefault(int(marker_id), []).append((float(cx), float(cy)))
 
+        seen = set()
         for marker_id, points in by_id.items():
             track = self.tracks.get(marker_id)
             if track is None:
-                cx, cy = points[0]
-            else:
-                cx, cy = min(points, key=lambda p: math.dist(p, (track.cx, track.cy)))
-            if track is None or math.dist((cx, cy), (track.cx, track.cy)) > MAX_JUMP_PX:
-                self.tracks[marker_id] = _Track(cx, cy)
-            else:
+                self.tracks[marker_id] = _Track(*points[0])
+                seen.add(marker_id)
+                continue
+            cx, cy = min(points, key=lambda p: math.dist(p, track.raw))
+            if math.dist((cx, cy), track.raw) <= MAX_JUMP_PX * track.since_hit:
                 track.cx += SMOOTHING * (cx - track.cx)
                 track.cy += SMOOTHING * (cy - track.cy)
+                track.raw = (cx, cy)
+                track.since_hit = 1
                 track.hits.append(True)
+                seen.add(marker_id)
+            elif not track.confirmed():
+                # A far detection replaces an unconfirmed track
+                self.tracks[marker_id] = _Track(cx, cy)
+                seen.add(marker_id)
+            # A far detection is a miss for a confirmed track, so one false
+            # positive cannot move it
 
         for marker_id, track in list(self.tracks.items()):
-            if marker_id not in by_id:
+            if marker_id not in seen:
                 track.hits.append(False)
+                track.since_hit += 1
                 if not any(track.hits):
                     del self.tracks[marker_id]
 
         return [(marker_id, round(track.cx, 1), round(track.cy, 1))
                 for marker_id, track in sorted(self.tracks.items())
-                if marker_id in by_id and sum(track.hits) >= CONFIRM_FRAMES]
+                if marker_id in seen and track.confirmed()]

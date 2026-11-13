@@ -18,15 +18,15 @@ Listed in the order to try them. Start with the simplest that works.
 
 ## Results
 
-Settings are at the top of `tracker.py`: a marker is reported after 3 hits in the last 5 frames, a jump over 40 px starts a new track, and the new position has a weight of 0.6.
+Settings are at the top of `tracker.py`: a marker is reported after 3 hits in the last 5 frames, a marker may move up to 40 px per frame since it was last seen, and the new position has a weight of 0.6. A far detection never moves a confirmed marker: it counts as a miss, so a single false positive with the same ID cannot replace it.
 
 On Shadow-ArUco `video_5` (`python -m testing.benchmark --track`):
 
 | Setting | Found | Unmatched |
 |---------|-------|-----------|
 | No tracking | 56.4% | 26.6% |
-| 2 of 5 frames | 55.0% | 6.1% |
-| 3 of 5 frames (chosen) | 53.2% | 2.4% |
+| 2 of 5 frames | 55.1% | 7.1% |
+| 3 of 5 frames (chosen) | 53.2% | 2.7% |
 
 Smoothing did not change these scores, because the benchmark accepts positions within 15 px. Confirming adds about 2 frames of delay, 67 ms at 30 frames per second. That footage uses another dictionary and was not filmed from a drone.
 

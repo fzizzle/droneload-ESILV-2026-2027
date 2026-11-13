@@ -73,6 +73,14 @@ def init_csv(path):
         f.flush()
     return f, writer
 
+def print_detections(detect_ms, detected_info):
+    print(f"\n[{time.strftime('%H:%M:%S')}] detect={detect_ms:.1f}ms")
+    if detected_info:
+        for mid, label, cx, cy in detected_info:
+            print(f"  ID={mid:>2}  label={label:<40}  center=({cx},{cy})")
+    else:
+        print("  No markers detected.")
+
 def make_camera(source):
     if source == "rubikpi-csi":
         from .camera_rubikpi_csi import RubikPiCSICamera
@@ -106,6 +114,7 @@ def main():
     last_written     = {}
     last_save        = 0.0
     last_log         = 0.0
+    last_frame       = None
 
     print("[INFO] Starting detection loop... Press Ctrl+C to stop.")
 
@@ -114,6 +123,10 @@ def main():
             ret, frame = camera.read()
             if not ret or frame is None:
                 if getattr(camera, "finite", False):
+                    # Show the last frame, since tracking hides the first one
+                    if last_frame is not None:
+                        print_detections(*last_frame[:2])
+                        cv2.imwrite(DEBUG_IMAGE_PATH, last_frame[2])
                     print("[INFO] End of source.")
                     break
                 print("[WARNING] Failed to read frame.")
@@ -168,18 +181,14 @@ def main():
             # Terminal log
             if now - last_log >= LOG_EVERY_SEC:
                 last_log = now
-                print(f"\n[{time.strftime('%H:%M:%S')}] detect={detect_ms:.1f}ms")
-                if detected_info:
-                    for mid, label, cx, cy in detected_info:
-                        print(f"  ID={mid:>2}  label={label:<40}  center=({cx},{cy})")
-                else:
-                    print("  No markers detected.")
+                print_detections(detect_ms, detected_info)
 
             #  Save debug image 
             if now - last_save >= SAVE_EVERY_SEC:
                 last_save = now
                 cv2.imwrite(DEBUG_IMAGE_PATH, vis)
 
+            last_frame = (detect_ms, detected_info, vis)
             time.sleep(0.01)
 
     except KeyboardInterrupt:

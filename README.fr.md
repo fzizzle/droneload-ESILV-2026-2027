@@ -155,7 +155,7 @@ La dernière ligne doit indiquer `Detections saved to detections.csv`. Les résu
 | Marqueurs du projet (`DICT_4X4_50`) | Non testés sur des images réelles |
 | Vol de démonstration | Testé uniquement dans le simulateur ArduPilot 4.7.2, pas sur un drone |
 
-Sur les images de test Shadow-ArUco, le détecteur a trouvé 56 % des marqueurs annotés, et 27 % de ses détections ne correspondaient à aucune annotation. Avec le suivi, il en a trouvé 53 %, et 2 % ne correspondaient pas. Ces images utilisent un autre dictionnaire, si bien que ces chiffres ne valent pas forcément pour les marqueurs du projet. Le travail restant figure dans `TODO.md`.
+Sur les images de test Shadow-ArUco, le détecteur a trouvé 56 % des marqueurs annotés, et 27 % de ses détections ne correspondaient à aucune annotation. Avec le suivi, il en a trouvé 53 %, et 3 % ne correspondaient pas. Ces images utilisent un autre dictionnaire, si bien que ces chiffres ne valent pas forcément pour les marqueurs du projet. Le travail restant figure dans `TODO.md`.
 
 ## Utilisation
 

@@ -155,7 +155,7 @@ The last line should say `Detections saved to detections.csv`. The results are i
 | Project markers (`DICT_4X4_50`) | Not tested on real footage |
 | Flight demo | Tested in the ArduPilot 4.7.2 simulator only, on simulated optical flow without GPS, not on a drone |
 
-On the Shadow-ArUco test footage, the detector found 56% of annotated markers, and 27% of its detections did not match the annotations. With tracking, it found 53% and 2% did not match. That footage uses a different dictionary, so these figures may not apply to project markers. `TODO.md` tracks open work.
+On the Shadow-ArUco test footage, the detector found 56% of annotated markers, and 27% of its detections did not match the annotations. With tracking, it found 53% and 3% did not match. That footage uses a different dictionary, so these figures may not apply to project markers. `TODO.md` tracks open work.
 
 ## Usage
 
