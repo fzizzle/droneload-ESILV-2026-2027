@@ -56,6 +56,18 @@ Simulated with a 900 px focal length at 1280 × 720, 40 placements per distance,
 - The mean is close to the worst case, which suggests a consistent bias. Corner refinement may reduce it, but that changes detection, so it needs the benchmark.
 - These are best-case numbers for this lens. Real accuracy depends on calibration and on the marker being printed at exactly 20 cm.
 
+## Calibration
+
+`python -m droneload.vision.calibrate` writes the file `marker_offset()` needs: `camera_matrix`, `dist_coeffs`, the image size and the RMS error, in OpenCV YAML.
+
+- Print a checkerboard with 10 × 7 squares (9 × 6 inner corners) on stiff, flat card. Measure one square and pass it with `--square`, in metres.
+- Move the board across the whole image, including the corners, and tilt it up to about 45°. Hold it still enough that frames are sharp.
+- A frame is kept only when the board has moved at least 20 px from every kept frame, so holding it still adds nothing.
+- Aim for an RMS error under 1 px; the tool warns above that. A low RMS is not enough on its own: boards that never turn give a focal length about 8% wrong with an RMS of 0.3 px. The tool also warns when the board's orientation varied by less than 20° across the kept frames.
+- Recalibrate after changing the resolution, lens or focus. The file records the image size it was made at.
+
+Tested on rendered images: focal length within 2%, and a marker at 1.5 m measured within 3% with the resulting calibration. On a webcam, only opening the camera was checked, without a board. Not tested on the drone's cameras.
+
 ## Vibration
 
 The organisers warn that camera vibration is usually a big problem. `python -m testing.vibration_test` simulates it on a clean generated image, with no real camera or drone. This table shows how often a marker was found:

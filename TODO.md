@@ -38,8 +38,10 @@ Problems found while reviewing the project.
 
 - [ ] **Record real `DICT_4X4_50` footage.** No public source was found.
 
-- [ ] **Add a camera calibration tool.** `pose.py` needs a calibration file with
-  `camera_matrix` and `dist_coeffs`. Use OpenCV's checkerboard calibration.
+- [x] **Add a camera calibration tool.** `python -m droneload.vision.calibrate`.
+
+- [ ] **Decide where real camera calibration files are kept.** `camera.yaml` is
+  gitignored for now. Each camera needs its own file.
 
 - [ ] **Use marker positions in the detection loop.** This may change the CSV
   format, which needs a person's decision.

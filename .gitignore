@@ -3,5 +3,6 @@ __pycache__/
 aruco_debug.jpg
 detections.csv
 test_markers.mp4
+camera.yaml
 test_footage/
 .venv/
