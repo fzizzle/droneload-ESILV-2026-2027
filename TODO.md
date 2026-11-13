@@ -115,6 +115,29 @@ inventory marks some box items as present and does not record others.
 - [ ] **Test supplies:** printed `DICT_4X4_50` markers (20 × 20 cm), A3 posters
   and a camera calibration checkerboard.
 
+## Can be built before hardware
+
+Each runs on a PC, against the simulator, recorded footage or a stub. Items
+already listed above are not repeated: calibration tool, `DICT_4X4_50`
+footage and Marvelmind simulation.
+
+- [ ] **Tracking in `vision/tracking`.** Confirm markers across frames and
+  smooth their positions. Plan: `docs/plans/2026-11-13-vision-tracking.md`.
+- [ ] **`comms` protocol layer.** A state machine for the V0 robot protocol
+  (`D`/`G`/`A` commands, `N`/`F`/`S` replies, target digit), tested against a
+  fake serial port. `pyserial` is a new dependency and needs a person's OK.
+- [ ] **`mission` state machine.** Steps, timeouts and the "operator only
+  confirms" rule, run against stubbed modules.
+- [ ] **Poster and floor-line vision.** Prototype A3 target recognition, decoy
+  rejection and safe-path line detection on synthetic or phone images.
+- [ ] **`navigation` in the simulator.** Centre over a marker, follow a path
+  and cross the window, using simulated detections. It commands a simulated
+  drone, so it needs a person's OK first.
+- [ ] **Detection display for the jury.** An overlay or stream of what the
+  drone detects, built on recorded footage.
+- [ ] **Drop-accuracy bench test.** 20 drops each from 0.5, 1 and 1.5 m of a
+  50 g disc onto an A3 sheet, to help choose the grabber.
+
 ## Possible features
 
 - [ ] Output is pixel centre only — no pose/distance estimation and nothing is
