@@ -22,3 +22,4 @@ Lasting decisions, one line each. Keep this file short.
 - 2026-10-30: Install instructions use a `.venv` and the `python` command, which works on Mac, Windows and Linux.
 - 2026-10-30: Team 450's drone goes back to the organisers and is not reused.
 - 2026-10-30: Only the main README has a French version. Other docs are in English, because a second language doubles each edit.
+- 2026-11-13: With tracking on, CSV rows hold the smoothed position of confirmed markers; the columns are unchanged. Approved by the project lead.

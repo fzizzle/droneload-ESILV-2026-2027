@@ -12,6 +12,7 @@ List the work that can be done before hardware arrives, and plan the first track
 
 ## Decisions
 - Plan covers confirm-across-frames and smoothing only; poor-frame skipping and motion correction wait for real footage.
+- CSV rows become smoothed, confirmed positions: approved by the project lead.
 
 ## Verification
 - Docs only. `./scripts/check.sh` run before the PR.

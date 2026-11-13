@@ -14,7 +14,7 @@
 
 - Settings are constants at the top of `tracker.py`.
 - Added delay: no more than a few frames (tracking README, Proposed).
-- The CSV columns stay `timestamp_ms, id, label, cx, cy`. Values become the smoothed, confirmed positions; tell the reviewer this in the PR.
+- The CSV columns stay `timestamp_ms, id, label, cx, cy`. Values become the smoothed, confirmed positions (approved 2026-11-13, see `logs/DECISIONS.md`).
 - `ARUCO_LABELS`, marker IDs and the default dictionary do not change.
 - Detection change: run `python -m testing.benchmark` before and after, and log both. Baseline `found=56.4% unmatched=26.6%`.
 - `README.md` and `README.fr.md` change together.
