@@ -8,8 +8,7 @@ Confirm markers across frames and smooth positions, to cut wrong IDs (plan: `doc
 
 ## Steps
 - 2026-11-13: Added `MarkerTracker` in `vision/tracking/tracker.py`, benchmark `--track`, and tracking in the detection loop (`--no-track` turns it off).
-- 2026-11-13: Benchmark before: found=56.4% unmatched=26.6%. First version: 53.2%/2.4%.
-- 2026-11-13: Review fixes: far detections no longer replace a confirmed track; jumps are checked against the last raw position, per frame missed; short videos save the last frame's debug image. After: 53.2%/2.7%. 2 of 5 frames gave 55.1%/7.1%.
+- 2026-11-13: Review fixes: far detections no longer replace a confirmed track; jumps are checked against the last raw position, per frame missed; short videos save the last frame's debug image. Benchmark: 56.4%/26.6% before, 53.2%/2.4% first version, 53.2%/2.7% after fixes.
 
 ## Decisions
 - 3 of 5 frames: lowest unmatched for 3.2 points of found. Smoothing 0.6 did not change scores.
