@@ -24,7 +24,7 @@ FOOTAGE    = {
 }
 ROOT       = Path(__file__).resolve().parents[2]
 OUTPUT_DIR = Path(__file__).parent / "output"
-CACHE_VERSION = 3  # bump when Run or Detected changes, so old caches are not read
+CACHE_VERSION = 3  # bump when Run, Detected or the detector settings change, so old caches are not read
 METRICS    = ("frame_err_px", "steady_err_px", "jitter_px", "true_jitter_px", "tracked", "false_ids")
 
 @dataclass

@@ -38,6 +38,8 @@ The move limit was a fixed 40 px until 2026-11-16. Under simulated moderate shak
 | None | 54.4% | 10.0 |
 | 0.75 sides, at least 20 px (chosen) | 54.1% | 0.1 |
 
+The two tables above were measured before the benchmark applied `MIN_SIDE_PX` and before `polygonalApproxAccuracyRate` returned to 0.03; the same `--track` command now gives `found=54.8% unmatched=0.8%`, with moderate shake raw 65.9% and tracked 57.2% (see `logs/DECISIONS.md`).
+
 Scaling with marker size keeps nearly all the recall of no limit with no more wrong IDs than the fixed 40 px. Camera-motion compensation (KLT optical flow and `estimateAffinePartial2D`) was also tried as a prototype: it gave the same 54.1% but 3.2 false IDs per 100 frames, and cost 5.7 ms per frame on a PC, so it was not kept. That shake is a global affine move; real flights add rolling-shutter wobble and parallax.
 
 Smoothing did not change these scores, because the benchmark accepts positions within 15 px, and it never changes which markers are reported. It does change where they are reported. The study in `analysis/smoothing/smoothing_study.ipynb` found that a weight of 0.6 left logged positions 15.2 px from the marker at moderate shake on fdcl-gwu, against 1.7 px at 1.0 (6.3 and 1.4 px on Shadow-ArUco), so smoothing was turned off on 2026-11-16. On a still scene, smoothing does steady the estimate of where a marker sits (14% at 0.6 on Shadow-ArUco), which is what centring needs. That filter belongs in `navigation`, where the drone's own motion is known, not in the logged positions. Confirming adds about 2 frames of delay, 67 ms at 30 frames per second. That footage uses another dictionary and was not filmed from a drone.
