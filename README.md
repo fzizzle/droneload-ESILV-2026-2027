@@ -181,7 +181,7 @@ If a live camera stops sending frames, the program reopens it every 2 s until fr
 
 A marker is reported only once it is seen in 3 of the last 5 frames, at the position detected in that frame. `--no-track` reports every detection instead, which a single image needs.
 
-`--show` plays the annotated video in a window; press `q` to stop. `--record out.mp4` saves the same video. A recording of a video file keeps the file's frame rate. A recording of a live camera is written at 30 fps in real time, so frames are repeated or skipped when the loop runs slower or faster. Confirmed markers are outlined in green with their ID, unconfirmed ones in grey, and the top-left corner shows detection time, frames per second and both counts. For example, to watch tracking on the Shadow-ArUco footage:
+`--show` plays the annotated video in a window; press `q` to stop. A video file plays at its own speed. `--record out.mp4` saves the same video. A recording of a video file keeps the file's frame rate. A recording of a live camera is written at 30 fps in real time, so frames are repeated or skipped when the loop runs slower or faster. Confirmed markers are outlined in green with their ID, unconfirmed ones in grey, and the top-left corner shows detection time, frames per second and both counts. For example, to watch tracking on the Shadow-ArUco footage:
 
 ```bash
 python -m droneload.vision --source "test_footage/shadow-aruco/video_5/%05d.png" --dict DICT_ARUCO_MIP_36h12 --show

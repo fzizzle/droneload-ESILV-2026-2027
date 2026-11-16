@@ -51,6 +51,10 @@ def frames_due(elapsed_s: float, written: int, fps: float = RECORD_FPS) -> int:
     """Copies of the current frame to write so a recording keeps real time."""
     return max(0, int(elapsed_s * fps) + 1 - written)
 
+def show_delay_ms(due_s: float, now_s: float) -> int:
+    """cv2.waitKey delay that holds a frame until due_s; waitKey needs at least 1 ms."""
+    return max(1, round(1000 * (due_s - now_s)))
+
 def preprocess(gray: np.ndarray) -> np.ndarray:
     """CLAHE adaptive contrast enhancement for variable lighting."""
     return CLAHE.apply(gray)
@@ -143,6 +147,7 @@ def main():
     recorder         = None
     record_start     = 0.0
     written          = 0
+    show_start       = None
     last_tick        = None
     failing_since    = None
     fps              = 0.0
@@ -249,7 +254,13 @@ def main():
 
             if args.show:
                 cv2.imshow(SHOW_WINDOW, vis)
-                if cv2.waitKey(1) & 0xFF == ord("q"):
+                delay = 1
+                if file_fps is not None:
+                    # A video file plays at its own speed: hold each frame until the next is due
+                    if show_start is None:
+                        show_start = time.perf_counter()
+                    delay = show_delay_ms(show_start + frame_index / file_fps, time.perf_counter())
+                if cv2.waitKey(delay) & 0xFF == ord("q"):
                     print("\n[INFO] Stopping...")
                     break
 
