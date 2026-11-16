@@ -153,7 +153,7 @@ Problems found while reviewing the project.
 
 - [ ] **`--show` plays video files faster than real time.** Without the per-frame sleep only `waitKey(1)` paces the window. If wanted, wait out the frame period when `--show` is on and the source is a file. `--record` already keeps the right speed.
 
-- [ ] **README flight-demo sentence differs between languages.** `README.md:157` says "on simulated optical flow without GPS"; `README.fr.md:157` leaves it out.
+- [x] **README flight-demo sentence differs between languages.** `README.md:157` says "on simulated optical flow without GPS"; `README.fr.md:157` leaves it out.
 
 ## Repo hygiene
 
