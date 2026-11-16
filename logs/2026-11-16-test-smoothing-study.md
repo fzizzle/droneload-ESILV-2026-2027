@@ -7,7 +7,7 @@
 Study how the tracker's `SMOOTHING` weight affects position error and jitter on shaken footage, with Plotly charts and a notebook for the project report. Informs plan Task 3.
 
 ## Steps
-- 2026-11-16: Design written in `docs/plans/2026-11-16-smoothing-study-design.md`.
+- 2026-11-16: Design approved; plan in `docs/plans/2026-11-16-smoothing-study.md`.
 
 ## Decisions
 - Plotly, a rerunnable notebook, and deps in `analysis/requirements.txt` only (project lead).
@@ -16,4 +16,4 @@ Study how the tracker's `SMOOTHING` weight affects position error and jitter on 
 - Not run yet.
 
 ## Next Steps
-- Lead approves the design, then plan and build.
+- Build Tasks 1-5 of the plan.

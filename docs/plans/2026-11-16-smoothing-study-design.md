@@ -1,6 +1,6 @@
 # Smoothing Study: Design
 
-**Status:** awaiting the project lead's approval.
+**Status:** approved by the project lead on 2026-11-16.
 
 ## Why
 
