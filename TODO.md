@@ -31,10 +31,10 @@ Problems found while reviewing the project.
 
 - [ ] **Check false positives and missed markers on real footage.**
   On Shadow-ArUco `video_5` the detector found 56% of annotated markers, and
-  27% of its detections did not match the annotations. Those detections
+  11% of its detections did not match the annotations. Those detections
   include recurring wrong IDs. The cause has not been investigated, and this
-  footage does not use `DICT_4X4_50`. Tracking cuts unmatched detections to 2.7%, with
-  53.2% found.
+  footage does not use `DICT_4X4_50`. Tracking cuts unmatched detections to 1.4%, with
+  53.3% found.
 
 - [ ] **Record real `DICT_4X4_50` footage.** No public source was found.
 
@@ -73,7 +73,7 @@ Problems found while reviewing the project.
   | fdcl-gwu moderate false IDs/100 frames | 0.1 | 0.1 |
   | Shadow-ArUco moderate tracked (raw 61.0%) | 53.8% | 56.8% |
   | Shadow-ArUco clean false IDs/100 frames | 3.7 | 4.6 |
-  | `benchmark --track` found / unmatched | 53.2% / 2.4% | 54.1% / 2.8% |
+  | `benchmark --track` found / unmatched | 53.3% / 1.4% | 54.1% / 2.8% |
 
   Cost: a wrong ID near a confirmed marker is reported after one hit. Not
   adopted on 2026-11-16 because 3 of 5 is preferred; revisit with flight
