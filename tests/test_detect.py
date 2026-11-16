@@ -404,3 +404,14 @@ def test_camera_that_never_returns_keeps_retrying(tmp_path, monkeypatch, capsys)
     assert camera.releases == 6                   # each reopen releases first; so does the exit
     assert logged_ids() == set()
     assert capsys.readouterr().out.count("[WARNING]") == 6   # one per attempt, not one per read
+
+@pytest.mark.parametrize("name", ["DICT_NOPE", "dict_4x4_50"])
+def test_unknown_dict_rejected_before_camera_opens(monkeypatch, name):
+    opened = []
+    monkeypatch.setattr(detect, "make_camera", opened.append)
+    monkeypatch.setattr(sys, "argv", ["detect", "--dict", name])
+    with pytest.raises(SystemExit) as error:
+        detect.main()
+
+    assert error.value.code == 2
+    assert opened == []

@@ -9,6 +9,7 @@ import numpy as np
 
 # ArUco settings 
 ARUCO_DICT        = "DICT_4X4_50"
+ARUCO_DICTS       = sorted(name for name in dir(cv2.aruco) if name.startswith("DICT_"))
 MIN_SIDE_PX       = 10
 DETECTION_LOG     = "detections.csv"
 WRITE_COOLDOWN_MS = 1000
@@ -118,7 +119,7 @@ def main():
                         help="rubikpi-csi, picamera, or anything cv2.VideoCapture opens: "
                              "device index, video file, image sequence, GStreamer pipeline "
                              "(default: 0)")
-    parser.add_argument("--dict", default=ARUCO_DICT,
+    parser.add_argument("--dict", default=ARUCO_DICT, choices=ARUCO_DICTS, metavar="DICTIONARY",
                         help=f"cv2.aruco dictionary name (default: {ARUCO_DICT})")
     parser.add_argument("--no-track", action="store_true",
                         help="report every detection, without confirming it across frames")
