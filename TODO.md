@@ -124,6 +124,28 @@ Problems found while reviewing the project.
   anything but a local simulator. Needs a person's decision and a
   propellers-off bench test first.
 
+- [ ] **Fix the bugs from the 2026-11-16 review.** The benchmark skips the
+  size filter, the loop sleeps 10 ms per frame, video files are timed by the
+  wall clock, `--record` is always 30 fps, a dead camera warns forever and a
+  bad `--dict` leaks the camera. Plan: `docs/plans/2026-11-16-review-fixes.md`.
+
+- [ ] **`flight` never reads `COMMAND_ACK`.** A rejected arm or takeoff shows
+  only as a timeout, with no reason. Needs a person's OK, as it is flight
+  controller code.
+
+- [ ] **`camera_picamera2.py` may swap red and blue (unverified).** Picamera2
+  documents `RGB888` as already in BGR order, so the `RGB2BGR` conversion
+  would be wrong and wasted. Grey ArUco detection barely notices; posters and
+  path colours would. Check on a Raspberry Pi.
+
+- [ ] **Skip the colour conversion on the board (unverified).** The CSI
+  pipeline converts NV12 to BGR on the CPU, then the loop converts BGR to
+  grey. The NV12 Y plane is already the grey image. Measure on the board.
+
+- [ ] **Set MJPG and a buffer of one frame for USB cameras (unverified).**
+  `OpenCVCamera` sets neither. Many UVC cameras give 720p at about 10 fps
+  without MJPG, and queued frames arrive late. Check on the chosen camera.
+
 ## Repo hygiene
 
 - [x] **`rubikpi-script` is a broken submodule.** It is committed as a gitlink
