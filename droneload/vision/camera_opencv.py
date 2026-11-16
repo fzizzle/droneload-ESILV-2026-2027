@@ -1,3 +1,4 @@
+import math
 import os
 import cv2
 
@@ -24,6 +25,10 @@ class OpenCVCamera:
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,  self.size[0])
             self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.size[1])
             self.cap.set(cv2.CAP_PROP_FPS, self.fps)
+        else:
+            reported = self.cap.get(cv2.CAP_PROP_FPS)
+            if math.isfinite(reported) and reported > 0:
+                self.fps = reported
         return True
 
     def read(self):

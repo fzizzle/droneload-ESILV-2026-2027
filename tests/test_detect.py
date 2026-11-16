@@ -14,6 +14,35 @@ def logged_ids():
     with open(detect.DETECTION_LOG, newline="") as f:
         return {int(row["id"]) for row in csv.DictReader(f)}
 
+def write_video(path, frames, fps):
+    height, width = frames[0].shape[:2]
+    writer = cv2.VideoWriter(str(path), cv2.VideoWriter_fourcc(*"mp4v"), fps, (width, height))
+    for frame in frames:
+        writer.write(frame)
+    writer.release()
+
+def logged_rows():
+    with open(detect.DETECTION_LOG, newline="") as f:
+        return [(int(row["timestamp_ms"]), int(row["id"])) for row in csv.DictReader(f)]
+
+@pytest.mark.parametrize("bad_fps", [float("nan"), float("inf"), -1.0, 0.0])
+def test_opencv_camera_ignores_bad_frame_rate(tmp_path, monkeypatch, bad_fps):
+    path = tmp_path / "clip.mp4"
+    write_video(path, [one_marker_frame()] * 3, 30)
+
+    class FakeCapture:
+        def __init__(self, source):
+            pass
+        def isOpened(self):
+            return True
+        def get(self, prop):
+            return bad_fps
+
+    monkeypatch.setattr("droneload.vision.camera_opencv.cv2.VideoCapture", FakeCapture)
+    camera = OpenCVCamera(str(path))
+    assert camera.open()
+    assert camera.fps == 30
+
 def test_marker_min_side():
     corner = np.array([[[0, 0], [10, 0], [10, 20], [0, 20]]], dtype=np.float32)
     assert detect.marker_min_side(corner) == 10
@@ -248,3 +277,83 @@ def test_shake_path_seed():
     default = vibration_test.shake_path(50, level, 1.0)
     assert (default == vibration_test.shake_path(50, level, 1.0, seed=vibration_test.SEED)).all()
     assert not (default == vibration_test.shake_path(50, level, 1.0, seed=2)).all()
+
+def test_loop_does_not_sleep_between_frames(tmp_path, monkeypatch):
+    slept = []
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(detect.time, "sleep", slept.append)
+    monkeypatch.setattr(detect, "make_camera", lambda source: FakeCamera([one_marker_frame()] * 3))
+    monkeypatch.setattr(sys, "argv", ["detect"])
+    detect.main()
+
+    assert slept == []
+
+def test_source_fps(tmp_path):
+    write_video(tmp_path / "slow.mp4", [one_marker_frame()] * 3, 10)
+    camera = OpenCVCamera(str(tmp_path / "slow.mp4"))
+    assert camera.open()
+    assert detect.source_fps(camera) == pytest.approx(10)
+    camera.release()
+
+    live = FakeCamera([])
+    live.finite = False
+    assert detect.source_fps(live) is None
+
+def test_source_fps_falls_back():
+    camera = FakeCamera([])                       # finite, with no fps
+    assert detect.source_fps(camera) == detect.RECORD_FPS
+    camera.fps = 0                                # a file that reports no frame rate
+    assert detect.source_fps(camera) == detect.RECORD_FPS
+
+def test_video_file_rows_follow_video_time(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    make_test_video.main()                        # 150 frames at 30 fps: 5 s of video
+    monkeypatch.setattr(sys, "argv", ["detect", "--source", make_test_video.OUTPUT])
+    before = detect.now_ms()
+    detect.main()
+
+    rows = logged_rows()
+    for marker_id in make_test_video.MARKER_IDS:
+        times = [ts for ts, logged_id in rows if logged_id == marker_id]
+        assert len(times) == 5                    # one row per second of video, on any computer
+        assert all(1000 <= b - a < 1100 for a, b in zip(times, times[1:]))
+        assert before <= times[0] < before + 60_000
+
+
+class LiveCamera(FakeCamera):
+    """A live source that ends with Ctrl+C when its frames run out."""
+    finite = False
+
+    def read(self):
+        if not self.frames:
+            raise KeyboardInterrupt
+        return True, self.frames.pop()
+
+def recorded(path):
+    video = cv2.VideoCapture(path)
+    return video.get(cv2.CAP_PROP_FPS), int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+
+def test_frames_due_keeps_real_time():
+    assert detect.frames_due(0.0, 0) == 1     # the first frame is written at once
+    assert detect.frames_due(0.01, 1) == 0    # loop faster than 30 fps: skip the frame
+    assert detect.frames_due(0.25, 2) == 6    # loop slower: repeat the frame
+
+@pytest.mark.parametrize("fps", [10, 29.97])
+def test_record_keeps_the_file_frame_rate(tmp_path, monkeypatch, fps):
+    monkeypatch.chdir(tmp_path)
+    write_video("in.mp4", [one_marker_frame()] * 12, fps)
+    monkeypatch.setattr(sys, "argv", ["detect", "--source", "in.mp4", "--record", "out.mp4"])
+    detect.main()
+
+    out_fps, count = recorded("out.mp4")
+    assert out_fps == pytest.approx(fps, abs=0.05)
+    assert count == 12
+
+def test_live_recording_writes_the_frames_due(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(detect, "make_camera", lambda source: LiveCamera([one_marker_frame()] * 3))
+    monkeypatch.setattr(detect, "frames_due", lambda elapsed_s, written: 2)
+    monkeypatch.setattr(sys, "argv", ["detect", "--record", "out.mp4"])
+    detect.main()
+
+    assert recorded("out.mp4") == (pytest.approx(detect.RECORD_FPS), 6)

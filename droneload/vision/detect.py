@@ -16,7 +16,7 @@ DEBUG_IMAGE_PATH  = "aruco_debug.jpg"
 SAVE_EVERY_SEC    = 2.0
 LOG_EVERY_SEC     = 2.0
 SHOW_WINDOW       = "droneload"
-RECORD_FPS        = 30
+RECORD_FPS        = 30  # also the rate assumed for a file that reports none
 RECORD_CODEC      = "mp4v"
 REJECTED_COLOR    = (128, 128, 128)  # markers the tracker has not confirmed
 CLAHE             = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
@@ -38,6 +38,16 @@ ARUCO_LABELS = {
 #  Helpers 
 def now_ms() -> int:
     return int(time.time() * 1000)
+
+def source_fps(camera):
+    """Frame rate of a finite source (a file), or None for a live camera."""
+    if not getattr(camera, "finite", False):
+        return None
+    return getattr(camera, "fps", 0) or RECORD_FPS
+
+def frames_due(elapsed_s: float, written: int, fps: float = RECORD_FPS) -> int:
+    """Copies of the current frame to write so a recording keeps real time."""
+    return max(0, int(elapsed_s * fps) + 1 - written)
 
 def preprocess(gray: np.ndarray) -> np.ndarray:
     """CLAHE adaptive contrast enhancement for variable lighting."""
@@ -130,8 +140,13 @@ def main():
     last_log         = 0.0
     last_frame       = None
     recorder         = None
+    record_start     = 0.0
+    written          = 0
     last_tick        = None
     fps              = 0.0
+    file_fps         = source_fps(camera)
+    start_ms         = now_ms()
+    frame_index      = 0
 
     print("[INFO] Starting detection loop... Press Ctrl+C to stop.")
 
@@ -157,7 +172,8 @@ def main():
             corners, ids, _ = detector.detectMarkers(gray)
 
             detect_ms = (time.perf_counter() - t0) * 1000.0
-            ts  = now_ms()
+            ts  = now_ms() if file_fps is None else start_ms + round(1000 * frame_index / file_fps)
+            frame_index += 1
             now = time.time()
 
             vis            = frame.copy()
@@ -214,8 +230,12 @@ def main():
                 if recorder is None:
                     height, width = vis.shape[:2]
                     recorder = cv2.VideoWriter(args.record, cv2.VideoWriter_fourcc(*RECORD_CODEC),
-                                               RECORD_FPS, (width, height))
-                recorder.write(vis)
+                                               file_fps or RECORD_FPS, (width, height))
+                    record_start = time.perf_counter()
+                copies = 1 if file_fps is not None else frames_due(time.perf_counter() - record_start, written)
+                for _ in range(copies):
+                    recorder.write(vis)
+                written += copies
 
             if args.show:
                 cv2.imshow(SHOW_WINDOW, vis)
@@ -234,7 +254,6 @@ def main():
                 cv2.imwrite(DEBUG_IMAGE_PATH, vis)
 
             last_frame = (detect_ms, detected_info, vis)
-            time.sleep(0.01)
 
     except KeyboardInterrupt:
         print("\n[INFO] Stopping...")

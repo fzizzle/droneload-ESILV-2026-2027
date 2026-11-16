@@ -179,7 +179,7 @@ python -m droneload.vision [--source SOURCE] [--dict DICTIONARY] [--no-track] [-
 
 A marker is reported only once it is seen in 3 of the last 5 frames, at the position detected in that frame. `--no-track` reports every detection instead, which a single image needs.
 
-`--show` plays the annotated video in a window; press `q` to stop. `--record out.mp4` saves the same video. Confirmed markers are outlined in green with their ID, unconfirmed ones in grey, and the top-left corner shows detection time, frames per second and both counts. For example, to watch tracking on the Shadow-ArUco footage:
+`--show` plays the annotated video in a window; press `q` to stop. `--record out.mp4` saves the same video. A recording of a video file keeps the file's frame rate. A recording of a live camera is written at 30 fps in real time, so frames are repeated or skipped when the loop runs slower or faster. Confirmed markers are outlined in green with their ID, unconfirmed ones in grey, and the top-left corner shows detection time, frames per second and both counts. For example, to watch tracking on the Shadow-ArUco footage:
 
 ```bash
 python -m droneload.vision --source "test_footage/shadow-aruco/video_5/%05d.png" --dict DICT_ARUCO_MIP_36h12 --show
@@ -219,7 +219,7 @@ If the flight mode changes during the demo, as when a pilot takes over, the prog
 2. Converts it to greyscale and applies CLAHE contrast enhancement, which improves detection in poor light.
 3. Detects markers and discards any with a side under 10 pixels (`MIN_SIDE_PX` in `detect.py`).
 4. Maps each ID to a label.
-5. Logs each marker ID at most once per second (`WRITE_COOLDOWN_MS`), which keeps the CSV small. The limit uses real time, so a video that processes faster than it plays logs fewer rows.
+5. Logs each marker ID at most once per second (`WRITE_COOLDOWN_MS`), which keeps the CSV small. For a live camera, this limit and `timestamp_ms` use real time. For a video file, they use the time the run started plus the frame's position in the video, so the same file gives equally spaced rows on any computer.
 
 Markers need a white border to be detected.
 
