@@ -52,7 +52,7 @@ Problems found while reviewing the project.
 
 - [x] **Tracker drops shaken markers.** The fixed 40 px move limit is now
   0.75 marker sides (at least 20 px). On fdcl-gwu at moderate shake, tracked
-  rose from 33% to 54% with fewer false IDs.
+  rose from 33% to 54% with no more false IDs.
 
 - [ ] **Confirming costs recall under shake.** At moderate shake the detector
   finds 64% of markers and the tracker reports 54%, even with no move limit,

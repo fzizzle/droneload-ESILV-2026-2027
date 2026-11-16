@@ -38,7 +38,7 @@ The move limit was a fixed 40 px until 2026-11-16. Under simulated moderate shak
 | None | 54.4% | 10.0 |
 | 0.75 sides, at least 20 px (chosen) | 54.1% | 0.1 |
 
-Scaling with marker size keeps nearly all the recall of no limit while blocking more wrong IDs than the fixed 40 px. Camera-motion compensation (KLT optical flow and `estimateAffinePartial2D`) was also tried as a prototype: it gave the same 54.1% but 3.2 false IDs per 100 frames, and cost 5.7 ms per frame on a PC, so it was not kept. That shake is a global affine move; real flights add rolling-shutter wobble and parallax.
+Scaling with marker size keeps nearly all the recall of no limit with no more wrong IDs than the fixed 40 px. Camera-motion compensation (KLT optical flow and `estimateAffinePartial2D`) was also tried as a prototype: it gave the same 54.1% but 3.2 false IDs per 100 frames, and cost 5.7 ms per frame on a PC, so it was not kept. That shake is a global affine move; real flights add rolling-shutter wobble and parallax.
 
 Smoothing did not change these scores, because the benchmark accepts positions within 15 px. Confirming adds about 2 frames of delay, 67 ms at 30 frames per second. That footage uses another dictionary and was not filmed from a drone.
 
