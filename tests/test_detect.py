@@ -300,3 +300,42 @@ def test_video_file_rows_follow_video_time(tmp_path, monkeypatch):
         assert len(times) == 5                    # one row per second of video, on any computer
         assert all(1000 <= b - a < 1100 for a, b in zip(times, times[1:]))
         assert before <= times[0] < before + 60_000
+
+
+class LiveCamera(FakeCamera):
+    """A live source that ends with Ctrl+C when its frames run out."""
+    finite = False
+
+    def read(self):
+        if not self.frames:
+            raise KeyboardInterrupt
+        return True, self.frames.pop()
+
+def recorded(path):
+    video = cv2.VideoCapture(path)
+    return video.get(cv2.CAP_PROP_FPS), int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+
+def test_frames_due_keeps_real_time():
+    assert detect.frames_due(0.0, 0) == 1     # the first frame is written at once
+    assert detect.frames_due(0.01, 1) == 0    # loop faster than 30 fps: skip the frame
+    assert detect.frames_due(0.25, 2) == 6    # loop slower: repeat the frame
+
+@pytest.mark.parametrize("fps", [10, 29.97])
+def test_record_keeps_the_file_frame_rate(tmp_path, monkeypatch, fps):
+    monkeypatch.chdir(tmp_path)
+    write_video("in.mp4", [one_marker_frame()] * 12, fps)
+    monkeypatch.setattr(sys, "argv", ["detect", "--source", "in.mp4", "--record", "out.mp4"])
+    detect.main()
+
+    out_fps, count = recorded("out.mp4")
+    assert out_fps == pytest.approx(fps, abs=0.05)
+    assert count == 12
+
+def test_live_recording_writes_the_frames_due(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(detect, "make_camera", lambda source: LiveCamera([one_marker_frame()] * 3))
+    monkeypatch.setattr(detect, "frames_due", lambda elapsed_s, written: 2)
+    monkeypatch.setattr(sys, "argv", ["detect", "--record", "out.mp4"])
+    detect.main()
+
+    assert recorded("out.mp4") == (pytest.approx(detect.RECORD_FPS), 6)

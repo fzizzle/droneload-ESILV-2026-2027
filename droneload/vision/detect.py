@@ -45,6 +45,10 @@ def source_fps(camera):
         return None
     return getattr(camera, "fps", 0) or RECORD_FPS
 
+def frames_due(elapsed_s: float, written: int, fps: float = RECORD_FPS) -> int:
+    """Copies of the current frame to write so a recording keeps real time."""
+    return max(0, int(elapsed_s * fps) + 1 - written)
+
 def preprocess(gray: np.ndarray) -> np.ndarray:
     """CLAHE adaptive contrast enhancement for variable lighting."""
     return CLAHE.apply(gray)
@@ -136,6 +140,8 @@ def main():
     last_log         = 0.0
     last_frame       = None
     recorder         = None
+    record_start     = 0.0
+    written          = 0
     last_tick        = None
     fps              = 0.0
     file_fps         = source_fps(camera)
@@ -224,8 +230,12 @@ def main():
                 if recorder is None:
                     height, width = vis.shape[:2]
                     recorder = cv2.VideoWriter(args.record, cv2.VideoWriter_fourcc(*RECORD_CODEC),
-                                               RECORD_FPS, (width, height))
-                recorder.write(vis)
+                                               file_fps or RECORD_FPS, (width, height))
+                    record_start = time.perf_counter()
+                copies = 1 if file_fps is not None else frames_due(time.perf_counter() - record_start, written)
+                for _ in range(copies):
+                    recorder.write(vis)
+                written += copies
 
             if args.show:
                 cv2.imshow(SHOW_WINDOW, vis)

@@ -179,7 +179,7 @@ Par défaut, `--source` vaut `0`, soit la première webcam. Valeurs possibles :
 
 Un marqueur n'est signalé qu'après avoir été vu sur 3 des 5 dernières images, à la position détectée sur cette image. `--no-track` signale chaque détection, ce qu'exige une image seule.
 
-`--show` affiche la vidéo annotée dans une fenêtre ; appuyez sur `q` pour arrêter. `--record out.mp4` enregistre la même vidéo. Les marqueurs confirmés sont entourés en vert avec leur ID, les autres en gris, et le coin supérieur gauche indique le temps de détection, les images par seconde et les deux nombres. Par exemple, pour observer le suivi sur les images Shadow-ArUco :
+`--show` affiche la vidéo annotée dans une fenêtre ; appuyez sur `q` pour arrêter. `--record out.mp4` enregistre la même vidéo. L'enregistrement d'un fichier vidéo conserve sa fréquence d'images. Celui d'une caméra est écrit à 30 images par seconde en temps réel : des images sont répétées ou sautées si la boucle tourne plus lentement ou plus vite. Les marqueurs confirmés sont entourés en vert avec leur ID, les autres en gris, et le coin supérieur gauche indique le temps de détection, les images par seconde et les deux nombres. Par exemple, pour observer le suivi sur les images Shadow-ArUco :
 
 ```bash
 python -m droneload.vision --source "test_footage/shadow-aruco/video_5/%05d.png" --dict DICT_ARUCO_MIP_36h12 --show
