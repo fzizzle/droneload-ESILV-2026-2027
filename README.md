@@ -32,7 +32,7 @@ scripts/
 ├── setup.sh                    # Installs GStreamer and qtiqmmfsrc on the RubikPi
 ├── test_camera.sh              # Tests the CSI pipeline without OpenCV
 └── build_opencv.sh             # Builds OpenCV with GStreamer and aruco
-docs/                           # Architecture and contest rules
+docs/                           # Architecture, contest rules and mission map
 logs/                           # Branch logs and decisions
 TODO.md                         # Known problems and open work
 ```
@@ -288,6 +288,7 @@ Contributors and coding agents follow [`AGENTS.md`](AGENTS.md). Work happens on 
 - [`docs/architecture.md`](docs/architecture.md): modules and how they depend on each other
 - [`logs/DECISIONS.md`](logs/DECISIONS.md): lasting decisions
 - [`docs/contest-rules.md`](docs/contest-rules.md): provisional Droneload 2027 rules, for contest questions
+- [`docs/mission-map.md`](docs/mission-map.md): the mission's goals, the functions each needs and their status
 - [`logs/`](logs/): one log per branch, where you record your work
 - `README.md`: what the project does and how to run it
 

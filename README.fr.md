@@ -32,7 +32,7 @@ scripts/
 ├── setup.sh                    # Installe GStreamer et qtiqmmfsrc sur le RubikPi
 ├── test_camera.sh              # Teste le pipeline CSI sans OpenCV
 └── build_opencv.sh             # Compile OpenCV avec GStreamer et aruco
-docs/                           # Architecture et règles du concours
+docs/                           # Architecture, règles du concours et carte de mission
 logs/                           # Journaux de branche et décisions
 TODO.md                         # Problèmes connus et travail restant
 ```
@@ -288,6 +288,7 @@ Les contributeurs et les agents de code suivent [`AGENTS.md`](AGENTS.md) (en ang
 - [`docs/architecture.md`](docs/architecture.md) : modules et dépendances entre eux
 - [`logs/DECISIONS.md`](logs/DECISIONS.md) : décisions durables
 - [`docs/contest-rules.md`](docs/contest-rules.md) : règles provisoires de Droneload 2027, pour les questions sur le concours
+- [`docs/mission-map.md`](docs/mission-map.md) : objectifs de la mission, fonctions nécessaires et leur état (en anglais)
 - [`logs/`](logs/) : un journal par branche, où noter votre travail
 - `README.fr.md` ou [`README.md`](README.md) : ce que fait le projet et comment le lancer
 

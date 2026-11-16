@@ -130,3 +130,4 @@ From the first-call slides: use OpenCV with Python for vision, simulate flight w
 - The slides give 135 for the Part 2 Junior total, but the V0 colours give 140. Which is right?
 - The slides give a manual total of 40, but the V0 tables give 50. Which is right?
 - What are the safe path line width and the exact window marker positions?
+- Is there a field plan showing where each zone is? This summary has none, so `mission-map.md` uses a sketch.
