@@ -82,6 +82,19 @@ The organisers warn that camera vibration is usually a big problem. `python -m t
 - Rolling-shutter wobble does much more damage than blur, especially on small markers, which is why this module proposes a global shutter.
 - Real results will be worse, because real images have noise, tilt and uneven light. Measure on footage from a flying drone as soon as possible.
 
+`python -m testing.vibration_test --source FOOTAGE --dict DICTIONARY` shakes real footage as a poorly stabilised camera would: slow sway, frame-to-frame jitter, rotation, blur along each move and, at the two worst levels, rolling-shutter wobble. It compares each level with the clean footage. Raw is the share of clean detections the detector still finds, and tracked is the share the tracker still reports:
+
+| Level | Shadow-ArUco `video_5` move, raw, tracked | fdcl-gwu move, raw, tracked |
+|-------|-------------------------------------------|-----------------------------|
+| Mild | 5 px, 78%, 73% | 13 px, 99%, 97% |
+| Moderate | 18 px, 61%, 53% | 43 px, 64%, 33% |
+| Severe | 44 px, 19%, 6% | 108 px, 4%, 0% |
+
+- Move is the mean camera shift between frames. Amplitudes scale with frame width, so the 1920 px fdcl-gwu footage moves further in pixels than the 800 px Shadow-ArUco footage.
+- Once frames move more than about 40 px apart, the tracker drops markers the detector still finds: on fdcl-gwu at moderate it reports half of them. This is its `MAX_JUMP_PX` limit.
+- The shake is simulated, and neither set is drone footage, so these figures only compare levels.
+- To watch it, add `--write shaken.mp4 --level moderate` to save the shaken footage, then play it through `python -m droneload.vision --source shaken.mp4 --dict DICTIONARY --show`. Markers the tracker drops are outlined in grey.
+
 Software methods that reduce vibration's effects are planned in [`tracking/`](tracking/README.md).
 
 ## Risks

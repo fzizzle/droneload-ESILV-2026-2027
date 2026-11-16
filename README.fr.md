@@ -23,7 +23,7 @@ droneload/
 testing/
 ├── make_test_video.py          # Génère une vidéo de test avec des marqueurs en mouvement
 ├── benchmark.py                # Évalue la détection par rapport à la vérité terrain
-├── vibration_test.py           # Simule le flou et les ondulations, et mesure la détection
+├── vibration_test.py           # Simule le flou, les ondulations et les secousses, et mesure la détection
 └── sitl_sensors.parm           # Flux optique et télémètre simulés
 tests/                          # Tests unitaires et de bout en bout
 scripts/
@@ -276,6 +276,19 @@ python -m droneload.vision --source "test_footage/shadow-aruco/video_5/%05d.png"
 |-----|---------|--------|---------|
 | `fdcl-gwu` | 821 images en 1080p | [fdcl-gwu/aruco-markers](https://github.com/fdcl-gwu/aruco-markers) | BSD-3-Clause |
 | `shadow-aruco` | 1 334 photos en 800×600 dans une pièce sombre avec des ombres mobiles, et vérité terrain dans `corrected_annotations/` | [Shadow-ArUco Dataset](https://doi.org/10.5281/zenodo.10791293), `video_5` | CC BY 4.0 |
+
+**Images secouées.** Pour tester les méthodes conçues pour une caméra mal stabilisée, générez des copies secouées des deux jeux à trois niveaux. Les secousses utilisent une graine fixe : elles sont identiques à chaque exécution.
+```bash
+mkdir -p test_footage/shaken
+for level in mild moderate severe; do
+    python -m testing.vibration_test --source test_footage/fdcl-gwu/test_video.mp4 \
+        --write test_footage/shaken/fdcl-gwu-$level.mp4 --level $level
+    python -m testing.vibration_test --source "test_footage/shadow-aruco/video_5/%05d.png" \
+        --write test_footage/shaken/shadow-aruco-$level.mp4 --level $level
+done
+```
+
+Pour en regarder une : `python -m droneload.vision --source test_footage/shaken/fdcl-gwu-moderate.mp4 --dict DICT_ARUCO_ORIGINAL --show`. Pour évaluer une méthode, lancez `python -m testing.vibration_test --source test_footage/fdcl-gwu/test_video.mp4 --dict DICT_ARUCO_ORIGINAL`, qui applique les mêmes secousses et compare avec les images d'origine. La référence se trouve dans `droneload/vision/README.md`.
 
 ## Contribuer
 

@@ -202,3 +202,26 @@ def test_show_displays_frames_until_q(tmp_path, monkeypatch):
     detect.main()
 
     assert len(shown) == 2
+
+def test_shake_rates_on_footage():
+    frames = [vibration_test.make_frame(240)] * 15
+    detector = detect.make_detector()
+    clean = vibration_test.SHAKE_LEVELS["clean"]
+
+    shaken, move = vibration_test.shake_frame(frames[0], (0, 0, 0), (0, 0, 0), clean, 1.0, 0)
+    assert move == 0 and (shaken == frames[0]).all()
+
+    real, rates = vibration_test.shake_rates(frames, detector)
+    assert real == {vibration_test.MARKER_ID}
+    assert rates["clean"]["raw"] == 1.0 and rates["clean"]["move_px"] == 0
+    assert rates["severe"]["move_px"] > rates["mild"]["move_px"] > 0
+    assert rates["severe"]["tracked"] < rates["clean"]["tracked"]
+
+def test_write_shaken(tmp_path):
+    frames = [vibration_test.make_frame(240)] * 5
+    path = str(tmp_path / "shaken.mp4")
+    vibration_test.write_shaken(frames, 30, vibration_test.SHAKE_LEVELS["severe"], path)
+
+    written, fps = vibration_test.read_frames(path)
+    assert len(written) == 5 and fps == 30
+    assert written[0].shape == frames[0].shape
