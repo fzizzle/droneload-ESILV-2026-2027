@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 665" width="1000" height="665" role="img" aria-label="Sketch of the Droneload arena from above, with zones A to G">
+  <title>Droneload arena sketch</title>
+  <style>
+    text { font-family: "IBM Plex Sans", Helvetica, Arial, sans-serif; }
+    .cage { fill: none; stroke: #66707a; stroke-width: 1.5; stroke-dasharray: 6 6; }
+    .mat { fill: #ffffff; stroke: #e1e5ea; stroke-width: 2; }
+    .zfill { fill: #e3ecf9; stroke: #2456a6; stroke-width: 1.5; }
+    .zfill-b { fill: none; stroke: #2456a6; stroke-width: 1.5; stroke-dasharray: 8 6; opacity: .7; }
+    .obst { fill: url(#hatch); stroke: #b8c0c9; stroke-width: 1.5; }
+    .hatch-line { stroke: #b8c0c9; stroke-width: 2; }
+    .wall { stroke: #1b1f24; stroke-width: 5; stroke-linecap: round; }
+    .win { stroke: #2456a6; stroke-width: 7; }
+    .marker { fill: #1b1f24; }
+    .marker-t { fill: #ffffff; font-size: 13px; font-weight: 600; }
+    .poster { fill: #ffffff; stroke: #66707a; stroke-width: 1.5; }
+    .yl { stroke: #c99a06; stroke-width: 5; }
+    .gl { stroke: #2e8b57; stroke-width: 5; }
+    .flypath { fill: none; stroke: #2456a6; stroke-width: 2.5; stroke-dasharray: 2 8; stroke-linecap: round; }
+    .robot { fill: #ffffff; stroke: #1b1f24; stroke-width: 2; }
+    .zl { fill: #2456a6; font-size: 26px; font-weight: 600; }
+    .lbl { fill: #66707a; font-size: 17px; }
+  </style>
+  <defs>
+    <pattern id="hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="10" class="hatch-line"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="1000" height="665" fill="#f3f6fa"/>
+  <rect class="cage" x="2" y="2" width="996" height="596" rx="4"/>
+  <text class="lbl" x="18" y="32">Cage, about 10 × 6 m</text>
+  <rect class="mat" x="100" y="50" width="800" height="500"/>
+  <text class="lbl" x="110" y="544">Field, about 8 × 5 m</text>
+
+  <!-- B central zone and F obstacles -->
+  <rect class="zfill-b" x="350" y="210" width="530" height="330"/>
+  <text class="zl" x="365" y="243">B</text>
+  <text class="lbl" x="393" y="241">Central zone</text>
+  <rect class="obst" x="560" y="235" width="70" height="55"/>
+  <rect class="obst" x="770" y="430" width="80" height="60"/>
+  <text class="zl" x="645" y="272">F</text>
+  <text class="lbl" x="668" y="270">Obstacles</text>
+
+  <!-- E window in a wall -->
+  <line class="wall" x1="480" y1="360" x2="610" y2="360"/>
+  <line class="wall" x1="710" y1="360" x2="880" y2="360"/>
+  <line class="win" x1="610" y1="360" x2="710" y2="360"/>
+  <text class="lbl" x="660" y="342" text-anchor="middle">8, 9</text>
+  <text class="lbl" x="660" y="390" text-anchor="middle">4 to 7</text>
+  <text class="zl" x="725" y="399">E</text>
+  <text class="lbl" x="750" y="397">Window</text>
+
+  <!-- C drop and hover zone with four A3 posters -->
+  <rect class="zfill" x="150" y="70" width="550" height="120"/>
+  <text class="zl" x="165" y="103">C</text>
+  <text class="lbl" x="193" y="101">Drop and hover</text>
+  <rect class="poster" x="330" y="130" width="42" height="30"/>
+  <rect class="poster" x="420" y="130" width="42" height="30"/>
+  <rect class="poster" x="510" y="130" width="42" height="30"/>
+  <rect class="poster" x="600" y="130" width="42" height="30"/>
+
+  <!-- G robot zone behind a visual barrier -->
+  <rect class="zfill" x="740" y="70" width="140" height="170"/>
+  <line class="wall" x1="740" y1="70" x2="740" y2="240"/>
+  <text class="zl" x="755" y="103">G</text>
+  <text class="lbl" x="783" y="101">Robot</text>
+  <rect class="robot" x="782" y="122" width="52" height="36" rx="4"/>
+  <rect class="marker" x="797" y="129" width="22" height="22"/>
+  <text class="marker-t" x="808" y="145" text-anchor="middle">1</text>
+  <rect class="marker" x="764" y="190" width="22" height="22"/>
+  <text class="marker-t" x="775" y="206" text-anchor="middle">2</text>
+  <rect class="marker" x="834" y="190" width="22" height="22"/>
+  <text class="marker-t" x="845" y="206" text-anchor="middle">3</text>
+
+  <!-- D safe path: yellow left, green right, seen from the pilot station -->
+  <line class="yl" x1="200" y1="190" x2="200" y2="420"/>
+  <line class="gl" x1="260" y1="190" x2="260" y2="420"/>
+  <text class="zl" x="221" y="314">D</text>
+  <text class="lbl" x="275" y="312">Safe path</text>
+
+  <!-- A take-off and landing with ArUco 0 -->
+  <rect class="zfill" x="150" y="420" width="180" height="110"/>
+  <text class="zl" x="165" y="453">A</text>
+  <rect class="marker" x="229" y="466" width="22" height="22"/>
+  <text class="marker-t" x="240" y="482" text-anchor="middle">0</text>
+  <text class="lbl" x="165" y="518">Take-off, landing</text>
+
+  <!-- window route -->
+  <polyline class="flypath" points="330,470 600,470 660,420 660,300 600,192"/>
+
+  <line class="wall" x1="430" y1="618" x2="570" y2="618"/>
+  <text class="lbl" x="500" y="650" text-anchor="middle">Pilot station</text>
+</svg>
