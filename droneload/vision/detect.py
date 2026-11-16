@@ -234,7 +234,6 @@ def main():
                 cv2.imwrite(DEBUG_IMAGE_PATH, vis)
 
             last_frame = (detect_ms, detected_info, vis)
-            time.sleep(0.01)
 
     except KeyboardInterrupt:
         print("\n[INFO] Stopping...")

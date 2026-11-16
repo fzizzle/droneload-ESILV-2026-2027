@@ -248,3 +248,13 @@ def test_shake_path_seed():
     default = vibration_test.shake_path(50, level, 1.0)
     assert (default == vibration_test.shake_path(50, level, 1.0, seed=vibration_test.SEED)).all()
     assert not (default == vibration_test.shake_path(50, level, 1.0, seed=2)).all()
+
+def test_loop_does_not_sleep_between_frames(tmp_path, monkeypatch):
+    slept = []
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(detect.time, "sleep", slept.append)
+    monkeypatch.setattr(detect, "make_camera", lambda source: FakeCamera([one_marker_frame()] * 3))
+    monkeypatch.setattr(sys, "argv", ["detect"])
+    detect.main()
+
+    assert slept == []
