@@ -102,3 +102,37 @@ def test_trace_has_gaps_where_not_reported():
 def test_format_table_shows_raw_and_percent():
     text = study.format_table(study.summarise([row(1, 1.0, None), row(1, 1.0, 0.5)]))
     assert "raw" in text and "0.5" in text and "%" in text
+
+def test_charts_have_one_trace_per_level():
+    pytest.importorskip("plotly")
+    from analysis.smoothing import charts
+    rows = [row(1, 2.0, w, level) for level in ("clean", "moderate") for w in (None, 0.5, 1.0)]
+    fig = charts.metric_vs_weight(study.summarise(rows), "f", "frame_err_px", "Frame error", "px")
+    names = {t.name for t in fig.data if t.showlegend is not False}
+    assert names == {"clean", "moderate"}
+    assert all(None not in t.x for t in fig.data)
+
+def test_tradeoff_and_trace_charts():
+    pytest.importorskip("plotly")
+    from analysis.smoothing import charts
+    rows = [row(1, 2.0, w, "moderate") for w in (None, 0.5, 1.0)]
+    fig = charts.tradeoff(study.summarise(rows), "f")
+    assert list(fig.data[0].text) == ["0.5", "1.0"]
+    _, detected = synthetic(moving([0, 10, 20, 30]))
+    fig = charts.trace_chart(study.trace(detected, seed=1, weights=(1.0,)))
+    assert len(fig.data) == 3
+
+def test_save_without_png_writes_html(monkeypatch, tmp_path):
+    pytest.importorskip("plotly")
+    from analysis.smoothing import charts
+    import plotly.graph_objects as go
+    monkeypatch.setattr(charts, "OUTPUT_DIR", tmp_path)
+    paths = charts.save(go.Figure(), "t", png=False)
+    assert paths == [tmp_path / "t.html"] and (tmp_path / "t.html").exists()
+
+def test_trace_chart_window():
+    pytest.importorskip("plotly")
+    from analysis.smoothing import charts
+    _, detected = synthetic(moving([0, 10, 20, 30]))
+    fig = charts.trace_chart(study.trace(detected, seed=1, weights=(1.0,)), window=(1, 3))
+    assert list(fig.data[0].x) == [1, 2]
