@@ -15,9 +15,9 @@ def test_single_frame_flicker_never_reported():
     out = run([[(7, 100, 100)]] + [[]] * 4)
     assert all(o == [] for o in out)
 
-def test_smooths_position():
+def test_reports_detected_position():
     out = run([[(1, 0, 0)]] * 3 + [[(1, 10, 0)]])
-    assert out[-1] == [(1, 6.0, 0.0)]
+    assert out[-1] == [(1, 10.0, 0.0)]
 
 def test_jump_restarts_confirmation():
     out = run([[(1, 0, 0)]] * 3 + [[(1, 200, 0)]])
@@ -37,7 +37,7 @@ def test_duplicate_id_follows_nearest():
     out = run([[(3, 100, 100)]] * 3 + [[(3, 400, 400), (3, 102, 100)]])
     assert len(out[-1]) == 1
     marker_id, cx, cy = out[-1][0]
-    assert marker_id == 3 and 100 < cx < 102 and cy == 100
+    assert marker_id == 3 and cx == 102 and cy == 100
 
 def test_follows_steady_motion():
     out = run([[(5, 20 * i, 0)] for i in range(10)])
@@ -77,6 +77,6 @@ def test_gate_uses_track_side():
     assert out[-1] == []
 
 def test_smoothing_weight_is_configurable():
-    tracker = MarkerTracker(smoothing=1.0)
+    tracker = MarkerTracker(smoothing=0.6)
     out = [tracker.update([(1, x, 0, SIDE)]) for x in (0, 0, 0, 10)]
-    assert out[-1] == [(1, 10.0, 0.0)]
+    assert out[-1] == [(1, 6.0, 0.0)]
