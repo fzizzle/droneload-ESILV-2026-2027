@@ -24,6 +24,7 @@ FOOTAGE    = {
 }
 ROOT       = Path(__file__).resolve().parents[2]
 OUTPUT_DIR = Path(__file__).parent / "output"
+CACHE_VERSION = 2  # bump when Run or Detected changes, so old caches are not read
 METRICS    = ("frame_err_px", "steady_err_px", "jitter_px", "true_jitter_px", "tracked", "false_ids")
 
 @dataclass
@@ -32,8 +33,9 @@ class Run:
     level: str
     seed: int
     detections: list  # find_markers output per frame
-    truth: list       # {id: (x, y)} per frame: where each real marker is in the shaken frame
-    steady: list      # {id: (x, y)} per frame: where it would be with the camera held still
+    truth: list       # {id: [(x, y), ...]} per frame: where each real marker is in the shaken frame
+    steady: list      # {id: [(x, y), ...]} per frame: where it would be with the camera held still
+    # Lists, because a frame can hold two markers with the same ID
 
 @dataclass
 class Detected:
@@ -69,6 +71,11 @@ def detect_runs(frames, dict_name, seeds=SEEDS, footage=""):
     counts    = Counter(marker_id for ids in replay(clean_detections, SMOOTHING) for marker_id in ids)
     real      = {marker_id for marker_id, count in counts.items() if count >= vibration_test.REAL_MIN_FRAMES}
     reference = [ids.keys() & real for ids in clean_raw]
+    clean_all = [{} for _ in clean_detections]
+    for positions, frame in zip(clean_all, clean_detections):
+        for marker_id, cx, cy, _ in frame:
+            if marker_id in real:
+                positions.setdefault(marker_id, []).append((cx, cy))
 
     runs = []
     for name, level in SHAKE_LEVELS.items():
@@ -78,15 +85,15 @@ def detect_runs(frames, dict_name, seeds=SEEDS, footage=""):
                 detections, matrices = clean_detections, [steady] * len(frames)
             else:
                 detections, matrices = _detect_pass(frames, level, seed, detector)
-            truth = [{m: map_point(matrix, *positions[m]) for m in positions if m in real}
-                     for positions, matrix in zip(clean_raw, matrices)]
-            still = [{m: map_point(steady, *positions[m]) for m in positions if m in real}
-                     for positions in clean_raw]
+            truth = [{m: [map_point(matrix, *p) for p in points] for m, points in positions.items()}
+                     for positions, matrix in zip(clean_all, matrices)]
+            still = [{m: [map_point(steady, *p) for p in points] for m, points in positions.items()}
+                     for positions in clean_all]
             runs.append(Run(name, seed, detections, truth, still))
     return Detected(footage, real, reference, runs)
 
 def cache_path(footage, seeds):
-    return OUTPUT_DIR / f"{footage}-seeds-{'-'.join(map(str, seeds))}.pkl"
+    return OUTPUT_DIR / f"{footage}-v{CACHE_VERSION}-seeds-{'-'.join(map(str, seeds))}.pkl"
 
 def load_or_detect(footage, seeds=SEEDS, refresh=False):
     """Return the footage's detections, from the cache when it exists."""
@@ -112,16 +119,22 @@ def _rms(values):
     return float(np.sqrt(np.mean(np.square(values)))) if values else math.nan
 
 def measure(run, reported, detected):
-    """Score one replay of a run against where the markers really are."""
+    """Score one replay of a run against where the markers really are.
+
+    Each report is matched to the nearest true copy of its ID."""
     frame_err, steady_err, steps, true_steps = [], [], [], []
+    matched = [{} for _ in reported]  # the true point each report was matched to
     for t, positions in enumerate(reported):
         for m, point in positions.items():
-            if m in run.truth[t]:
-                frame_err.append(math.dist(point, run.truth[t][m]))
-                steady_err.append(math.dist(point, run.steady[t][m]))
-            if t and m in reported[t - 1] and m in run.truth[t] and m in run.truth[t - 1]:
+            if m not in run.truth[t]:
+                continue
+            i = min(range(len(run.truth[t][m])), key=lambda i: math.dist(point, run.truth[t][m][i]))
+            matched[t][m] = run.truth[t][m][i]
+            frame_err.append(math.dist(point, matched[t][m]))
+            steady_err.append(math.dist(point, run.steady[t][m][i]))
+            if t and m in matched[t - 1]:
                 steps.append(math.dist(point, reported[t - 1][m]))
-                true_steps.append(math.dist(run.truth[t][m], run.truth[t - 1][m]))
+                true_steps.append(math.dist(matched[t][m], matched[t - 1][m]))
     total = sum(len(ids) for ids in detected.reference)
     return dict(
         frame_err_px   = _mean(frame_err),
@@ -175,7 +188,7 @@ def trace(detected, level="moderate", seed=SEEDS[0], weights=(0.6, 1.0), marker_
     return dict(
         marker_id = marker_id,
         frames    = list(range(len(run.truth))),
-        truth_x   = xs(run.truth),
+        truth_x   = xs([{m: points[0] for m, points in p.items()} for p in run.truth]),  # first copy
         raw_x     = xs(replay(run.detections, None)),
         weights   = {w: xs(replay(run.detections, w)) for w in weights},
     )

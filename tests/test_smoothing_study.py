@@ -10,7 +10,11 @@ SIDE = 60
 def synthetic(detections, truth=None, real=frozenset({1})):
     """Return a Run and a Detected for synthetic (id, x, y, side) frames."""
     if truth is None:
-        truth = [{m: (float(x), float(y)) for m, x, y, _ in frame if m in real} for frame in detections]
+        truth = [{} for _ in detections]
+        for t, frame in enumerate(detections):
+            for m, x, y, _ in frame:
+                if m in real:
+                    truth[t].setdefault(m, []).append((float(x), float(y)))
     run = study.Run("moderate", 1, detections, truth, truth)
     return run, study.Detected("synthetic", set(real), [set(t) for t in truth], [run])
 
@@ -25,7 +29,7 @@ def test_replay_full_weight_reports_detections():
 
 def test_recall_does_not_depend_on_weight():
     xs = [15 * i for i in range(20)]
-    truth = [{1: (float(x), 0.0)} for x in xs]
+    truth = [{1: [(float(x), 0.0)]} for x in xs]
     detections = [[] if i in (4, 8, 9) else [(1, x, 0, SIDE)] for i, x in enumerate(xs)]
     for i in range(10, 15):
         detections[i] = detections[i] + [(9, 500, 500, SIDE)]
@@ -38,7 +42,7 @@ def test_recall_does_not_depend_on_weight():
 
 def test_measure_reports_equal_truth():
     run, detected = synthetic(moving([0, 5, 15, 30, 50]))
-    m = study.measure(run, run.truth, detected)
+    m = study.measure(run, study.replay(run.detections, None), detected)
     assert m["frame_err_px"] == 0 and m["steady_err_px"] == 0
     assert m["jitter_px"] == m["true_jitter_px"] > 0
     assert m["tracked"] == 1.0 and m["false_ids"] == 0
@@ -80,7 +84,7 @@ def test_detect_runs_generated():
     assert detected.real == {0}
     assert len(detected.runs) == 1 + 3 * 2
     assert detected.runs[0].level == "clean"
-    assert detected.runs[0].truth[0][0] == pytest.approx(detected.runs[0].steady[0][0])
+    assert detected.runs[0].truth[0][0][0] == pytest.approx(detected.runs[0].steady[0][0][0])
     assert study.busiest_marker(detected) == 0
 
 def test_cache_path_includes_seeds():
@@ -136,3 +140,14 @@ def test_trace_chart_window():
     _, detected = synthetic(moving([0, 10, 20, 30]))
     fig = charts.trace_chart(study.trace(detected, seed=1, weights=(1.0,)), window=(1, 3))
     assert list(fig.data[0].x) == [1, 2]
+
+def test_measure_matches_nearest_copy_of_duplicate_id():
+    # ID 1 is seen twice; the tracker follows the moving copy it started on, first_by_id takes x = 900
+    detections = [[(1, 100, 0, SIDE)]] + [[(1, 900, 0, SIDE), (1, 100 + 2 * t, 0, SIDE)] for t in range(1, 6)]
+    run, detected = synthetic(detections)
+    m = study.measure(run, study.replay(detections, 1.0), detected)
+    assert m["frame_err_px"] == 0
+    assert m["jitter_px"] == pytest.approx(m["true_jitter_px"]) == pytest.approx(2.0)
+
+def test_cache_path_has_format_version():
+    assert f"v{study.CACHE_VERSION}" in study.cache_path("x", (1,)).name
