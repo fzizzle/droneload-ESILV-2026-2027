@@ -1,4 +1,4 @@
-# Confirms markers across frames and smooths their pixel positions.
+# Confirms markers across frames and reports their detected pixel positions.
 from collections import deque
 from dataclasses import dataclass, field
 import math
@@ -8,11 +8,11 @@ CONFIRM_FRAMES = 3     # hits needed in the window before a marker is reported
 WINDOW_FRAMES  = 5     # recent frames remembered per marker
 MIN_GATE_PX    = 20.0  # smallest gate, for small markers
 GATE_SIDES     = 0.75  # farthest move per frame from the last detection, in marker sides
-SMOOTHING      = 0.6   # weight of the new position; 1.0 means no smoothing
+SMOOTHING      = 1.0   # weight of the new position; 1.0 means no smoothing (see analysis/smoothing)
 
 @dataclass
 class _Track:
-    cx: float              # smoothed position, reported
+    cx: float              # reported position, smoothed only if SMOOTHING < 1
     cy: float
     side: float            # shortest side of the last detection, sets the gate
     raw: tuple = None      # last detected position, used for the jump check

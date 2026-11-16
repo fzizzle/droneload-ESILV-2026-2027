@@ -79,13 +79,13 @@ Problems found while reviewing the project.
   adopted on 2026-11-16 because 3 of 5 is preferred; revisit with flight
   footage.
 
-- [ ] **Decide the tracker's smoothing weight (plan Task 3).** The smoothing
+- [x] **Decide the tracker's smoothing weight (plan Task 3).** Set to 1.0 on 2026-11-16. The smoothing
   study (`analysis/smoothing/`) finds that `SMOOTHING = 0.6` leaves logged
   positions 15.2 px behind the marker at fdcl-gwu moderate shake, against
   1.7 px at 1.0, with recall and false IDs unchanged. On a still scene it does
   steady the estimate (Shadow-ArUco: −14%). Needs the project lead.
 
-- [ ] **Update the shake baseline in `AGENTS.md` and `DECISIONS.md`.** Both
+- [x] **Update the shake baseline in `AGENTS.md` and `DECISIONS.md`.** Both
   still say moderate `tracked=32.6%`; since the size-scaled gate it is 54.1%.
 
 - [ ] **Retest camera-motion compensation on flight footage.** A KLT +

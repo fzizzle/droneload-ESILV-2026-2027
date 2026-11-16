@@ -19,7 +19,7 @@ droneload/
     ├── camera_opencv.py        # Toute source lisible par cv2.VideoCapture
     ├── camera_rubikpi_csi.py   # Caméra CSI du RubikPi (pipeline GStreamer)
     ├── camera_picamera2.py     # Caméra du Raspberry Pi
-    └── tracking/               # Confirme les marqueurs sur plusieurs images et lisse leur position
+    └── tracking/               # Confirme les marqueurs sur plusieurs images
 testing/
 ├── make_test_video.py          # Génère une vidéo de test avec des marqueurs en mouvement
 ├── benchmark.py                # Évalue la détection par rapport à la vérité terrain
@@ -177,7 +177,7 @@ Par défaut, `--source` vaut `0`, soit la première webcam. Valeurs possibles :
 
 `--dict` prend le nom d'un dictionnaire `cv2.aruco` et vaut `DICT_4X4_50` par défaut.
 
-Un marqueur n'est signalé qu'après avoir été vu sur 3 des 5 dernières images, et sa position est lissée. `--no-track` signale chaque détection, ce qu'exige une image seule.
+Un marqueur n'est signalé qu'après avoir été vu sur 3 des 5 dernières images, à la position détectée sur cette image. `--no-track` signale chaque détection, ce qu'exige une image seule.
 
 `--show` affiche la vidéo annotée dans une fenêtre ; appuyez sur `q` pour arrêter. `--record out.mp4` enregistre la même vidéo. Les marqueurs confirmés sont entourés en vert avec leur ID, les autres en gris, et le coin supérieur gauche indique le temps de détection, les images par seconde et les deux nombres. Par exemple, pour observer le suivi sur les images Shadow-ArUco :
 
