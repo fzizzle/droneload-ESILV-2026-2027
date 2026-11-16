@@ -2,7 +2,7 @@
 
 Keeps detections steady and reliable from frame to frame, despite camera vibration. This covers software only. Flight stability is in `droneload/flight/stabilisation`, and camera shutter, exposure and mounting are in the `vision` README.
 
-**Status:** Confirming across frames and smoothing positions are done, in `tracker.py`, and on by default in the detection loop (`--no-track` turns them off). Nothing here has been tested on a real camera or in flight.
+**Status:** Confirming across frames is done, in `tracker.py`, and on by default in the detection loop (`--no-track` turns it off). Smoothing was tried and is off (`SMOOTHING = 1.0`), because it made logged positions lag. Nothing here has been tested on a real camera or in flight.
 
 ## Planned Work
 
@@ -11,14 +11,14 @@ Listed in the order to try them. Start with the simplest that works.
 | Method | What it does | Limit |
 |--------|--------------|-------|
 | Confirm across frames | Accept a marker only if it is seen in several recent frames | Adds a short delay |
-| Smooth positions | Filter marker positions over time, to steady centring and landing | Lags behind real movement |
+| Smooth positions (tried, off) | Filter marker positions over time, to steady centring and landing | Lags behind real movement. For steering, filter in `navigation` instead (see below) |
 | Skip poor frames | Discard frames that are too blurred, using a sharpness measure | Fewer frames to work with |
 | Use drone motion | Correct positions using the flight controller's attitude data | Needs matching timestamps, and goes through `flight` |
 | Stabilise whole images, as a last resort | Align frames with OpenCV optical flow. Try it only if real footage shows a need; it may help the jury display, line following or search | Costs processing time and adds delay. ArUco detection works on single frames, so it will not fix blur on its own |
 
 ## Results
 
-Settings are at the top of `tracker.py`: a marker is reported after 3 hits in the last 5 frames, a marker may move up to 0.75 of its side length per frame since it was last seen (at least 20 px), and the new position has a weight of 0.6. A far detection never moves a confirmed marker: it counts as a miss, so a single false positive with the same ID cannot replace it.
+Settings are at the top of `tracker.py`: a marker is reported after 3 hits in the last 5 frames, a marker may move up to 0.75 of its side length per frame since it was last seen (at least 20 px), and the reported position is the detected one (`SMOOTHING = 1.0`). A far detection never moves a confirmed marker: it counts as a miss, so a single false positive with the same ID cannot replace it.
 
 On Shadow-ArUco `video_5` (`python -m testing.benchmark --track`):
 
@@ -40,7 +40,7 @@ The move limit was a fixed 40 px until 2026-11-16. Under simulated moderate shak
 
 Scaling with marker size keeps nearly all the recall of no limit with no more wrong IDs than the fixed 40 px. Camera-motion compensation (KLT optical flow and `estimateAffinePartial2D`) was also tried as a prototype: it gave the same 54.1% but 3.2 false IDs per 100 frames, and cost 5.7 ms per frame on a PC, so it was not kept. That shake is a global affine move; real flights add rolling-shutter wobble and parallax.
 
-Smoothing did not change these scores, because the benchmark accepts positions within 15 px. Confirming adds about 2 frames of delay, 67 ms at 30 frames per second. That footage uses another dictionary and was not filmed from a drone.
+Smoothing did not change these scores, because the benchmark accepts positions within 15 px, and it never changes which markers are reported. It does change where they are reported. The study in `analysis/smoothing/smoothing_study.ipynb` found that a weight of 0.6 left logged positions 15.2 px from the marker at moderate shake on fdcl-gwu, against 1.7 px at 1.0 (6.3 and 1.4 px on Shadow-ArUco), so smoothing was turned off on 2026-11-16. On a still scene, smoothing does steady the estimate of where a marker sits (14% at 0.6 on Shadow-ArUco), which is what centring needs. That filter belongs in `navigation`, where the drone's own motion is known, not in the logged positions. Confirming adds about 2 frames of delay, 67 ms at 30 frames per second. That footage uses another dictionary and was not filmed from a drone.
 
 Software cannot recover a marker that is badly blurred or distorted. It works alongside a global-shutter camera, short exposure and soft mounting, and does not replace them.
 

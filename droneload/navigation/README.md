@@ -28,6 +28,10 @@ Turns what the drone sees into movement: centring on targets, searching the fiel
 - Window markers are off the diagonals on one side and off-centre on the other. Exact positions are unknown.
 - The drone needs a clearance margin in the window, so measure its width with propellers.
 
+## Design Notes
+
+- Marker positions from `vision` are unsmoothed detections. If centring or landing needs a steadier target, filter it here, using the drone's own motion, rather than in `vision`. On a still scene, smoothing lowered the error against the still-camera position by 14% at a weight of 0.6, but it adds lag (`analysis/smoothing/smoothing_study.ipynb`).
+
 ## Risks
 
 - Crossing the window on the return is harder, because fewer markers are visible.

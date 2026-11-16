@@ -30,3 +30,6 @@ Lasting decisions, one line each. Keep this file short.
 - 2026-11-16: The tracker's move limit is max(20 px, 0.75 × marker side) × frames since last seen, replacing the fixed 40 px.
 - 2026-11-16: For now, the 3-of-5 rule applies to keeping a marker, not only to its first report. Keeping confirmed tracks confirmed through gaps stays an option; see `TODO.md`.
 - 2026-11-16: Analysis notebooks and their dependencies (`plotly`, `kaleido`, `nbformat`, `jupyter`) live in `analysis/`; CI and the drone do not install them. Notebooks are committed with outputs cleared.
+- 2026-11-16: With tracking on, CSV rows hold the detected position of confirmed markers (`SMOOTHING = 1.0`), superseding the smoothed positions of 2026-11-13. Approved by the project lead after `analysis/smoothing/`.
+- 2026-11-16: Any smoothing for steering (centring, landing) goes in `navigation`, with the drone's motion known, not in `vision`'s logged positions.
+- 2026-11-16: The shake baseline is now raw 63.8%, tracked 54.1%, tracked err 1.7 px (size-scaled gate, no smoothing), superseding tracked 32.6%.

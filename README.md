@@ -19,7 +19,7 @@ droneload/
     ├── camera_opencv.py        # Any source cv2.VideoCapture can open
     ├── camera_rubikpi_csi.py   # RubikPi CSI camera (GStreamer pipeline)
     ├── camera_picamera2.py     # Raspberry Pi camera
-    └── tracking/               # Confirms markers across frames and smooths positions
+    └── tracking/               # Confirms markers across frames
 testing/
 ├── make_test_video.py          # Generates a test video of moving markers
 ├── benchmark.py                # Scores detection against ground truth
@@ -177,7 +177,7 @@ python -m droneload.vision [--source SOURCE] [--dict DICTIONARY] [--no-track] [-
 
 `--dict` takes a `cv2.aruco` dictionary name and defaults to `DICT_4X4_50`.
 
-A marker is reported only once it is seen in 3 of the last 5 frames, and its position is smoothed. `--no-track` reports every detection instead, which a single image needs.
+A marker is reported only once it is seen in 3 of the last 5 frames, at the position detected in that frame. `--no-track` reports every detection instead, which a single image needs.
 
 `--show` plays the annotated video in a window; press `q` to stop. `--record out.mp4` saves the same video. Confirmed markers are outlined in green with their ID, unconfirmed ones in grey, and the top-left corner shows detection time, frames per second and both counts. For example, to watch tracking on the Shadow-ArUco footage:
 
