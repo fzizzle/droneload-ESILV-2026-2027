@@ -58,6 +58,8 @@ Problems found while reviewing the project.
   finds 64% of markers and the tracker reports 54%, even with no move limit,
   because a marker needs 3 hits in 5 frames. Try re-running `detectMarkers` on
   an upscaled crop around each track's last position when it is missed.
+  Keeping confirmed tracks confirmed through gaps was rejected (see
+  `logs/DECISIONS.md`), so any fix must raise the detection rate itself.
 
 - [ ] **Retest camera-motion compensation on flight footage.** A KLT +
   `estimateAffinePartial2D` prototype gave no gain on the simulated (global

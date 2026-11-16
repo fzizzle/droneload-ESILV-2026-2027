@@ -28,3 +28,4 @@ Lasting decisions, one line each. Keep this file short.
 - 2026-11-13: Calibration uses a checkerboard with 9 × 6 inner corners and 25 mm squares by default, and writes OpenCV YAML with `camera_matrix`, `dist_coeffs`, `image_width`, `image_height` and `rms_px`.
 - 2026-11-16: The shake baseline is `vibration_test --source` on fdcl-gwu at moderate shake (seed 1): raw 63.8%, tracked 32.6%. Saved shaken videos in `test_footage/shaken/` are for watching; scores come from the in-memory run.
 - 2026-11-16: The tracker's move limit is max(20 px, 0.75 × marker side) × frames since last seen, replacing the fixed 40 px.
+- 2026-11-16: The 3-of-5 rule applies to keeping a marker, not only to its first report. Keeping confirmed tracks confirmed through gaps was prototyped (fdcl moderate tracked 54.1% → 60.2%) and rejected.
