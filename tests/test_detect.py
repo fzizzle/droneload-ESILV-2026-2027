@@ -25,6 +25,24 @@ def logged_rows():
     with open(detect.DETECTION_LOG, newline="") as f:
         return [(int(row["timestamp_ms"]), int(row["id"])) for row in csv.DictReader(f)]
 
+@pytest.mark.parametrize("bad_fps", [float("nan"), float("inf"), -1.0, 0.0])
+def test_opencv_camera_ignores_bad_frame_rate(tmp_path, monkeypatch, bad_fps):
+    path = tmp_path / "clip.mp4"
+    write_video(path, [one_marker_frame()] * 3, 30)
+
+    class FakeCapture:
+        def __init__(self, source):
+            pass
+        def isOpened(self):
+            return True
+        def get(self, prop):
+            return bad_fps
+
+    monkeypatch.setattr("droneload.vision.camera_opencv.cv2.VideoCapture", FakeCapture)
+    camera = OpenCVCamera(str(path))
+    assert camera.open()
+    assert camera.fps == 30
+
 def test_marker_min_side():
     corner = np.array([[[0, 0], [10, 0], [10, 20], [0, 20]]], dtype=np.float32)
     assert detect.marker_min_side(corner) == 10
