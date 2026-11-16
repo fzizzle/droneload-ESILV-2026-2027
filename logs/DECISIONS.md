@@ -29,3 +29,4 @@ Lasting decisions, one line each. Keep this file short.
 - 2026-11-16: The shake baseline is `vibration_test --source` on fdcl-gwu at moderate shake (seed 1): raw 63.8%, tracked 32.6%. Saved shaken videos in `test_footage/shaken/` are for watching; scores come from the in-memory run.
 - 2026-11-16: The tracker's move limit is max(20 px, 0.75 × marker side) × frames since last seen, replacing the fixed 40 px.
 - 2026-11-16: For now, the 3-of-5 rule applies to keeping a marker, not only to its first report. Keeping confirmed tracks confirmed through gaps stays an option; see `TODO.md`.
+- 2026-11-16: Analysis notebooks and their dependencies (`plotly`, `kaleido`, `nbformat`, `jupyter`) live in `analysis/`; CI and the drone do not install them. Notebooks are committed with outputs cleared.

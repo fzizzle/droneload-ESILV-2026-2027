@@ -26,6 +26,7 @@ testing/
 ├── vibration_test.py           # Simule le flou, les ondulations et les secousses, et mesure la détection
 └── sitl_sensors.parm           # Flux optique et télémètre simulés
 tests/                          # Tests unitaires et de bout en bout
+analysis/                       # Études pour le rapport de projet (notebooks et graphiques)
 scripts/
 ├── check.sh                    # Lance tous les contrôles avec une sortie courte
 ├── sim.sh                      # Télécharge et lance le simulateur ArduPilot
@@ -289,6 +290,8 @@ done
 ```
 
 Pour en regarder une : `python -m droneload.vision --source test_footage/shaken/fdcl-gwu-moderate.mp4 --dict DICT_ARUCO_ORIGINAL --show`. Pour évaluer une méthode, lancez `python -m testing.vibration_test --source test_footage/fdcl-gwu/test_video.mp4 --dict DICT_ARUCO_ORIGINAL`, qui applique les mêmes secousses et compare avec les images d'origine. La référence se trouve dans `droneload/vision/README.md`.
+
+**Études.** `analysis/smoothing/smoothing_study.ipynb` mesure l'effet du poids de lissage du suivi sur l'erreur de position et la gigue, sur ces images secouées. Voir [`analysis/README.md`](analysis/README.md) (en anglais).
 
 ## Contribuer
 
