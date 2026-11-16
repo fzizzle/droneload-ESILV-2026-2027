@@ -19,7 +19,7 @@ CI and the drone do not install these packages. Keep plotting code out of `drone
 
 | Folder | Question | Result |
 |---|---|---|
-| `smoothing/` | How does the tracker's `SMOOTHING` weight change position error and jitter under camera shake? | It adds lag without changing which markers are reported; see the notebook's conclusion |
+| `smoothing/` | How does the tracker's `SMOOTHING` weight change position error and jitter under camera shake? | For per-frame positions it adds lag (4-9× the frame error at 0.6); on a still scene it gives a steadier estimate. It never changes which markers are reported. See the notebook's conclusion |
 
 ## Smoothing study
 
