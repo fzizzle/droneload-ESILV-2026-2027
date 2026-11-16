@@ -58,8 +58,26 @@ Problems found while reviewing the project.
   finds 64% of markers and the tracker reports 54%, even with no move limit,
   because a marker needs 3 hits in 5 frames. Try re-running `detectMarkers` on
   an upscaled crop around each track's last position when it is missed.
-  Keeping confirmed tracks confirmed through gaps was rejected (see
-  `logs/DECISIONS.md`), so any fix must raise the detection rate itself.
+  The 3-of-5 rule is kept for now (see `logs/DECISIONS.md`).
+
+- [ ] **To consider: keep confirmed markers through short gaps.** Under shake
+  the detector finds each marker in bursts (3.4 frames on average). At fdcl-gwu
+  moderate, 12.8% of detections are dropped because a marker already reported
+  has fewer than 3 hits in its last 5 frames; the move limit drops only 0.5%.
+  Prototype: still need 3 of 5 for the first report, then keep reporting until
+  the track is deleted (5 frames without a hit), as DeepSORT does.
+
+  | | Now | Prototype |
+  |---|---|---|
+  | fdcl-gwu moderate tracked (raw 63.8%) | 54.1% | 60.2% |
+  | fdcl-gwu moderate false IDs/100 frames | 0.1 | 0.1 |
+  | Shadow-ArUco moderate tracked (raw 61.0%) | 53.8% | 56.8% |
+  | Shadow-ArUco clean false IDs/100 frames | 3.7 | 4.6 |
+  | `benchmark --track` found / unmatched | 53.2% / 2.4% | 54.1% / 2.8% |
+
+  Cost: a wrong ID near a confirmed marker is reported after one hit. Not
+  adopted on 2026-11-16 because 3 of 5 is preferred; revisit with flight
+  footage.
 
 - [ ] **Retest camera-motion compensation on flight footage.** A KLT +
   `estimateAffinePartial2D` prototype gave no gain on the simulated (global
