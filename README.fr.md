@@ -154,7 +154,7 @@ La dernière ligne doit indiquer `Detections saved to detections.csv`. Les résu
 | Caméra CSI du RubikPi | Non testée sur la carte ; le pipeline devra peut-être être adapté |
 | Matériel | Kit de prêt des organisateurs retenu par hypothèse, avec un ordinateur de bord Qualcomm (modèle à confirmer) ; caméras à acheter |
 | Marqueurs du projet (`DICT_4X4_50`) | Non testés sur des images réelles |
-| Vol de démonstration | Testé uniquement dans le simulateur ArduPilot 4.7.2, pas sur un drone |
+| Vol de démonstration | Testé uniquement dans le simulateur ArduPilot 4.7.2, sur un flux optique simulé sans GPS, pas sur un drone |
 
 Sur les images de test Shadow-ArUco, le détecteur a trouvé 58 % des marqueurs annotés, et 4 % de ses détections ne correspondaient à aucune annotation. Avec le suivi, il en a trouvé 55 %, et 1 % ne correspondaient pas. Ces images utilisent un autre dictionnaire, si bien que ces chiffres ne valent pas forcément pour les marqueurs du projet. Le travail restant figure dans `TODO.md`.
 
