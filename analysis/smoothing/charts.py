@@ -97,7 +97,7 @@ def save(fig, name, png=True):
     """Write the chart as HTML and, if a Chromium-based browser is found, as PNG."""
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     paths = [OUTPUT_DIR / f"{name}.html"]
-    fig.write_html(paths[0], include_plotlyjs="cdn")
+    fig.write_html(paths[0], include_plotlyjs=True)  # works offline, for presenting
     if png:
         try:
             fig.write_image(OUTPUT_DIR / f"{name}.png", scale=PNG_SCALE)

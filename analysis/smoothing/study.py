@@ -185,10 +185,19 @@ def trace(detected, level="moderate", seed=SEEDS[0], weights=(0.6, 1.0), marker_
     def xs(positions):
         return [p[marker_id][0] if marker_id in p else None for p in positions]
 
+    truth_x, last = [], None  # with two copies of the ID, follow the one nearest the last point
+    for positions in run.truth:
+        points = positions.get(marker_id)
+        if not points:
+            truth_x.append(None)
+            continue
+        last = points[0] if last is None else min(points, key=lambda p: math.dist(p, last))
+        truth_x.append(last[0])
+
     return dict(
         marker_id = marker_id,
         frames    = list(range(len(run.truth))),
-        truth_x   = xs([{m: points[0] for m, points in p.items()} for p in run.truth]),  # first copy
+        truth_x   = truth_x,
         raw_x     = xs(replay(run.detections, None)),
         weights   = {w: xs(replay(run.detections, w)) for w in weights},
     )

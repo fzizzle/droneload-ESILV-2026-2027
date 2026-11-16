@@ -1,4 +1,5 @@
 import math
+import re
 
 import pytest
 
@@ -151,3 +152,29 @@ def test_measure_matches_nearest_copy_of_duplicate_id():
 
 def test_cache_path_has_format_version():
     assert f"v{study.CACHE_VERSION}" in study.cache_path("x", (1,)).name
+
+def test_save_falls_back_to_html_when_png_fails(monkeypatch, tmp_path, capsys):
+    pytest.importorskip("plotly")
+    from analysis.smoothing import charts
+    import plotly.graph_objects as go
+
+    def no_browser(*args, **kwargs):
+        raise RuntimeError("no Chrome found")
+    monkeypatch.setattr(go.Figure, "write_image", no_browser)
+    monkeypatch.setattr(charts, "OUTPUT_DIR", tmp_path)
+    assert charts.save(go.Figure(), "t") == [tmp_path / "t.html"]
+    assert "[WARN]" in capsys.readouterr().out
+
+def test_saved_html_works_offline(monkeypatch, tmp_path):
+    pytest.importorskip("plotly")
+    from analysis.smoothing import charts
+    import plotly.graph_objects as go
+    monkeypatch.setattr(charts, "OUTPUT_DIR", tmp_path)
+    charts.save(go.Figure(), "t", png=False)
+    assert not re.search(r"<script[^>]*\bsrc=", (tmp_path / "t.html").read_text())
+
+def test_trace_truth_follows_nearest_copy():
+    # From frame 1 a static copy of ID 1 is listed first; the truth line must stay on the moving copy
+    detections = [[(1, 100, 0, SIDE)]] + [[(1, 900, 0, SIDE), (1, 100 + 2 * t, 0, SIDE)] for t in range(1, 4)]
+    _, detected = synthetic(detections)
+    assert study.trace(detected, seed=1, weights=())["truth_x"] == [100.0, 102.0, 104.0, 106.0]
