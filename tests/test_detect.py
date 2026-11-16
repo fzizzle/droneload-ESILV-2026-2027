@@ -415,3 +415,8 @@ def test_unknown_dict_rejected_before_camera_opens(monkeypatch, name):
 
     assert error.value.code == 2
     assert opened == []
+
+
+def test_detector_uses_default_polygon_accuracy():
+    params = detect.make_detector().getDetectorParameters()
+    assert params.polygonalApproxAccuracyRate == pytest.approx(0.03)

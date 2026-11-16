@@ -65,9 +65,9 @@ Set up with the README, then before review:
 ./scripts/check.sh
 ```
 
-For detection changes, also run `python -m testing.benchmark` before and after, and log both results. The baseline is `found=56.4% unmatched=10.9%`. The footage is listed in the README. Passing the generated test video does not show detection quality is good.
+For detection changes, also run `python -m testing.benchmark` before and after, and log both results. The baseline is `found=57.6% unmatched=4.1%`. The footage is listed in the README. Passing the generated test video does not show detection quality is good.
 
-For changes meant to cope with camera shake, also run `python -m testing.vibration_test --source test_footage/fdcl-gwu/test_video.mp4 --dict DICT_ARUCO_ORIGINAL` before and after. The baseline at moderate shake is `raw=63.8% tracked=54.1%`, with tracked err 1.7 px.
+For changes meant to cope with camera shake, also run `python -m testing.vibration_test --source test_footage/fdcl-gwu/test_video.mp4 --dict DICT_ARUCO_ORIGINAL` before and after. The baseline at moderate shake is `raw=65.9% tracked=57.2%`, with tracked err 1.7 px.
 
 ## Reporting
 

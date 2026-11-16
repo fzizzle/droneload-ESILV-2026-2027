@@ -35,11 +35,11 @@ Problems found while reviewing the project.
 - [x] **Camera was hard-coded in `main.py`.** Replaced by `--source`.
 
 - [ ] **Check false positives and missed markers on real footage.**
-  On Shadow-ArUco `video_5` the detector found 56% of annotated markers, and
-  11% of its detections did not match the annotations. Those detections
+  On Shadow-ArUco `video_5` the detector found 58% of annotated markers, and
+  4% of its detections did not match the annotations. Those detections
   include recurring wrong IDs. The cause has not been investigated, and this
-  footage does not use `DICT_4X4_50`. Tracking cuts unmatched detections to 1.4%, with
-  53.3% found.
+  footage does not use `DICT_4X4_50`. Tracking cuts unmatched detections to 0.8%, with
+  54.8% found.
 
 - [ ] **Record real `DICT_4X4_50` footage.** No public source was found.
 
@@ -60,7 +60,7 @@ Problems found while reviewing the project.
   rose from 33% to 54% with no more false IDs.
 
 - [ ] **Confirming costs recall under shake.** At moderate shake the detector
-  finds 64% of markers and the tracker reports 54%, even with no move limit,
+  finds 66% of markers and the tracker reports 57%, even with no move limit,
   because a marker needs 3 hits in 5 frames. Try re-running `detectMarkers` on
   an upscaled crop around each track's last position when it is missed.
   The 3-of-5 rule is kept for now (see `logs/DECISIONS.md`).
