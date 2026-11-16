@@ -75,3 +75,8 @@ def test_gate_has_pixel_floor():
 def test_gate_uses_track_side():
     out = run([[(3, 100, 100, 40)]] * 3 + [[(3, 300, 100, 400)]])
     assert out[-1] == []
+
+def test_smoothing_weight_is_configurable():
+    tracker = MarkerTracker(smoothing=1.0)
+    out = [tracker.update([(1, x, 0, SIDE)]) for x in (0, 0, 0, 10)]
+    assert out[-1] == [(1, 10.0, 0.0)]
