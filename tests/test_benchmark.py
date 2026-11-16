@@ -37,3 +37,9 @@ def test_score_with_tracker_drops_flicker(tmp_path):
 
     assert benchmark.score(paths, detector)[:2] == (6, 0)
     assert benchmark.score(paths, detector, MarkerTracker())[:2] == (3, 0)
+
+def test_score_applies_size_filter(tmp_path, monkeypatch):
+    paths = write_frames(tmp_path)
+    monkeypatch.setattr(detect, "MIN_SIDE_PX", 200)   # larger than the 150 px markers
+
+    assert benchmark.score(paths, detect.make_detector("DICT_4X4_50")) == (0, 0, 6)

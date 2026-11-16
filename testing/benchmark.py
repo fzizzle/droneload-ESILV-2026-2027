@@ -10,6 +10,7 @@ import numpy as np
 
 from droneload.vision import detect
 from droneload.vision.tracking.tracker import MarkerTracker
+from testing import vibration_test
 
 MATCH_DISTANCE_PX = 15
 
@@ -25,10 +26,7 @@ def score(paths, detector, tracker=None):
     for path in paths:
         truth = load_truth(path)
         annotated += len(truth)
-        gray = detect.preprocess(cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2GRAY))
-        corners, ids, _ = detector.detectMarkers(gray)
-        found = [(marker_id, *corner[0].mean(axis=0), detect.marker_min_side(corner))
-                 for corner, marker_id in zip(corners, [] if ids is None else ids.flatten().tolist())]
+        found = vibration_test.find_markers(cv2.imread(path), detector)
         if tracker is not None:
             found = tracker.update(found)
         for marker_id, cx, cy, *_ in found:

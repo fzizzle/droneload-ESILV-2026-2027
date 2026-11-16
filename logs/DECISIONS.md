@@ -33,3 +33,4 @@ Lasting decisions, one line each. Keep this file short.
 - 2026-11-16: With tracking on, CSV rows hold the detected position of confirmed markers (`SMOOTHING = 1.0`), superseding the smoothed positions of 2026-11-13. Approved by the project lead after `analysis/smoothing/`.
 - 2026-11-16: Any smoothing for steering (centring, landing) goes in `navigation`, with the drone's motion known, not in `vision`'s logged positions.
 - 2026-11-16: The shake baseline is now raw 63.8%, tracked 54.1%, tracked err 1.7 px (size-scaled gate, no smoothing), superseding tracked 32.6%.
+- 2026-11-16: The benchmark applies MIN_SIDE_PX as the app does. The baseline is now found=56.4% unmatched=10.9%, superseding unmatched=26.6%.

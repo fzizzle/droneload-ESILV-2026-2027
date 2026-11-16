@@ -31,10 +31,10 @@ Problems found while reviewing the project.
 
 - [ ] **Check false positives and missed markers on real footage.**
   On Shadow-ArUco `video_5` the detector found 56% of annotated markers, and
-  27% of its detections did not match the annotations. Those detections
+  11% of its detections did not match the annotations. Those detections
   include recurring wrong IDs. The cause has not been investigated, and this
-  footage does not use `DICT_4X4_50`. Tracking cuts unmatched detections to 2.7%, with
-  53.2% found.
+  footage does not use `DICT_4X4_50`. Tracking cuts unmatched detections to 1.4%, with
+  53.3% found.
 
 - [ ] **Record real `DICT_4X4_50` footage.** No public source was found.
 
