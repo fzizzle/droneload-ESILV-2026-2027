@@ -277,6 +277,19 @@ python -m droneload.vision --source "test_footage/shadow-aruco/video_5/%05d.png"
 | `fdcl-gwu` | 821 frames at 1080p | [fdcl-gwu/aruco-markers](https://github.com/fdcl-gwu/aruco-markers) | BSD-3-Clause |
 | `shadow-aruco` | 1,334 photos at 800×600 in a dark room with moving shadows, with ground truth in `corrected_annotations/` | [Shadow-ArUco Dataset](https://doi.org/10.5281/zenodo.10791293), `video_5` | CC BY 4.0 |
 
+**Shaken footage.** To test methods meant to cope with a poorly stabilised camera, generate shaken copies of both sets at three levels. The shake uses a fixed seed, so it is the same on every run:
+```bash
+mkdir -p test_footage/shaken
+for level in mild moderate severe; do
+    python -m testing.vibration_test --source test_footage/fdcl-gwu/test_video.mp4 \
+        --write test_footage/shaken/fdcl-gwu-$level.mp4 --level $level
+    python -m testing.vibration_test --source "test_footage/shadow-aruco/video_5/%05d.png" \
+        --write test_footage/shaken/shadow-aruco-$level.mp4 --level $level
+done
+```
+
+Watch one with `python -m droneload.vision --source test_footage/shaken/fdcl-gwu-moderate.mp4 --dict DICT_ARUCO_ORIGINAL --show`. To score a method, run `python -m testing.vibration_test --source test_footage/fdcl-gwu/test_video.mp4 --dict DICT_ARUCO_ORIGINAL`, which applies the same shake and compares it with the clean footage. The baseline is in `droneload/vision/README.md`.
+
 ## Contributing
 
 Contributors and coding agents follow [`AGENTS.md`](AGENTS.md). Work happens on branches, and each branch has a log in `logs/`.
