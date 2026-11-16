@@ -67,7 +67,6 @@ def make_detector(dict_name: str = ARUCO_DICT) -> cv2.aruco.ArucoDetector:
 
     # Allow smaller markers (useful when drone is higher)
     params.minMarkerPerimeterRate      = 0.02
-    params.polygonalApproxAccuracyRate = 0.05
 
     return cv2.aruco.ArucoDetector(aruco_dict, params)
 
