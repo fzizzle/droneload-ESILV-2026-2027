@@ -50,6 +50,16 @@ Problems found while reviewing the project.
   Record markers from a flying drone, and set a fixed short exposure on live
   cameras. Only `camera_picamera2.py` sets exposure today.
 
+- [ ] **Tracker drops shaken markers.** With simulated shake on fdcl-gwu
+  (`vibration_test --source`, moderate level, 43 px mean move per frame), the
+  detector finds 64% of markers but the tracker reports 33%, because moves
+  beyond `MAX_JUMP_PX = 40` count as misses. Consider scaling the limit with
+  frame size or predicting motion, and check with the benchmark.
+
+- [ ] **`--show` fails on Wayland.** The pip OpenCV wheel has no Qt Wayland
+  plugin, so the window does not open. `QT_QPA_PLATFORM=xcb` works through
+  XWayland. Consider setting it in `detect.py` or noting it in the README.
+
 - [x] **Update `ARUCO_LABELS` for the V0 rules.** Labels now cover IDs 0-9.
 
 - [x] **Simulate indoor positioning.** The simulator flies on optical flow and

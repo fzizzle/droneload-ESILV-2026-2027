@@ -23,7 +23,7 @@ droneload/
 testing/
 ├── make_test_video.py          # Generates a test video of moving markers
 ├── benchmark.py                # Scores detection against ground truth
-├── vibration_test.py           # Simulates blur and wobble, and measures detection
+├── vibration_test.py           # Simulates blur, wobble and camera shake, and measures detection
 └── sitl_sensors.parm           # Simulated optical flow and rangefinder
 tests/                          # Unit and end-to-end tests
 scripts/

@@ -23,7 +23,7 @@ droneload/
 testing/
 ├── make_test_video.py          # Génère une vidéo de test avec des marqueurs en mouvement
 ├── benchmark.py                # Évalue la détection par rapport à la vérité terrain
-├── vibration_test.py           # Simule le flou et les ondulations, et mesure la détection
+├── vibration_test.py           # Simule le flou, les ondulations et les secousses, et mesure la détection
 └── sitl_sensors.parm           # Flux optique et télémètre simulés
 tests/                          # Tests unitaires et de bout en bout
 scripts/
