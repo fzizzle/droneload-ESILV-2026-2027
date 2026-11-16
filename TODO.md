@@ -55,6 +55,14 @@ Problems found while reviewing the project.
   detector finds 64% of markers but the tracker reports 33%, because moves
   beyond `MAX_JUMP_PX = 40` count as misses. Consider scaling the limit with
   frame size or predicting motion, and check with the benchmark.
+  `docs/research/vibration-and-blur.md` ranks the options; start with a gate
+  sweep (40, 80, 120 px, none) and camera-motion compensation.
+
+- [ ] **`DICT_4X4_50` corrects no bit errors.** OpenCV allows
+  `int(1 × errorCorrectionRate)` bits, so the default 0.6 gives 0: one bit
+  flipped by blur rejects the marker (checked on OpenCV 4.10). `1.0` enables
+  1-bit correction but adds false positives; drop IDs outside 0-9 with it.
+  Needs a `DICT_4X4_50` shake set to judge, since neither baseline uses it.
 
 - [ ] **`--show` fails on Wayland.** The pip OpenCV wheel has no Qt Wayland
   plugin, so the window does not open. `QT_QPA_PLATFORM=xcb` works through
