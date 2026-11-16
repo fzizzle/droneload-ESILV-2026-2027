@@ -26,6 +26,7 @@ testing/
 ├── vibration_test.py           # Simulates blur, wobble and camera shake, and measures detection
 └── sitl_sensors.parm           # Simulated optical flow and rangefinder
 tests/                          # Unit and end-to-end tests
+analysis/                       # Studies for the project report (notebooks and charts)
 scripts/
 ├── check.sh                    # Runs all checks with short output
 ├── sim.sh                      # Downloads and runs the ArduPilot simulator
@@ -289,6 +290,8 @@ done
 ```
 
 Watch one with `python -m droneload.vision --source test_footage/shaken/fdcl-gwu-moderate.mp4 --dict DICT_ARUCO_ORIGINAL --show`. To score a method, run `python -m testing.vibration_test --source test_footage/fdcl-gwu/test_video.mp4 --dict DICT_ARUCO_ORIGINAL`, which applies the same shake and compares it with the clean footage. The baseline is in `droneload/vision/README.md`.
+
+**Studies.** `analysis/smoothing/smoothing_study.ipynb` measures how the tracker's smoothing weight changes position error and jitter on this shaken footage. See [`analysis/README.md`](analysis/README.md).
 
 ## Contributing
 

@@ -31,7 +31,8 @@ class _Track:
 class MarkerTracker:
     """Keeps one track per marker ID and reports only confirmed markers."""
 
-    def __init__(self):
+    def __init__(self, smoothing=SMOOTHING):
+        self.smoothing = smoothing
         self.tracks = {}
 
     def update(self, detections):
@@ -49,8 +50,8 @@ class MarkerTracker:
                 continue
             cx, cy, side = min(points, key=lambda p: math.dist(p[:2], track.raw))
             if math.dist((cx, cy), track.raw) <= track.gate():
-                track.cx += SMOOTHING * (cx - track.cx)
-                track.cy += SMOOTHING * (cy - track.cy)
+                track.cx += self.smoothing * (cx - track.cx)
+                track.cy += self.smoothing * (cy - track.cy)
                 track.raw = (cx, cy)
                 track.side = side
                 track.since_hit = 1

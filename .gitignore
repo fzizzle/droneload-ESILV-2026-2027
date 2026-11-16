@@ -6,3 +6,5 @@ test_markers.mp4
 camera.yaml
 test_footage/
 .venv/
+analysis/smoothing/output/
+.ipynb_checkpoints/
