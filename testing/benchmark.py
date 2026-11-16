@@ -27,11 +27,11 @@ def score(paths, detector, tracker=None):
         annotated += len(truth)
         gray = detect.preprocess(cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2GRAY))
         corners, ids, _ = detector.detectMarkers(gray)
-        found = [(marker_id, *corner[0].mean(axis=0))
+        found = [(marker_id, *corner[0].mean(axis=0), detect.marker_min_side(corner))
                  for corner, marker_id in zip(corners, [] if ids is None else ids.flatten().tolist())]
         if tracker is not None:
             found = tracker.update(found)
-        for marker_id, cx, cy in found:
+        for marker_id, cx, cy, *_ in found:
             near = marker_id in truth and np.linalg.norm(np.subtract((cx, cy), truth[marker_id])) < MATCH_DISTANCE_PX
             matched   += near
             unmatched += not near

@@ -1,8 +1,10 @@
 from droneload.vision.tracking.tracker import MarkerTracker
 
+SIDE = 60  # gate max(20, 45) = 45 px, so the 30 px/frame and 200 px cases keep their meaning
+
 def run(frames):
     tracker = MarkerTracker()
-    return [tracker.update(frame) for frame in frames]
+    return [tracker.update([d if len(d) == 4 else (*d, SIDE) for d in frame]) for frame in frames]
 
 def test_confirms_after_three_frames():
     out = run([[(4, 100, 100)]] * 3)
@@ -59,3 +61,17 @@ def test_one_miss_while_moving_keeps_track():
     frames[5] = []
     out = run(frames)
     assert [m[0] for m in out[6]] == [5]
+
+def test_gate_scales_with_marker_side():
+    big = run([[(5, 100 * i, 0, 200)] for i in range(6)])      # gate 150 px
+    assert all([m[0] for m in o] == [5] for o in big[2:])
+    small = run([[(5, 0, 0, 40)]] * 3 + [[(5, 100, 0, 40)]])  # gate 30 px
+    assert small[-1] == []
+
+def test_gate_has_pixel_floor():
+    out = run([[(5, 15 * i, 0, 10)] for i in range(6)])       # 0.75 x 10 < 20 px floor
+    assert all([m[0] for m in o] == [5] for o in out[2:])
+
+def test_gate_uses_track_side():
+    out = run([[(3, 100, 100, 40)]] * 3 + [[(3, 300, 100, 400)]])
+    assert out[-1] == []
