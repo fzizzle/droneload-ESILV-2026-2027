@@ -4,6 +4,7 @@ Problems found while reviewing the project.
 
 ## Bugs
 
+- [ ] **Check camera reopening on hardware.** The loop reopens a camera after 2 s without frames; this is tested with a fake camera only.
 - [ ] **Confirm the camera pipeline on the board.**
   `test_camera.sh` now uses the same pipeline as `camera_rubikpi_csi.py`
   (plain `video/x-raw` NV12 + `videoconvert`), but it has not been run on a
