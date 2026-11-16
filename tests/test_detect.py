@@ -1,4 +1,5 @@
 import csv
+import math
 import sys
 
 import cv2
@@ -208,7 +209,7 @@ def test_shake_rates_on_footage():
     detector = detect.make_detector()
     clean = vibration_test.SHAKE_LEVELS["clean"]
 
-    shaken, move = vibration_test.shake_frame(frames[0], (0, 0, 0), (0, 0, 0), clean, 1.0, 0)
+    shaken, move, _ = vibration_test.shake_frame(frames[0], (0, 0, 0), (0, 0, 0), clean, 1.0, 0)
     assert move == 0 and (shaken == frames[0]).all()
 
     real, rates = vibration_test.shake_rates(frames, detector)
@@ -225,3 +226,19 @@ def test_write_shaken(tmp_path):
     written, fps = vibration_test.read_frames(path)
     assert len(written) == 5 and fps == 30
     assert written[0].shape == frames[0].shape
+
+def test_position_errors_matches_ids():
+    assert vibration_test.position_errors({1: (0, 0), 2: (10, 10)}, {1: (3, 4), 3: (0, 0)}) == [5.0]
+
+def test_shake_matrix_maps_marker_centre():
+    frames = [vibration_test.make_frame(120)] * 4  # marker centred at (640, 360)
+    detector = detect.make_detector()
+    for shaken, _, matrix in vibration_test.shaken_frames(frames, vibration_test.SHAKE_LEVELS["mild"]):
+        (_, cx, cy, _), = vibration_test.find_markers(shaken, detector)
+        assert math.dist((cx, cy), vibration_test.map_point(matrix, 640, 360)) < 2.0
+
+def test_shake_rates_report_position_error():
+    frames = [vibration_test.make_frame(240)] * 15
+    _, rates = vibration_test.shake_rates(frames, detect.make_detector())
+    assert rates["clean"]["raw_err_px"] < 1.0
+    assert rates["clean"]["tracked_err_px"] < 1.0

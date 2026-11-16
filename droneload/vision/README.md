@@ -92,6 +92,7 @@ The organisers warn that camera vibration is usually a big problem. `python -m t
 
 - Move is the mean camera shift between frames. Amplitudes scale with frame width, so the 1920 px fdcl-gwu footage moves further in pixels than the 800 px Shadow-ArUco footage.
 - The tracker accepts a move of up to 0.75 marker sides per frame, and at least 20 px. Before 2026-11-16 the limit was a fixed 40 px, and on fdcl-gwu at moderate the tracker reported only 33%. The remaining gap between raw and tracked comes from confirming markers in 3 of the last 5 frames.
+- Raw err and tracked err are the mean distance in px between each reported position and where that marker really is in the shaken frame: its clean detection moved by the shake transform. On fdcl-gwu, with the tracker's smoothing weight of 0.6, tracked err is 5.6 px clean and 15.0 px at moderate. Raw err is 0.0 and 3.7 px, so smoothing makes positions lag. With a weight of 1.0 (no smoothing), tracked err is 0.0 and 1.7 px.
 - The shake is simulated, and neither set is drone footage, so these figures only compare levels.
 - To watch it, add `--write shaken.mp4 --level moderate` to save the shaken footage, then play it through `python -m droneload.vision --source shaken.mp4 --dict DICTIONARY --show`. Markers the tracker drops are outlined in grey.
 

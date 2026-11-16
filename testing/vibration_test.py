@@ -114,7 +114,10 @@ def shake_path(count, level, scale):
     return path
 
 def shake_frame(frame, pose, previous_pose, level, scale, index):
-    """Move the frame to pose, blurred along the move since the previous frame."""
+    """Move the frame to pose, blurred along the move since the previous frame.
+
+    Return the shaken frame, the move in px and the 2x3 affine matrix applied,
+    which leaves out blur and wobble."""
     height, width = frame.shape[:2]
     dx, dy, angle = pose
     matrix = cv2.getRotationMatrix2D((width / 2, height / 2), angle, level["zoom"])
@@ -126,10 +129,10 @@ def shake_frame(frame, pose, previous_pose, level, scale, index):
         shaken = motion_blur(shaken, blur_px, math.degrees(math.atan2(move_y, move_x)))
     if level["wobble"]:
         shaken = rolling_wobble(shaken, level["wobble"] * scale, index * 1.7)
-    return shaken, math.hypot(move_x, move_y)
+    return shaken, math.hypot(move_x, move_y), matrix
 
 def shaken_frames(frames, level):
-    """Yield each frame shaken at the given level, with its move in px."""
+    """Yield each frame shaken at the given level, with its move in px and its matrix."""
     scale = frames[0].shape[1] / SHAKE_WIDTH_PX
     path  = shake_path(len(frames), level, scale)
     for index, frame in enumerate(frames):
@@ -138,50 +141,80 @@ def shaken_frames(frames, level):
 def write_shaken(frames, fps, level, path):
     height, width = frames[0].shape[:2]
     writer = cv2.VideoWriter(path, cv2.VideoWriter_fourcc(*"mp4v"), fps, (width, height))
-    for shaken, _ in shaken_frames(frames, level):
+    for shaken, _, _ in shaken_frames(frames, level):
         writer.write(shaken)
     writer.release()
 
+def map_point(matrix, x, y):
+    """Return where the affine matrix moves the point (x, y)."""
+    mx, my = matrix @ (x, y, 1)
+    return float(mx), float(my)
+
+def position_errors(expected, found):
+    """Return the distance in px for each ID in both {id: (x, y)} maps."""
+    return [math.dist(expected[marker_id], found[marker_id]) for marker_id in expected if marker_id in found]
+
+def first_by_id(markers):
+    """Return {id: (cx, cy)}, keeping the first marker of each ID."""
+    positions = {}
+    for marker_id, cx, cy, *_ in markers:
+        positions.setdefault(marker_id, (cx, cy))
+    return positions
+
 def shake_run(frames, level, detector):
-    """Return per-frame raw IDs, tracked IDs and movement in px."""
+    """Return per-frame raw and tracked {id: (cx, cy)}, movement in px and shake matrices."""
     tracker = MarkerTracker()
-    raw, tracked, moves = [], [], []
-    for shaken, move in shaken_frames(frames, level):
+    raw, tracked, moves, matrices = [], [], [], []
+    for shaken, move, matrix in shaken_frames(frames, level):
         found = find_markers(shaken, detector)
-        raw.append({marker_id for marker_id, *_ in found})
-        tracked.append({marker_id for marker_id, _, _ in tracker.update(found)})
+        raw.append(first_by_id(found))
+        tracked.append(first_by_id(tracker.update(found)))
         moves.append(move)
-    return raw, tracked, moves
+        matrices.append(matrix)
+    return raw, tracked, moves, matrices
+
+def mean_error(expected, found):
+    errors = [e for exp, fnd in zip(expected, found) for e in position_errors(exp, fnd)]
+    return float(np.mean(errors)) if errors else math.nan
 
 def shake_rates(frames, detector):
     """Return the real marker IDs and, per level, the share of clean detections kept."""
-    clean_raw, clean_tracked, _ = shake_run(frames, SHAKE_LEVELS["clean"], detector)
+    clean_raw, clean_tracked, _, _ = shake_run(frames, SHAKE_LEVELS["clean"], detector)
     counts = {}
     for ids in clean_tracked:
         for marker_id in ids:
             counts[marker_id] = counts.get(marker_id, 0) + 1
     real      = {marker_id for marker_id, count in counts.items() if count >= REAL_MIN_FRAMES}
-    reference = [ids & real for ids in clean_raw]
+    reference = [ids.keys() & real for ids in clean_raw]
     total     = sum(len(ids) for ids in reference)
     rates = {}
     for name, level in SHAKE_LEVELS.items():
-        raw, tracked, moves = shake_run(frames, level, detector)
+        raw, tracked, moves, matrices = shake_run(frames, level, detector)
+        expected = [{marker_id: map_point(matrix, *positions[marker_id]) for marker_id in positions if marker_id in real}
+                    for positions, matrix in zip(clean_raw, matrices)]
         rates[name] = dict(
             move_px     = float(np.mean(moves)),
             move_p95_px = float(np.percentile(moves, 95)),
-            raw         = sum(len(r & s) for r, s in zip(reference, raw)) / total,
-            tracked     = sum(len(r & s) for r, s in zip(reference, tracked)) / total,
-            false_ids   = 100 * sum(len(s - real) for s in tracked) / len(frames),
+            raw         = sum(len(r & s.keys()) for r, s in zip(reference, raw)) / total,
+            tracked     = sum(len(r & s.keys()) for r, s in zip(reference, tracked)) / total,
+            false_ids   = 100 * sum(len(s.keys() - real) for s in tracked) / len(frames),
+            raw_err_px     = mean_error(expected, raw),
+            tracked_err_px = mean_error(expected, tracked),
         )
     return real, rates
+
+def format_px(value):
+    return "-" if math.isnan(value) else f"{value:.1f}"
 
 def print_shake_table(frames, detector):
     real, rates = shake_rates(frames, detector)
     print(f"{len(frames)} frames, real markers {sorted(real)}")
-    print(f"{'level':<10}{'move px':>9}{'p95':>6}{'raw':>8}{'tracked':>9}{'false IDs/100 frames':>22}")
+    print(f"{'level':<10}{'move px':>9}{'p95':>6}{'raw':>8}{'tracked':>9}{'false IDs/100 frames':>22}"
+          f"{'raw err':>9}{'tracked err':>13}")
     for name, rate in rates.items():
         print(f"{name:<10}{rate['move_px']:>9.1f}{rate['move_p95_px']:>6.0f}{100 * rate['raw']:>7.1f}%"
-              f"{100 * rate['tracked']:>8.1f}%{rate['false_ids']:>22.1f}")
+              f"{100 * rate['tracked']:>8.1f}%{rate['false_ids']:>22.1f}"
+              f"{format_px(rate['raw_err_px']):>9}{format_px(rate['tracked_err_px']):>13}")
 
 def main():
     parser = argparse.ArgumentParser()

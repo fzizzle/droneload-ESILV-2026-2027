@@ -12,11 +12,13 @@ Stop the tracker discarding shaken markers the detector still finds (report row 
 - 2026-11-16: Wrote `docs/plans/2026-11-16-tracker-gate.md`.
 - 2026-11-16: Task 1, size-scaled gate. Bench 56.4/26.6 before and after; `--track` 53.2/2.7 → 53.2/2.4. fdcl moderate tracked 32.6 → 54.1% (false IDs 0.2 → 0.1), mild 97.3 → 98.4%.
 
+- 2026-11-16: Task 2, position error in the vibration test. fdcl tracked err at clean/mild/moderate: 5.6/7.5/15.0 px with SMOOTHING 0.6, 0.0/0.5/1.7 px with 1.0. Raw err 0.0/0.5/3.7 px.
+
 ## Decisions
 - Size-scaled gate, not motion compensation: same recall, fewer false IDs, no cost.
 
 ## Verification
-- Task 1: `./scripts/check.sh` passes. Nothing run on hardware.
+- Tasks 1-2: `./scripts/check.sh` passes. Nothing run on hardware.
 
 ## Next Steps
 - Tasks 1-2 of the plan. Task 3 (smoothing) needs the project lead's decision.
