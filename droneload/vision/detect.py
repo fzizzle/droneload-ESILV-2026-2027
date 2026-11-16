@@ -172,12 +172,14 @@ def main():
                 for corner, marker_id in zip(corners, ids.flatten()):
                     if marker_min_side(corner) < MIN_SIDE_PX:
                         continue
-                    found.append((int(marker_id), *center_of(corner)))
+                    found.append((int(marker_id), *center_of(corner), marker_min_side(corner)))
                     corner_of.setdefault(int(marker_id), []).append(corner)
                     raw_corners.append(corner)
 
             if tracker is not None:
                 found = tracker.update(found)
+            else:
+                found = [(marker_id, cx, cy) for marker_id, cx, cy, _ in found]
 
             for marker_id, cx, cy in found:
                 # Draw the raw outline nearest the reported position

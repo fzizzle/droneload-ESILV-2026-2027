@@ -50,13 +50,19 @@ Problems found while reviewing the project.
   Record markers from a flying drone, and set a fixed short exposure on live
   cameras. Only `camera_picamera2.py` sets exposure today.
 
-- [ ] **Tracker drops shaken markers.** With simulated shake on fdcl-gwu
-  (`vibration_test --source`, moderate level, 43 px mean move per frame), the
-  detector finds 64% of markers but the tracker reports 33%, because moves
-  beyond `MAX_JUMP_PX = 40` count as misses. Consider scaling the limit with
-  frame size or predicting motion, and check with the benchmark.
-  `docs/research/vibration-and-blur.md` ranks the options; start with a gate
-  sweep (40, 80, 120 px, none) and camera-motion compensation.
+- [x] **Tracker drops shaken markers.** The fixed 40 px move limit is now
+  0.75 marker sides (at least 20 px). On fdcl-gwu at moderate shake, tracked
+  rose from 33% to 54% with fewer false IDs.
+
+- [ ] **Confirming costs recall under shake.** At moderate shake the detector
+  finds 64% of markers and the tracker reports 54%, even with no move limit,
+  because a marker needs 3 hits in 5 frames. Try re-running `detectMarkers` on
+  an upscaled crop around each track's last position when it is missed.
+
+- [ ] **Retest camera-motion compensation on flight footage.** A KLT +
+  `estimateAffinePartial2D` prototype gave no gain on the simulated (global
+  affine) shake, added false IDs and cost 5.7 ms per frame on a PC. Real
+  wobble and parallax may change that.
 
 - [ ] **`DICT_4X4_50` corrects no bit errors.** OpenCV allows
   `int(1 × errorCorrectionRate)` bits, so the default 0.6 gives 0: one bit

@@ -62,16 +62,17 @@ def rolling_wobble(frame, amplitude_px, phase):
     return cv2.remap(frame, map_x, map_y, cv2.INTER_LINEAR)
 
 def find_markers(frame, detector):
-    """Return (id, cx, cy) for each marker, filtered as the detection loop does."""
+    """Return (id, cx, cy, side_px) for each marker, filtered as the detection loop does."""
     gray = detect.preprocess(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
     corners, ids, _ = detector.detectMarkers(gray)
     if ids is None:
         return []
-    return [(int(marker_id), *detect.center_of(corner)) for corner, marker_id in zip(corners, ids.flatten())
+    return [(int(marker_id), *detect.center_of(corner), detect.marker_min_side(corner))
+            for corner, marker_id in zip(corners, ids.flatten())
             if detect.marker_min_side(corner) >= detect.MIN_SIDE_PX]
 
 def is_found(frame, detector):
-    return any(marker_id == MARKER_ID for marker_id, _, _ in find_markers(frame, detector))
+    return any(marker_id == MARKER_ID for marker_id, *_ in find_markers(frame, detector))
 
 def blur_rate(frame, length_px, detector):
     angles = np.linspace(0, 180, TRIALS, endpoint=False)
@@ -147,7 +148,7 @@ def shake_run(frames, level, detector):
     raw, tracked, moves = [], [], []
     for shaken, move in shaken_frames(frames, level):
         found = find_markers(shaken, detector)
-        raw.append({marker_id for marker_id, _, _ in found})
+        raw.append({marker_id for marker_id, *_ in found})
         tracked.append({marker_id for marker_id, _, _ in tracker.update(found)})
         moves.append(move)
     return raw, tracked, moves
