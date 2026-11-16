@@ -100,9 +100,9 @@ def read_frames(source):
     capture.release()
     return frames, fps
 
-def shake_path(count, level, scale):
+def shake_path(count, level, scale, seed=SEED):
     """Return (dx, dy, angle) per frame: slow random sway plus fast jitter."""
-    rng  = np.random.default_rng(SEED)
+    rng  = np.random.default_rng(seed)
     t    = np.arange(count)
     path = np.zeros((count, 3))
     for axis, amplitude in enumerate([level["drift"] * scale, level["drift"] * scale, level["rot"]]):
@@ -131,10 +131,10 @@ def shake_frame(frame, pose, previous_pose, level, scale, index):
         shaken = rolling_wobble(shaken, level["wobble"] * scale, index * 1.7)
     return shaken, math.hypot(move_x, move_y), matrix
 
-def shaken_frames(frames, level):
+def shaken_frames(frames, level, seed=SEED):
     """Yield each frame shaken at the given level, with its move in px and its matrix."""
     scale = frames[0].shape[1] / SHAKE_WIDTH_PX
-    path  = shake_path(len(frames), level, scale)
+    path  = shake_path(len(frames), level, scale, seed)
     for index, frame in enumerate(frames):
         yield shake_frame(frame, path[index], path[max(index - 1, 0)], level, scale, index)
 

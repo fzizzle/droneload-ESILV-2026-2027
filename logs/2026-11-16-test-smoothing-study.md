@@ -8,6 +8,7 @@ Study how the tracker's `SMOOTHING` weight affects position error and jitter on 
 
 ## Steps
 - 2026-11-16: Design approved; plan in `docs/plans/2026-11-16-smoothing-study.md`.
+- 2026-11-16: `MarkerTracker(smoothing=)` and a shake `seed`. fdcl vibration baseline unchanged: moderate raw 63.8% tracked 54.1%, err 3.7/15.0 px.
 
 ## Decisions
 - Plotly, a rerunnable notebook, and deps in `analysis/requirements.txt` only (project lead).

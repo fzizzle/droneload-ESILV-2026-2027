@@ -242,3 +242,9 @@ def test_shake_rates_report_position_error():
     _, rates = vibration_test.shake_rates(frames, detect.make_detector())
     assert rates["clean"]["raw_err_px"] < 1.0
     assert rates["clean"]["tracked_err_px"] < 1.0
+
+def test_shake_path_seed():
+    level = vibration_test.SHAKE_LEVELS["moderate"]
+    default = vibration_test.shake_path(50, level, 1.0)
+    assert (default == vibration_test.shake_path(50, level, 1.0, seed=vibration_test.SEED)).all()
+    assert not (default == vibration_test.shake_path(50, level, 1.0, seed=2)).all()
