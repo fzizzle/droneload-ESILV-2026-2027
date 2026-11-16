@@ -73,7 +73,7 @@ Problems found while reviewing the project.
   | fdcl-gwu moderate false IDs/100 frames | 0.1 | 0.1 |
   | Shadow-ArUco moderate tracked (raw 61.0%) | 53.8% | 56.8% |
   | Shadow-ArUco clean false IDs/100 frames | 3.7 | 4.6 |
-  | `benchmark --track` found / unmatched | 53.3% / 1.4% | 54.1% / 2.8% |
+  | `benchmark --track` found / unmatched | 53.2% / 2.4% | 54.1% / 2.8% |
 
   Cost: a wrong ID near a confirmed marker is reported after one hit. Not
   adopted on 2026-11-16 because 3 of 5 is preferred; revisit with flight
