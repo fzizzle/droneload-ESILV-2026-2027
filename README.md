@@ -175,6 +175,8 @@ python -m droneload.vision [--source SOURCE] [--dict DICTIONARY] [--no-track] [-
 | `rubikpi-csi` | RubikPi CSI camera |
 | `picamera` | Raspberry Pi camera, needs `picamera2` |
 
+If a live camera stops sending frames, the program reopens it every 2 s until frames return.
+
 `--dict` takes a `cv2.aruco` dictionary name and defaults to `DICT_4X4_50`.
 
 A marker is reported only once it is seen in 3 of the last 5 frames, at the position detected in that frame. `--no-track` reports every detection instead, which a single image needs.

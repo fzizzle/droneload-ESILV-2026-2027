@@ -175,6 +175,8 @@ Par défaut, `--source` vaut `0`, soit la première webcam. Valeurs possibles :
 | `rubikpi-csi` | Caméra CSI du RubikPi |
 | `picamera` | Caméra du Raspberry Pi, nécessite `picamera2` |
 
+Si une caméra cesse d'envoyer des images, le programme la rouvre toutes les 2 s jusqu'au retour des images.
+
 `--dict` prend le nom d'un dictionnaire `cv2.aruco` et vaut `DICT_4X4_50` par défaut.
 
 Un marqueur n'est signalé qu'après avoir été vu sur 3 des 5 dernières images, à la position détectée sur cette image. `--no-track` signale chaque détection, ce qu'exige une image seule.

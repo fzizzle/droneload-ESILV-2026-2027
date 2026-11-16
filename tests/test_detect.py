@@ -357,3 +357,61 @@ def test_live_recording_writes_the_frames_due(tmp_path, monkeypatch):
     detect.main()
 
     assert recorded("out.mp4") == (pytest.approx(detect.RECORD_FPS), 6)
+
+class FlakyCamera:
+    """Live camera that sends no frames until it has been opened more than dead_opens times."""
+    finite = False
+
+    def __init__(self, frames, dead_opens, max_reads=20):
+        self.frames, self.dead_opens, self.reads_left = frames, dead_opens, max_reads
+        self.opens = self.releases = 0
+
+    def open(self):
+        self.opens += 1
+        return self.opens == 1 or self.opens > self.dead_opens
+
+    def read(self):
+        self.reads_left -= 1
+        alive = self.opens > self.dead_opens
+        if self.reads_left < 0 or (alive and not self.frames):
+            raise KeyboardInterrupt               # stands in for Ctrl+C
+        return (True, self.frames.pop()) if alive else (False, None)
+
+    def release(self):
+        self.releases += 1
+
+def run_flaky(tmp_path, monkeypatch, camera):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(detect, "REOPEN_AFTER_SEC", 0)
+    monkeypatch.setattr(detect.time, "sleep", lambda seconds: None)
+    monkeypatch.setattr(detect, "make_camera", lambda source: camera)
+    monkeypatch.setattr(sys, "argv", ["detect", "--no-track"])
+    detect.main()
+
+def test_dead_camera_is_reopened(tmp_path, monkeypatch, capsys):
+    camera = FlakyCamera([one_marker_frame()], dead_opens=1)
+    run_flaky(tmp_path, monkeypatch, camera)
+
+    assert camera.opens == 2
+    assert logged_ids() == {0}
+    assert capsys.readouterr().out.count("[WARNING]") == 2   # frames lost, then one reopen
+
+def test_camera_that_never_returns_keeps_retrying(tmp_path, monkeypatch, capsys):
+    camera = FlakyCamera([], dead_opens=99, max_reads=6)
+    run_flaky(tmp_path, monkeypatch, camera)      # ends on Ctrl+C without raising
+
+    assert camera.opens == 6                      # the first open, then one per failed read after the first
+    assert camera.releases == 6                   # each reopen releases first; so does the exit
+    assert logged_ids() == set()
+    assert capsys.readouterr().out.count("[WARNING]") == 6   # one per attempt, not one per read
+
+@pytest.mark.parametrize("name", ["DICT_NOPE", "dict_4x4_50"])
+def test_unknown_dict_rejected_before_camera_opens(monkeypatch, name):
+    opened = []
+    monkeypatch.setattr(detect, "make_camera", opened.append)
+    monkeypatch.setattr(sys, "argv", ["detect", "--dict", name])
+    with pytest.raises(SystemExit) as error:
+        detect.main()
+
+    assert error.value.code == 2
+    assert opened == []

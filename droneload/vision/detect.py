@@ -9,12 +9,14 @@ import numpy as np
 
 # ArUco settings 
 ARUCO_DICT        = "DICT_4X4_50"
+ARUCO_DICTS       = sorted(name for name in dir(cv2.aruco) if name.startswith("DICT_"))
 MIN_SIDE_PX       = 10
 DETECTION_LOG     = "detections.csv"
 WRITE_COOLDOWN_MS = 1000
 DEBUG_IMAGE_PATH  = "aruco_debug.jpg"
 SAVE_EVERY_SEC    = 2.0
 LOG_EVERY_SEC     = 2.0
+REOPEN_AFTER_SEC  = 2.0  # a live camera is reopened after this long without frames
 SHOW_WINDOW       = "droneload"
 RECORD_FPS        = 30  # also the rate assumed for a file that reports none
 RECORD_CODEC      = "mp4v"
@@ -117,7 +119,7 @@ def main():
                         help="rubikpi-csi, picamera, or anything cv2.VideoCapture opens: "
                              "device index, video file, image sequence, GStreamer pipeline "
                              "(default: 0)")
-    parser.add_argument("--dict", default=ARUCO_DICT,
+    parser.add_argument("--dict", default=ARUCO_DICT, choices=ARUCO_DICTS, metavar="DICTIONARY",
                         help=f"cv2.aruco dictionary name (default: {ARUCO_DICT})")
     parser.add_argument("--no-track", action="store_true",
                         help="report every detection, without confirming it across frames")
@@ -143,6 +145,7 @@ def main():
     record_start     = 0.0
     written          = 0
     last_tick        = None
+    failing_since    = None
     fps              = 0.0
     file_fps         = source_fps(camera)
     start_ms         = now_ms()
@@ -161,9 +164,17 @@ def main():
                         cv2.imwrite(DEBUG_IMAGE_PATH, last_frame[2])
                     print("[INFO] End of source.")
                     break
-                print("[WARNING] Failed to read frame.")
+                if failing_since is None:
+                    failing_since = time.monotonic()
+                    print("[WARNING] No frame from the camera. Retrying.")
+                elif time.monotonic() - failing_since >= REOPEN_AFTER_SEC:
+                    print("[WARNING] Reopening the camera.")
+                    camera.release()
+                    camera.open()
+                    failing_since = time.monotonic()
                 time.sleep(0.05)
                 continue
+            failing_since = None
 
             t0 = time.perf_counter()
 

@@ -36,3 +36,4 @@ Lasting decisions, one line each. Keep this file short.
 - 2026-11-16: The benchmark applies MIN_SIDE_PX as the app does. The baseline is now found=56.4% unmatched=10.9%, superseding unmatched=26.6%.
 - 2026-11-16: For a video file, CSV timestamps and the cooldown follow the run's start time plus the frame's position in the video; live cameras keep real time. The columns are unchanged. Approved by the project lead.
 - 2026-11-16: --record keeps a video file's frame rate; a live camera is recorded at 30 fps in real time, repeating or skipping frames to keep pace.
+- 2026-11-16: A live camera that sends no frame for 2 s is released and reopened, then every 2 s, with one warning per attempt. Approved by the project lead.
