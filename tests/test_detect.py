@@ -216,3 +216,12 @@ def test_shake_rates_on_footage():
     assert rates["clean"]["raw"] == 1.0 and rates["clean"]["move_px"] == 0
     assert rates["severe"]["move_px"] > rates["mild"]["move_px"] > 0
     assert rates["severe"]["tracked"] < rates["clean"]["tracked"]
+
+def test_write_shaken(tmp_path):
+    frames = [vibration_test.make_frame(240)] * 5
+    path = str(tmp_path / "shaken.mp4")
+    vibration_test.write_shaken(frames, 30, vibration_test.SHAKE_LEVELS["severe"], path)
+
+    written, fps = vibration_test.read_frames(path)
+    assert len(written) == 5 and fps == 30
+    assert written[0].shape == frames[0].shape

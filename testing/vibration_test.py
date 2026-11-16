@@ -2,6 +2,7 @@
 #   python -m testing.vibration_test
 # Or shake real footage, as a poorly stabilised camera would, and compare with the clean footage:
 #   python -m testing.vibration_test --source FOOTAGE --dict DICTIONARY
+# Add --write OUT.mp4 --level moderate to save the shaken footage instead.
 import argparse
 import math
 
@@ -32,6 +33,7 @@ SHAKE_WIDTH_PX  = 800
 EXPOSURE        = 0.5  # share of the frame interval the shutter is open; sets blur length
 REAL_MIN_FRAMES = 10   # a marker is real if the tracker confirms it in this many clean frames
 SEED            = 1
+DEFAULT_FPS     = 30   # used when the source does not report a frame rate
 
 def make_frame(side_px):
     aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
@@ -86,14 +88,16 @@ def print_table(name, levels, rate):
         print(f"{side:>7} px  " + "".join(f"{100 * rate(frame, level):>5.0f}%" for level in levels))
 
 def read_frames(source):
+    """Return the source's frames and frame rate."""
     capture, frames = cv2.VideoCapture(source), []
     while True:
         ok, frame = capture.read()
         if not ok:
             break
         frames.append(frame)
+    fps = capture.get(cv2.CAP_PROP_FPS) or DEFAULT_FPS
     capture.release()
-    return frames
+    return frames, fps
 
 def shake_path(count, level, scale):
     """Return (dx, dy, angle) per frame: slow random sway plus fast jitter."""
@@ -123,14 +127,25 @@ def shake_frame(frame, pose, previous_pose, level, scale, index):
         shaken = rolling_wobble(shaken, level["wobble"] * scale, index * 1.7)
     return shaken, math.hypot(move_x, move_y)
 
+def shaken_frames(frames, level):
+    """Yield each frame shaken at the given level, with its move in px."""
+    scale = frames[0].shape[1] / SHAKE_WIDTH_PX
+    path  = shake_path(len(frames), level, scale)
+    for index, frame in enumerate(frames):
+        yield shake_frame(frame, path[index], path[max(index - 1, 0)], level, scale, index)
+
+def write_shaken(frames, fps, level, path):
+    height, width = frames[0].shape[:2]
+    writer = cv2.VideoWriter(path, cv2.VideoWriter_fourcc(*"mp4v"), fps, (width, height))
+    for shaken, _ in shaken_frames(frames, level):
+        writer.write(shaken)
+    writer.release()
+
 def shake_run(frames, level, detector):
     """Return per-frame raw IDs, tracked IDs and movement in px."""
-    scale   = frames[0].shape[1] / SHAKE_WIDTH_PX
-    path    = shake_path(len(frames), level, scale)
     tracker = MarkerTracker()
     raw, tracked, moves = [], [], []
-    for index, frame in enumerate(frames):
-        shaken, move = shake_frame(frame, path[index], path[max(index - 1, 0)], level, scale, index)
+    for shaken, move in shaken_frames(frames, level):
         found = find_markers(shaken, detector)
         raw.append({marker_id for marker_id, _, _ in found})
         tracked.append({marker_id for marker_id, _, _ in tracker.update(found)})
@@ -171,11 +186,20 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", help="footage to shake; without it, a generated marker is used")
     parser.add_argument("--dict", default=detect.ARUCO_DICT, help="cv2.aruco dictionary name")
+    parser.add_argument("--write", metavar="OUT", help="save the footage shaken at --level instead of measuring")
+    parser.add_argument("--level", default="moderate", choices=SHAKE_LEVELS, help="shake level for --write")
     args = parser.parse_args()
 
+    if args.write and not args.source:
+        parser.error("--write needs --source")
+    if args.write:
+        frames, fps = read_frames(args.source)
+        write_shaken(frames, fps, SHAKE_LEVELS[args.level], args.write)
+        print(f"[INFO] {len(frames)} frames shaken at {args.level} saved to {args.write}")
+        return
     detector = detect.make_detector(args.dict)
     if args.source:
-        print_shake_table(read_frames(args.source), detector)
+        print_shake_table(read_frames(args.source)[0], detector)
         return
     print_table("blur px", BLUR_PX, lambda frame, level: blur_rate(frame, level, detector))
     print_table("wobble px", WOBBLE_PX, lambda frame, level: wobble_rate(frame, level, detector))

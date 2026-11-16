@@ -93,6 +93,7 @@ The organisers warn that camera vibration is usually a big problem. `python -m t
 - Move is the mean camera shift between frames. Amplitudes scale with frame width, so the 1920 px fdcl-gwu footage moves further in pixels than the 800 px Shadow-ArUco footage.
 - Once frames move more than about 40 px apart, the tracker drops markers the detector still finds: on fdcl-gwu at moderate it reports half of them. This is its `MAX_JUMP_PX` limit.
 - The shake is simulated, and neither set is drone footage, so these figures only compare levels.
+- To watch it, add `--write shaken.mp4 --level moderate` to save the shaken footage, then play it through `python -m droneload.vision --source shaken.mp4 --dict DICTIONARY --show`. Markers the tracker drops are outlined in grey.
 
 Software methods that reduce vibration's effects are planned in [`tracking/`](tracking/README.md).
 

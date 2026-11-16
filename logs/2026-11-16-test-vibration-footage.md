@@ -7,7 +7,7 @@
 Measure detection on poorly stabilised footage by shaking real test footage in `testing/vibration_test.py`.
 
 ## Steps
-- 2026-11-16: Added `--source` and `--dict` to `vibration_test.py`: four shake levels (sway, jitter, rotation, blur along each move, rolling wobble), compared with clean footage, raw and tracked. Ran on Shadow-ArUco `video_5` and fdcl-gwu; results are in `droneload/vision/README.md`. On fdcl-gwu at moderate shake, raw 64%, tracked 33%.
+- 2026-11-16: Added `--source` and `--dict` to `vibration_test.py`: four shake levels (sway, jitter, rotation, blur along each move, rolling wobble), compared with clean footage, raw and tracked. Ran on Shadow-ArUco `video_5` and fdcl-gwu; results are in `droneload/vision/README.md`. On fdcl-gwu at moderate shake, raw 64%, tracked 33%. Added `--write` and `--level` to save shaken footage; tables unchanged after.
 
 ## Decisions
 - Extended the existing vibration test instead of adding a script; it reuses `motion_blur` and `rolling_wobble`.
