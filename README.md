@@ -219,7 +219,7 @@ If the flight mode changes during the demo, as when a pilot takes over, the prog
 2. Converts it to greyscale and applies CLAHE contrast enhancement, which improves detection in poor light.
 3. Detects markers and discards any with a side under 10 pixels (`MIN_SIDE_PX` in `detect.py`).
 4. Maps each ID to a label.
-5. Logs each marker ID at most once per second (`WRITE_COOLDOWN_MS`), which keeps the CSV small. The limit uses real time, so a video that processes faster than it plays logs fewer rows.
+5. Logs each marker ID at most once per second (`WRITE_COOLDOWN_MS`), which keeps the CSV small. For a live camera, this limit and `timestamp_ms` use real time. For a video file, they use the time the run started plus the frame's position in the video, so the same file gives equally spaced rows on any computer.
 
 Markers need a white border to be detected.
 

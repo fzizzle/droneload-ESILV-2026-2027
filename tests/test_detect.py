@@ -14,6 +14,17 @@ def logged_ids():
     with open(detect.DETECTION_LOG, newline="") as f:
         return {int(row["id"]) for row in csv.DictReader(f)}
 
+def write_video(path, frames, fps):
+    height, width = frames[0].shape[:2]
+    writer = cv2.VideoWriter(str(path), cv2.VideoWriter_fourcc(*"mp4v"), fps, (width, height))
+    for frame in frames:
+        writer.write(frame)
+    writer.release()
+
+def logged_rows():
+    with open(detect.DETECTION_LOG, newline="") as f:
+        return [(int(row["timestamp_ms"]), int(row["id"])) for row in csv.DictReader(f)]
+
 def test_marker_min_side():
     corner = np.array([[[0, 0], [10, 0], [10, 20], [0, 20]]], dtype=np.float32)
     assert detect.marker_min_side(corner) == 10
@@ -258,3 +269,34 @@ def test_loop_does_not_sleep_between_frames(tmp_path, monkeypatch):
     detect.main()
 
     assert slept == []
+
+def test_source_fps(tmp_path):
+    write_video(tmp_path / "slow.mp4", [one_marker_frame()] * 3, 10)
+    camera = OpenCVCamera(str(tmp_path / "slow.mp4"))
+    assert camera.open()
+    assert detect.source_fps(camera) == pytest.approx(10)
+    camera.release()
+
+    live = FakeCamera([])
+    live.finite = False
+    assert detect.source_fps(live) is None
+
+def test_source_fps_falls_back():
+    camera = FakeCamera([])                       # finite, with no fps
+    assert detect.source_fps(camera) == detect.RECORD_FPS
+    camera.fps = 0                                # a file that reports no frame rate
+    assert detect.source_fps(camera) == detect.RECORD_FPS
+
+def test_video_file_rows_follow_video_time(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    make_test_video.main()                        # 150 frames at 30 fps: 5 s of video
+    monkeypatch.setattr(sys, "argv", ["detect", "--source", make_test_video.OUTPUT])
+    before = detect.now_ms()
+    detect.main()
+
+    rows = logged_rows()
+    for marker_id in make_test_video.MARKER_IDS:
+        times = [ts for ts, logged_id in rows if logged_id == marker_id]
+        assert len(times) == 5                    # one row per second of video, on any computer
+        assert all(1000 <= b - a < 1100 for a, b in zip(times, times[1:]))
+        assert before <= times[0] < before + 60_000

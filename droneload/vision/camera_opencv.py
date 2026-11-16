@@ -24,6 +24,8 @@ class OpenCVCamera:
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH,  self.size[0])
             self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.size[1])
             self.cap.set(cv2.CAP_PROP_FPS, self.fps)
+        else:
+            self.fps = self.cap.get(cv2.CAP_PROP_FPS) or self.fps
         return True
 
     def read(self):
