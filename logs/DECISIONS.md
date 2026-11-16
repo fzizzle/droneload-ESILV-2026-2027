@@ -38,3 +38,4 @@ Lasting decisions, one line each. Keep this file short.
 - 2026-11-16: --record keeps a video file's frame rate; a live camera is recorded at 30 fps in real time, repeating or skipping frames to keep pace.
 - 2026-11-16: A live camera that sends no frame for 2 s is released and reopened, then every 2 s, with one warning per attempt. Approved by the project lead.
 - 2026-11-16: polygonalApproxAccuracyRate returns to OpenCV's default 0.03 (was 0.05). Baselines are now found=57.6% unmatched=4.1%, and moderate shake raw=65.9% tracked=57.2%, superseding found=56.4% unmatched=10.9% and raw=63.8% tracked=54.1%.
+- 2026-11-16: With `--show`, a video file plays at its own frame rate; live cameras and runs without `--show` are not slowed.

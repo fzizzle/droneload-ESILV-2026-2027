@@ -1,6 +1,7 @@
 import csv
 import math
 import sys
+import time
 
 import cv2
 import numpy as np
@@ -420,3 +421,41 @@ def test_unknown_dict_rejected_before_camera_opens(monkeypatch, name):
 def test_detector_uses_default_polygon_accuracy():
     params = detect.make_detector().getDetectorParameters()
     assert params.polygonalApproxAccuracyRate == pytest.approx(0.03)
+
+def test_show_delay_ms():
+    assert detect.show_delay_ms(1.1, 1.0) == 100      # hold the frame until the next one is due
+    assert detect.show_delay_ms(1.0, 1.05) == 1       # behind schedule: waitKey still needs 1 ms
+    assert detect.show_delay_ms(1.0004, 1.0) == 1
+
+def run_show(tmp_path, monkeypatch, camera):
+    delays = []
+
+    def wait_key(delay):
+        delays.append(delay)
+        time.sleep(delay / 1000)
+        return -1
+
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(detect, "make_camera", lambda source: camera)
+    monkeypatch.setattr(detect.cv2, "imshow", lambda name, image: None)
+    monkeypatch.setattr(detect.cv2, "waitKey", wait_key)
+    monkeypatch.setattr(detect.cv2, "destroyAllWindows", lambda: None)
+    monkeypatch.setattr(sys, "argv", ["detect", "--show"])
+    start = time.perf_counter()
+    detect.main()
+    return delays, time.perf_counter() - start
+
+def test_show_plays_video_files_at_their_speed(tmp_path, monkeypatch):
+    camera = FakeCamera([one_marker_frame()] * 3)
+    camera.fps = 20                                    # 50 ms per frame: 3 frames last 0.15 s
+    delays, elapsed = run_show(tmp_path, monkeypatch, camera)
+
+    assert len(delays) == 3
+    assert max(delays) > 1
+    assert all(1 <= delay <= 50 for delay in delays)
+    assert elapsed >= 0.14
+
+def test_show_does_not_slow_live_cameras(tmp_path, monkeypatch):
+    delays, _ = run_show(tmp_path, monkeypatch, LiveCamera([one_marker_frame()] * 3))
+
+    assert delays == [1, 1, 1]
