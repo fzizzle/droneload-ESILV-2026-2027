@@ -1,0 +1,6 @@
+# Analysis notebooks only; CI and the drone do not install these.
+-r ../requirements-dev.txt
+plotly==7.1.0
+kaleido==1.5.1
+nbformat==5.11.1
+jupyter==1.1.1
