@@ -1,6 +1,6 @@
 # fix/camera-failures
 
-**Agent:** Claude Code (Claude Sonnet)
+**Agent:** Claude Code (Claude Sonnet, Claude Haiku)
 **Status:** ready for review
 
 ## Goal
@@ -14,5 +14,5 @@ Handle camera failures in `detect.py`: reopen a live camera that stops sending f
 - Reopen every 2 s, approved by the project lead.
 
 ## Verification
-- `./scripts/check.sh` result recorded in the pull request.
+- `./scripts/check.sh` passes (4x [OK]).
 - Reopening is tested with fake cameras only; it is unverified on hardware.

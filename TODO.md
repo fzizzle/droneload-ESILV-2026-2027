@@ -5,6 +5,10 @@ Problems found while reviewing the project.
 ## Bugs
 
 - [ ] **Check camera reopening on hardware.** The loop reopens a camera after 2 s without frames; this is tested with a fake camera only.
+  After a reopen, a camera that returns a different frame size would make
+  `VideoWriter.write` drop frames silently. `PiCamera2Source.read()` never
+  returns `False` and its `open()` raises rather than returning `False`, so the
+  reopen path does not cover that camera.
 - [ ] **Confirm the camera pipeline on the board.**
   `test_camera.sh` now uses the same pipeline as `camera_rubikpi_csi.py`
   (plain `video/x-raw` NV12 + `videoconvert`), but it has not been run on a
@@ -125,7 +129,7 @@ Problems found while reviewing the project.
   anything but a local simulator. Needs a person's decision and a
   propellers-off bench test first.
 
-- [ ] **Fix the bugs from the 2026-11-16 review.** The benchmark skips the
+- [x] **Fix the bugs from the 2026-11-16 review.** The benchmark skips the
   size filter, the loop sleeps 10 ms per frame, video files are timed by the
   wall clock, `--record` is always 30 fps, a dead camera warns forever and a
   bad `--dict` leaks the camera. Plan: `docs/plans/2026-11-16-review-fixes.md`.
