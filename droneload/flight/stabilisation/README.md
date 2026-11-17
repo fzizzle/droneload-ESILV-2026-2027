@@ -2,7 +2,7 @@
 
 Keeps the drone steady: level in the air, and holding its position indoors without GPS.
 
-**Status:** [`indoor.parm`](indoor.parm) sets ArduPilot's estimator to use optical flow instead of GPS. It flies in the simulator, which also measures drift: about 5 cm over a 1 m move. Sensor drivers for the PMW3901 and a rangefinder are not set yet, and nothing here has been tested on a drone.
+**Status:** [`indoor.parm`](indoor.parm) sets ArduPilot's estimator to use optical flow instead of GPS. It flies in the simulator, which also measures drift: about 5 cm over a 1 m move. Sensor drivers for the MTF-01 optical flow and a rangefinder are not set yet, and nothing here has been tested on a drone.
 
 ArduPilot on the flight controller does the stabilising. Python on the companion computer must not run this loop, because it is too slow and must never get in the way of pilot takeover or the failsafe. Work here is mainly flight controller settings and tuning.
 

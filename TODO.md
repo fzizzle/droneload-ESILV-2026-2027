@@ -118,8 +118,9 @@ Problems found while reviewing the project.
 - [ ] **Set the indoor origin to the venue.** `flight` sends the simulator's
   home as the estimator's origin; the compass check fails if they differ.
 
-- [ ] **Set PMW3901 and rangefinder drivers** in `stabilisation/indoor.parm`
-  once the rangefinder is known. Only simulator drivers exist.
+- [ ] **Set MTF-01 optical flow and rangefinder drivers** in
+  `stabilisation/indoor.parm`. The V1 loan kit lists the MTF-01; whether its
+  rangefinder is enough is unverified. Only simulator drivers exist.
 
 - [x] **Stop the drone if the mission stops sending commands.** ArduPilot's
   GCS failsafe lands after 3 s without a heartbeat. Check it on the Pixhawk
@@ -182,8 +183,11 @@ Not in the loan kit. Team 450's drone is going back to the organisers, so do
 not count on anything fitted to it. Check what stays with us before buying: the
 inventory marks some box items as present and does not record others.
 
-- [ ] **Confirm the Qualcomm computer's exact model.** Do this before buying
-  cameras.
+- [ ] **Confirm the lent Qualcomm computer's exact model.** Do this before
+  buying cameras. Buying a second computer with better camera support is an
+  option; it needs the project lead's decision.
+- [ ] **Marvelmind beacons for testing.** The kit lends one beacon; the 4 fixed
+  ones are only at the final.
 - [ ] **Buy two cameras:** one downward, one forward, preferably global shutter,
   in colour, because vibration distorts rolling-shutter images and the path and
   posters need colour. If the board is a Rubik Pi 3, prefer USB (UVC) cameras,
@@ -197,7 +201,7 @@ inventory marks some box items as present and does not record others.
   only if it does not.
 - [ ] **Level converter:** needed between a 3.3 V Raspberry Pi and a 5 V
   Arduino or robot link. Team 450's is not recorded in the box.
-- [ ] **Robot link:** V0 shows a team module on the robot. Team 450 used two
+- [ ] **Robot link:** V1 shows a team module on the robot. Team 450 used two
   HC-12 radio modules, which are not recorded in the box.
 - [ ] **Test supplies:** printed `DICT_4X4_50` markers (20 × 20 cm), A3 posters
   and a camera calibration checkerboard.
@@ -211,7 +215,7 @@ footage and Marvelmind simulation.
 - [x] **Tracking in `vision/tracking`.** Confirm markers across frames and
   smooth their positions. Skipping blurred frames and using drone motion are
   still open; see `droneload/vision/tracking/README.md`.
-- [ ] **`comms` protocol layer.** A state machine for the V0 robot protocol
+- [ ] **`comms` protocol layer.** A state machine for the V1 robot protocol
   (`D`/`G`/`A` commands, `N`/`F`/`S` replies, target digit), tested against a
   fake serial port. `pyserial` is a new dependency and needs a person's OK.
 - [ ] **`mission` state machine.** Steps, timeouts and the "operator only
@@ -224,6 +228,8 @@ footage and Marvelmind simulation.
 - [ ] **Detection display for the jury.** `--show` and `--record` give an
   annotated video on a PC. Still to decide: how it reaches the organisers'
   screen from the drone.
+- [ ] **Redraw the arena map** in `docs/mission-map.md` and
+  `docs/arena-map.svg` from Figure 1 of the V1 rules, replacing the V0 sketch.
 - [ ] **Drop-accuracy bench test.** 20 drops each from 0.5, 1 and 1.5 m of a
   50 g disc onto an A3 sheet, to help choose the grabber.
 
