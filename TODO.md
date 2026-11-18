@@ -2,6 +2,15 @@
 
 Problems found while reviewing the project.
 
+## Roadmap
+
+The order of work up to the final is in [`docs/plans/2026-11-18-roadmap.md`](docs/plans/2026-11-18-roadmap.md), with one plan per feature in the same folder. Start there for anything larger than a fix.
+
+- [ ] **Loan kit bring-up** (`kit-bring-up`): start the day the kit arrives. The stable-flight video is due by RCE2, 23 January 2027.
+- [ ] **Before the kit arrives, on a PC:** `sim-camera`, `vision-api`, `flight-velocity`, `mission-runner`, and the footage task of `detection-tuning`.
+- [ ] **Project lead's decisions** listed in the roadmap: flight controller code, the real-drone connection, the grabber, the robot link and `pyserial`, the marker ID filter.
+- [ ] **Questions for the organisers** listed in the roadmap: the referee's target, Wi-Fi and the screen, the window markers and path lines, the robot link, the floor.
+
 ## Bugs
 
 - [ ] **Check camera reopening on hardware.** The loop reopens a camera after 2 s without frames; this is tested with a fake camera only.
@@ -138,6 +147,14 @@ Problems found while reviewing the project.
 - [ ] **`flight` never reads `COMMAND_ACK`.** A rejected arm or takeoff shows
   only as a timeout, with no reason. Needs a person's OK, as it is flight
   controller code.
+
+- [ ] **`Vehicle.move()` checks distance travelled, not arrival.** A drift of
+  the right length in any direction passes. Fixed by Task 4 of
+  `docs/plans/2026-11-18-flight-velocity.md`.
+
+- [ ] **Module READMEs and the mission map lag the V1 rules.** They cite
+  "2027 V0", and `droneload/flight/README.md` and `docs/mission-map.md` still
+  name the PMW3901 and FS-i6 where V1 lists the MTF-01 and FS-i6X.
 
 - [ ] **`camera_picamera2.py` may swap red and blue (unverified).** Picamera2
   documents `RGB888` as already in BGR order, so the `RGB2BGR` conversion
