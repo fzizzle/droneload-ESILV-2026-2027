@@ -7,8 +7,7 @@
 Record that a Raspberry Pi 5 is tested first, then the lent Qualcomm computer, list the Pi work, and record the first camera.
 
 ## Steps
-- 2026-11-24: Updated `AGENTS.md` context, added the decision to `DECISIONS.md`, and added a Raspberry Pi 5 section and a regulator item to `TODO.md`.
-- 2026-11-24: Compared global-shutter cameras on a €200 budget; recorded the first camera in `DECISIONS.md` and `TODO.md`.
+- 2026-11-24: Updated `AGENTS.md` context, added the decision to `DECISIONS.md`, and added a Raspberry Pi 5 section and a regulator item to `TODO.md`. Compared global-shutter cameras on a €200 budget and recorded the first one.
 
 ## Decisions
 - The organisers accept any computer; the flight computer is chosen after testing both (project lead).
