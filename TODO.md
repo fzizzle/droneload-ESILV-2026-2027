@@ -207,11 +207,13 @@ inventory marks some box items as present and does not record others.
   the draw on the Pi before buying.
 - [ ] **Marvelmind beacons for testing.** The kit lends one beacon; the 4 fixed
   ones are only at the final.
-- [ ] **Buy two cameras:** one downward, one forward, preferably global shutter,
-  in colour, because vibration distorts rolling-shutter images and the path and
-  posters need colour. USB (UVC) cameras, starting with the Arducam AR0234,
-  work on both the Pi and the Qualcomm board; a CSI camera ties the team to
-  one board. Check fixed exposure on the board before buying the second.
+- [ ] **Buy two cameras:** one downward, one forward. The first is the Svpro/ELP
+  USBGS1200P01 board (AR0234, colour, global shutter, USB 2.0, 126° lens), for
+  the downward camera. Before buying the second, check on the Pi that exposure
+  can be fixed (`v4l2-ctl -l`, and after a stream restart) and the MJPG frame
+  rate at 720p. For the forward camera, consider the same board with a
+  distortion-free lens of about 85-100° (H100 or V100). Avoid fisheye and zoom
+  lenses.
 - [ ] **Camera damping:** soft mounts for both cameras, and spare propellers to
   balance.
 - [ ] **Grabber:** choose one first. Two Namvo KK-P20 electromagnets are in the
