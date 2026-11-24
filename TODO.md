@@ -200,16 +200,18 @@ Not in the loan kit. Team 450's drone is going back to the organisers, so do
 not count on anything fitted to it. Check what stays with us before buying: the
 inventory marks some box items as present and does not record others.
 
-- [ ] **Confirm the lent Qualcomm computer's exact model.** Do this before
-  buying cameras. Buying a second computer with better camera support is an
-  option; it needs the project lead's decision.
+- [ ] **Confirm the lent Qualcomm computer's exact model.** A Raspberry Pi 5
+  is tested first; the flight computer is chosen after testing both.
+- [ ] **5 V regulator for the Raspberry Pi 5 (unverified).** It may draw up to
+  about 5 A with cameras, more than the Pixhawk power module gives. Measure
+  the draw on the Pi before buying.
 - [ ] **Marvelmind beacons for testing.** The kit lends one beacon; the 4 fixed
   ones are only at the final.
 - [ ] **Buy two cameras:** one downward, one forward, preferably global shutter,
   in colour, because vibration distorts rolling-shutter images and the path and
-  posters need colour. If the board is a Rubik Pi 3, prefer USB (UVC) cameras,
-  starting with the Arducam AR0234. Check fixed exposure on the board before
-  buying the second.
+  posters need colour. USB (UVC) cameras, starting with the Arducam AR0234,
+  work on both the Pi and the Qualcomm board; a CSI camera ties the team to
+  one board. Check fixed exposure on the board before buying the second.
 - [ ] **Camera damping:** soft mounts for both cameras, and spare propellers to
   balance.
 - [ ] **Grabber:** choose one first. Two Namvo KK-P20 electromagnets are in the
@@ -222,6 +224,26 @@ inventory marks some box items as present and does not record others.
   HC-12 radio modules, which are not recorded in the box.
 - [ ] **Test supplies:** printed `DICT_4X4_50` markers (20 × 20 cm), A3 posters
   and a camera calibration checkerboard.
+
+## Raspberry Pi 5
+
+Tests and changes for the Pi, which arrives before the Qualcomm board. Items
+already listed above are not repeated: picamera red/blue, `read()` never
+failing, MJPG and the one-frame buffer, and the Y-plane grey image.
+
+- [ ] **Pi setup script.** `scripts/setup.sh` is RubikPi-only. A Pi script
+  would install `python3-picamera2` from apt and make the `.venv` with
+  `--system-site-packages`. Adding Picamera2 needs the project lead's OK.
+- [ ] **Check NumPy with Picamera2 (unverified).** pip may install NumPy 2
+  over the system NumPy that apt's Picamera2 is built against.
+- [ ] **Choose the Pi camera with `--source`.** `picamera` always opens camera
+  0; the Pi 5 has two CSI ports. Consider `picamera:N`.
+- [ ] **Move `camera_picamera2.py` settings to constants** and add tests with a
+  fake `picamera2` module. Consider `create_video_configuration`.
+- [ ] **Measure on the Pi:** detection frame rate at 720p on a live camera,
+  with and without `--record` (the Pi 5 has no hardware video encoder), and
+  current draw with both cameras.
+- [ ] **Record real `DICT_4X4_50` footage on the Pi** with printed markers.
 
 ## Can be built before hardware
 

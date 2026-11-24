@@ -41,3 +41,4 @@ Lasting decisions, one line each. Keep this file short.
 - 2026-11-16: With `--show`, a video file plays at its own frame rate; live cameras and runs without `--show` are not slowed.
 - 2026-11-17: Rules summary follows V1. The loan kit is annex 1 (MTF-01 optical flow, one Marvelmind beacon); the organisers lend a Qualcomm computer, and buying another for camera support stays open. Approved by the project lead.
 - 2026-11-24: The F450 build guide is committed as PDFs in `docs/hardware/`, in English and French, as an exception to the no-generated-files and English-only-docs rules: it is a hand-made reference for the team, not build output. Approved by the project lead.
+- 2026-11-24: The organisers accept any companion computer. A Raspberry Pi 5 is tested first, then the lent Qualcomm computer; the flight computer is chosen after both, so camera code stays hardware-independent. Supersedes the 2026-10-31 Qualcomm focus. Approved by the project lead.
