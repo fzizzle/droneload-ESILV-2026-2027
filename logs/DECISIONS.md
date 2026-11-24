@@ -40,3 +40,4 @@ Lasting decisions, one line each. Keep this file short.
 - 2026-11-16: polygonalApproxAccuracyRate returns to OpenCV's default 0.03 (was 0.05). Baselines are now found=57.6% unmatched=4.1%, and moderate shake raw=65.9% tracked=57.2%, superseding found=56.4% unmatched=10.9% and raw=63.8% tracked=54.1%.
 - 2026-11-16: With `--show`, a video file plays at its own frame rate; live cameras and runs without `--show` are not slowed.
 - 2026-11-17: Rules summary follows V1. The loan kit is annex 1 (MTF-01 optical flow, one Marvelmind beacon); the organisers lend a Qualcomm computer, and buying another for camera support stays open. Approved by the project lead.
+- 2026-11-24: The F450 build guide is committed as PDFs in `docs/hardware/`, in English and French, as an exception to the no-generated-files and English-only-docs rules: it is a hand-made reference for the team, not build output. Approved by the project lead.
